@@ -30,7 +30,17 @@ func NewPostsRepository(conn *gorm.DB) *PostsRepository {
 
 func (r *PostsRepository) Get() ([]*entities.Post, error) {
 	var posts []Post
-	r.Conn.Find(&posts)
+	if err := r.Conn.Table("posts").Select(`
+        posts.id,
+        posts.title,
+        posts.body,
+        posts.user_id,
+        users.name as username,
+        posts.created_at,
+        posts.updated_at
+    `).Joins("inner join users on posts.user_id = users.id").Scan(&posts).Error; err != nil {
+		return nil, err
+	}
 	var ent_posts []*entities.Post
 	for _, post := range posts {
 		ent_posts = append(ent_posts, convertPostRepositoryModelToEntity(&post))
