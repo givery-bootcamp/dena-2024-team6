@@ -1,6 +1,6 @@
 package entities
 
-type Posts struct {
+type Post struct {
 	ID        int    `json:"id"`
 	Title     string `json:"title"`
 	Body      string `json:"body"`

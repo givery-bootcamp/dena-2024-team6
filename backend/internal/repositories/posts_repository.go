@@ -12,7 +12,7 @@ type PostsRepository struct {
 
 // This struct is same as entity model
 // However define again for training
-type Posts struct {
+type Post struct {
 	ID        int
 	Title     string
 	Body      string
@@ -28,21 +28,18 @@ func NewPostsRepository(conn *gorm.DB) *PostsRepository {
 	}
 }
 
-func (r *PostsRepository) Get() (*entities.Posts, error) {
-	obj := Posts{
-		ID:        1,
-		Title:     "title",
-		Body:      "本文",
-		UserId:    1,
-		Username:  "user1",
-		CreatedAt: "2022-05-01T00:00:00Z",
-		UpdatedAt: "2022-05-01T00:00:00Z",
+func (r *PostsRepository) Get() ([]*entities.Post, error) {
+	var posts []Post
+	r.Conn.Find(&posts)
+	var ent_posts []*entities.Post
+	for _, post := range posts {
+		ent_posts = append(ent_posts, convertPostRepositoryModelToEntity(&post))
 	}
-	return convertPostsRepositoryModelToEntity(&obj), nil
+	return ent_posts, nil
 }
 
-func convertPostsRepositoryModelToEntity(v *Posts) *entities.Posts {
-	return &entities.Posts{
+func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
+	return &entities.Post{
 		ID:        v.ID,
 		Title:     v.Title,
 		Body:      v.Body,
