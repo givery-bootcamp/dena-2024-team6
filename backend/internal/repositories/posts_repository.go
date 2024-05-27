@@ -38,7 +38,7 @@ func (r *PostsRepository) Get() ([]*entities.Post, error) {
         users.name as username,
         posts.created_at,
         posts.updated_at
-    `).Joins("inner join users on posts.user_id = users.id").Scan(&posts).Error; err != nil {
+    `).Joins("inner join users on posts.user_id = users.id").Order("posts.id DESC").Scan(&posts).Error; err != nil {
 		return nil, err
 	}
 	var ent_posts []*entities.Post
