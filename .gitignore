@@ -1,2 +1,3 @@
 docker/mysql/*
 backend/tmp/*
+.DS_Store
