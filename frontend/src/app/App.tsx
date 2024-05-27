@@ -1,6 +1,6 @@
-import { AppRoute } from './AppRoute';
+import { AppRoute } from './AppRoute'
 
-import './App.scss';
+import './App.scss'
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
         <AppRoute />
       </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
