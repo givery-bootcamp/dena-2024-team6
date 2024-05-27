@@ -1,28 +1,17 @@
-version: '3.9'
+version: "3.9"
 services:
   backend:
     build:
       context: ./docker
       dockerfile: backend.Dockerfile
     ports:
-      - '9000:9000'
+      - "9000:9000"
     volumes:
       - ./backend:/go/src/myapp
     command: "air"
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      TZ: Asia/Tokyo
-  frontend:
-    image: node:20.12.2
-    working_dir: /home/node/myapp
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./frontend:/home/node/myapp
-      - /home/node/myapp/node_modules
-    command: "bash -c 'npm i && npm run dev'"
     environment:
       TZ: Asia/Tokyo
   db:
