@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"myapp/internal/entities"
 	"time"
 
@@ -47,6 +48,29 @@ func (r *PostsRepository) List() ([]*entities.Post, error) {
 		ent_posts = append(ent_posts, convertPostRepositoryModelToEntity(&post))
 	}
 	return ent_posts, nil
+}
+
+func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
+	var post Post
+	err := r.Conn.Table("posts").Select(`
+        posts.id,
+        posts.title,
+        posts.body,
+        posts.user_id,
+        users.name as username,
+        posts.created_at,
+        posts.updated_at
+    `).Joins("inner join users on posts.user_id = users.id").Where("posts.id = ?", postID).First(&post).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return convertPostRepositoryModelToEntity(&post), nil
 }
 
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
