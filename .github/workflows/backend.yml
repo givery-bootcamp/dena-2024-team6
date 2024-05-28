@@ -28,8 +28,8 @@ jobs:
       
       - name: initial db setup
         run: |
-          docker-compose exec -T db sh -c "mysql < /sqlscripts/create.sql"
-          docker-compose exec -T db sh -c "mysql training < /sqlscripts/insert.sql"
+          docker-compose exec -T db sh -c "mysql --protocol=tcp < /sqlscripts/create.sql"
+          docker-compose exec -T db sh -c "mysql --protocol=tcp training < /sqlscripts/insert.sql"
 
       - name: Get dependencies
         run: go get -v -t -d ./...
