@@ -24,11 +24,10 @@ jobs:
           go-version: 1.22.2
       
       - name: build container
-        run: docker compose -f ../docker-compose.yml up -d
+        run: docker compose -f ../docker-compose.yml up -d --wait
       
       - name: initial db setup
         run: |
-          docker-compose exec -T db sh -c "sudo /etc/init.d/mysql start"
           docker-compose exec -T db sh -c "mysql < /sqlscripts/create.sql"
           docker-compose exec -T db sh -c "mysql training < /sqlscripts/insert.sql"
 
