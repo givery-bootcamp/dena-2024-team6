@@ -48,16 +48,18 @@ func (r *PostsRepository) List() ([]*entities.Post, error) {
 	return ent_posts, nil
 }
 
-func (r *PostsRepository) Get() (*entities.Post, error) {
-	// TODO: Implement this
-	post := Post{
-		ID:        1,
-		Title:     "Title",
-		Body:      "Body",
-		UserId:    1,
-		Username:  "Username",
-		CreatedAt: "2021-01-01",
-		UpdatedAt: "2021-01-01",
+func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
+	var post Post
+	if err := r.Conn.Table("posts").Select(`
+        posts.id,
+        posts.title,
+        posts.body,
+        posts.user_id,
+        users.name as username,
+        posts.created_at,
+        posts.updated_at
+    `).Joins("inner join users on posts.user_id = users.id").Where("posts.id = ?", postID).Scan(&post).Error; err != nil {
+		return nil, err
 	}
 
 	return convertPostRepositoryModelToEntity(&post), nil
