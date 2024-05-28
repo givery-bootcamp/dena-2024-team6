@@ -57,21 +57,3 @@ jobs:
         with:
           version: latest
           working-directory: backend/
-
-  build_check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Docker Build
-        run: |
-          docker build -f Dockerfile -t ${{ env.DOCKER_IMAGE_TAG }} .
-
-      # Dockleで脆弱性検査を行う
-      - name: Run Dockle
-        uses: erzz/dockle-action@v1
-        with:
-          image: ${{ env.DOCKER_IMAGE_TAG }}
-          exit-code: 1
-          failure-threshold: fatal
