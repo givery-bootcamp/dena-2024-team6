@@ -1,12 +1,9 @@
 name: Backend-CI
 
-on:
+on: 
   push:
-    tags:
-      - v*
-    branches:
-      - master
-  pull_request:
+    paths:
+      - "backend/**"
 
 env:
   DOCKER_IMAGE_TAG: "backend"
@@ -38,28 +35,28 @@ jobs:
       - name: Upload Octocov
         uses: k1LoW/octocov-action@v0
 
-    lint:
-      name: lint
-      runs-on: ubuntu-latest
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-        - name: Setup Go
-          uses: actions/setup-go@v3
-          with:
-            go-version: 1.22.2
-        - name: OS Version
-          run: cat /etc/os-release
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.22.2
+      - name: OS Version
+        run: cat /etc/os-release
 
-        - name: Go Version
-          run: go version
+      - name: Go Version
+        run: go version
 
-        - name: Go Lint
-          uses: golangci/golangci-lint-action@v3
-          with:
-            version: latest
-            working-directory: backend/
+      - name: Go Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          working-directory: backend/
 
   build_check:
     runs-on: ubuntu-latest
