@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "backend/**"
+  pull_request:
 
 env:
   DOCKER_IMAGE_TAG: "backend"
