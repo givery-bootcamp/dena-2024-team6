@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"myapp/internal/entities"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -18,8 +19,8 @@ type Post struct {
 	Body      string
 	UserId    int
 	Username  string
-	CreatedAt string
-	UpdatedAt string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func NewPostsRepository(conn *gorm.DB) *PostsRepository {
