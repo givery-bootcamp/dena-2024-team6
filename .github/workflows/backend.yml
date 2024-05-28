@@ -25,11 +25,6 @@ jobs:
       
       - name: build container
         run: docker compose -f ../docker-compose.yml up -d --wait
-
-      - name: debug
-        run: |
-          sleep 10
-          docker ps
       
       - name: initial db setup
         run: |
