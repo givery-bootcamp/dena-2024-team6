@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	"myapp/internal/entities"
 
 	"gorm.io/gorm"
@@ -50,7 +51,7 @@ func (r *PostsRepository) List() ([]*entities.Post, error) {
 
 func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 	var post Post
-	if err := r.Conn.Table("posts").Select(`
+	err := r.Conn.Table("posts").Select(`
         posts.id,
         posts.title,
         posts.body,
@@ -58,7 +59,13 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
         users.name as username,
         posts.created_at,
         posts.updated_at
-    `).Joins("inner join users on posts.user_id = users.id").Where("posts.id = ?", postID).Scan(&post).Error; err != nil {
+    `).Joins("inner join users on posts.user_id = users.id").Where("posts.id = ?", postID).First(&post).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
