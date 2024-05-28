@@ -1,0 +1,92 @@
+openapi: 3.0.3
+
+info:
+  title: "Web開発研修 API"
+  version: "1.0.0"
+  description: |
+    FY24卒Web開発研修6班のAPI仕様書です。
+
+servers:
+  - url: http://localhost:9000
+    description: ローカル開発環境 (API)
+  - url: https://prod.example.com
+    description: 本番環境 (API)
+
+components:
+  schemas:
+    Post:
+      description: 投稿のモデル
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Funobu1周年記念YouTubeライブ開催決定！
+        body:
+          type: string
+          example: 2024年3月5日19:00からYouTubeの公式チャンネルにて、Funobuの音楽ライブ配信が行われます！
+        user_id:
+          type: integer
+          example: 35
+        user_name:
+          type: string
+          example: Funobu
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-03-05T00:00:00+09:00"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-03-05T00:00:00+09:00"
+      # Both properties are required
+      required:
+        - id
+        - title
+        - user_id
+        - user_name
+        - created_at
+
+paths:
+  /posts:
+    get:
+      summary: 投稿の一覧
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
+  /posts/{postId}:
+    get:
+      summary: 投稿の一覧
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: 取得したい対象の投稿ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
