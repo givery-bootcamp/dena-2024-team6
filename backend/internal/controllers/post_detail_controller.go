@@ -14,7 +14,7 @@ func PostDetailController(ctx *gin.Context) {
 
 	postID, err := strconv.Atoi(ctx.Param("postid"))
 	if err != nil {
-		handleError(ctx, 500, err)
+		handleError(ctx, 400, err)
 		return
 	}
 
