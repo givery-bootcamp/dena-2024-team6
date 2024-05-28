@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { MOCK_POSTS, post } from '../../../shared/models'
 import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
@@ -22,6 +22,7 @@ export const PostDetailRoute = () => {
       </HStack>
       <Divider variant="solid" />
       <Text>{post.body}</Text>
+      <Link to="/">戻る</Link>
     </Container>
   )
 }
