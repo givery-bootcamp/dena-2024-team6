@@ -12,7 +12,5 @@ func SetupRoutes(app *gin.Engine) {
 	})
 	app.GET("/hello", controllers.HelloWorld)
 	app.GET("/posts", controllers.PostsController)
-	app.GET("/posts/:postid", func(ctx *gin.Context) {
-		ctx.String(200, "Post ID: %s", ctx.Param("postid"))
-	})
+	app.GET("/posts/:postid", controllers.PostDetailController)
 }

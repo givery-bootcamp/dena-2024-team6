@@ -48,6 +48,21 @@ func (r *PostsRepository) List() ([]*entities.Post, error) {
 	return ent_posts, nil
 }
 
+func (r *PostsRepository) Get() (*entities.Post, error) {
+	// TODO: Implement this
+	post := Post{
+		ID:        1,
+		Title:     "Title",
+		Body:      "Body",
+		UserId:    1,
+		Username:  "Username",
+		CreatedAt: "2021-01-01",
+		UpdatedAt: "2021-01-01",
+	}
+
+	return convertPostRepositoryModelToEntity(&post), nil
+}
+
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
 	return &entities.Post{
 		ID:        v.ID,
