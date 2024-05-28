@@ -1,30 +1,21 @@
-version: '3.9'
+version: "3.9"
 services:
   backend:
     build:
       context: ./docker
       dockerfile: backend.Dockerfile
     ports:
-      - '9000:9000'
+      - "9000:9000"
     volumes:
       - ./backend:/go/src/myapp
     command: "air"
     depends_on:
-      - db
-    environment:
-      TZ: Asia/Tokyo
-  frontend:
-    image: node:20.12.2
-    working_dir: /home/node/myapp
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./frontend:/home/node/myapp
-      - /home/node/myapp/node_modules
-    command: "bash -c 'npm i && npm run dev'"
+      db:
+        condition: service_healthy
     environment:
       TZ: Asia/Tokyo
   db:
+    container_name: mysql
     build:
       context: ./docker
       dockerfile: mysql.Dockerfile
@@ -34,6 +25,12 @@ services:
       - ./mysql/sql:/sqlscripts
     ports:
       - '3306:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 30s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=training

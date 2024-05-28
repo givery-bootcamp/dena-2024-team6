@@ -1,4 +1,4 @@
 export type Hello = {
-  lang: string;
-  message: string;
-};
+  lang: string
+  message: string
+}
