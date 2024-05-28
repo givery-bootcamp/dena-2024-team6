@@ -28,6 +28,7 @@ jobs:
 
       - name: debug
         run: |
+          sleep 1m
           docker ps
       
       - name: initial db setup
