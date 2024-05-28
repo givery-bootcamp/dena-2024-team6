@@ -19,281 +19,38 @@ export const MOCK_POSTS: Array<post> = [
     updatedAt: '2024-06-02T00:00:00+09:00'
   },
   {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
+    id: '1',
+    title: 'モックタイトル1',
+    body: 'こんにちは\nこんにちは',
     userId: 'mock-user-id1',
-    userName: 'Funobu',
+    userName: 'わだ',
     createdAt: '2024-06-02T00:00:00+09:00',
     updatedAt: '2024-06-02T00:00:00+09:00'
   },
   {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
+    id: '2',
+    title: 'モックタイトル2',
+    body: 'こんにちは\nこんにちは',
     userId: 'mock-user-id1',
-    userName: 'Funobu',
+    userName: 'わだ',
     createdAt: '2024-06-02T00:00:00+09:00',
     updatedAt: '2024-06-02T00:00:00+09:00'
   },
   {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
+    id: '3',
+    title: 'モックタイトル3',
+    body: 'こんにちは\nこんにちは',
     userId: 'mock-user-id1',
-    userName: 'Funobu',
+    userName: 'わだ',
     createdAt: '2024-06-02T00:00:00+09:00',
     updatedAt: '2024-06-02T00:00:00+09:00'
   },
   {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
+    id: '4',
+    title: 'モックタイトル4',
+    body: 'こんにちは\nこんにちは',
     userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
-    createdAt: '2024-06-02T00:00:00+09:00',
-    updatedAt: '2024-06-02T00:00:00+09:00'
-  },
-  {
-    id: 'mock-id',
-    title: 'モックタイトル',
-    body: 'hoge',
-    userId: 'mock-user-id1',
-    userName: 'Funobu',
+    userName: 'わだ',
     createdAt: '2024-06-02T00:00:00+09:00',
     updatedAt: '2024-06-02T00:00:00+09:00'
   }
