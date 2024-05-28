@@ -5,6 +5,10 @@ on:
     paths:
       - "backend/**"
 
+defaults:
+  run:
+    working-directory: backend
+
 jobs:
   test:
     name: Test
@@ -21,9 +25,8 @@ jobs:
       
       - name: build container
         run: docker compose up -d
-
-      - name: cd into backend
-        run: cd backend
+        with:
+          working-directory: ./
 
       - name: Get dependencies
         run: go get -v -t -d ./...
@@ -33,8 +36,6 @@ jobs:
 
       - name: Upload Octocov
         uses: k1LoW/octocov-action@v0
-        with:
-          working-directory: backend/
 
   lint:
     name: lint
