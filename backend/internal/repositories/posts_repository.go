@@ -28,7 +28,7 @@ func NewPostsRepository(conn *gorm.DB) *PostsRepository {
 	}
 }
 
-func (r *PostsRepository) Get() ([]*entities.Post, error) {
+func (r *PostsRepository) List() ([]*entities.Post, error) {
 	var posts []Post
 	if err := r.Conn.Table("posts").Select(`
         posts.id,
