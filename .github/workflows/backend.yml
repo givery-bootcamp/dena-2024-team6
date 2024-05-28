@@ -1,0 +1,79 @@
+name: Backend-CI
+
+on: 
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+env:
+  DOCKER_IMAGE_TAG: "backend"
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22.2
+
+      - name: Get dependencies
+        run: go get -v -t -d ./...
+
+      - name: Run Test
+        run: go test -v ./... -coverprofile=coverage.out
+
+      - name: Upload Octocov
+        uses: k1LoW/octocov-action@v0
+
+    lint:
+      name: lint
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/checkout@v3
+
+        - name: Setup Go
+          uses: actions/setup-go@v3
+          with:
+            go-version: 1.22.2
+        - name: OS Version
+          run: cat /etc/os-release
+
+        - name: Go Version
+          run: go version
+
+        - name: Go Lint
+          uses: golangci/golangci-lint-action@v3
+          with:
+            version: latest
+            working-directory: backend/
+
+  build_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Docker Build
+        run: |
+          docker build -f Dockerfile -t ${{ env.DOCKER_IMAGE_TAG }} .
+
+      # Dockleで脆弱性検査を行う
+      - name: Run Dockle
+        uses: erzz/dockle-action@v1
+        with:
+          image: ${{ env.DOCKER_IMAGE_TAG }}
+          exit-code: 1
+          failure-threshold: fatal
