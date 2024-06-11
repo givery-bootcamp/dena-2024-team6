@@ -1,16 +1,37 @@
-import { Card, CardBody, CardHeader, Container, Text, HStack, Heading, CardFooter, VStack } from '@yamada-ui/react'
-import { useEffect, useState } from 'react'
-import { MOCK_POSTS, post } from '../../shared/models'
-import dayjs, { Dayjs } from 'dayjs'
+import {
+  Loading,
+  Card,
+  CardBody,
+  CardHeader,
+  Container,
+  Text,
+  HStack,
+  Heading,
+  CardFooter,
+  VStack,
+  Center
+} from '@yamada-ui/react'
+import dayjs from 'dayjs'
+import { useGetPosts } from '../../api/api'
 
 export const PostsRoute = () => {
   // API取得
-  const [posts, setPosts] = useState<Array<post>>(MOCK_POSTS)
+  const { data, isLoading, isError } = useGetPosts()
   return (
     <Container>
       <Heading size="lg">投稿一覧</Heading>
+      {isLoading && (
+        <Center>
+          <Loading variant="circles" size="6xl" color="cyan.500" />
+        </Center>
+      )}
+      {isError && (
+        <Center>
+          <Heading>エラーが発生しました</Heading>
+        </Center>
+      )}
       <VStack w="full">
-        {posts.map((post) => (
+        {data?.map((post) => (
           <Card key={post.id} variant="outline" w="full">
             <CardHeader>
               <Heading size="md">{post.title}</Heading>
@@ -21,8 +42,8 @@ export const PostsRoute = () => {
             </CardBody>
             <CardFooter>
               <HStack>
-                <Text>{post.userName}</Text>
-                <Text>更新日時： {dayjs(post.updatedAt).format('YYYY年M月D日 HH:mm:ss')}</Text>
+                <Text>{post.user_name}</Text>
+                <Text>更新日時： {dayjs(post.updated_at).format('YYYY年M月D日 HH:mm:ss')}</Text>
               </HStack>
             </CardFooter>
           </Card>
