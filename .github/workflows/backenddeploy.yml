@@ -45,7 +45,6 @@ jobs:
   backend-ecr-push:
     runs-on: ubuntu-latest
     needs: [backend-build]
-    if: github.ref == 'refs/heads/deploy'
 
     steps:
     - name: Download backend build artifacts
