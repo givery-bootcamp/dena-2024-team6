@@ -7,7 +7,6 @@ on:
       - ".github/**"
 
 
-
 env:
   AWS_REGION: ap-northeast-1
   REPOSITORY_NAME_BACKEND: dena-training-2024-team-6-backend
@@ -19,25 +18,26 @@ env:
   BUCKET_PREFIX: team-6
   VITE_API_ENDPOINT_PATH: https://team-6_bk.member0005.track-bootcamp.run
 
-backend-build:
-    runs-on: ubuntu-latest
+jobs:
+  backend-build:
+      runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: '1.22'
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.22'
 
-    - name: Build
-      working-directory: ./backend
-      run: go build -o myapp
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-bin
-        path: |
-          backend/myapp
-          docker/backend-ci.Dockerfile
+      - name: Build
+        working-directory: ./backend
+        run: go build -o myapp
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-bin
+          path: |
+            backend/myapp
+            docker/backend-ci.Dockerfile
