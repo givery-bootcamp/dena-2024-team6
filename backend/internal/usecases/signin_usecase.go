@@ -1,6 +1,9 @@
 package usecases
 
-import "myapp/internal/interfaces"
+import (
+	"myapp/internal/entities"
+	"myapp/internal/interfaces"
+)
 
 type SigninUsecase struct {
 	repository interfaces.SigninRepository
@@ -12,6 +15,6 @@ func NewSigninUsecase(r interfaces.SigninRepository) *SigninUsecase {
 	}
 }
 
-func (u *SigninUsecase) Execute(username string, password string) (string, error) {
+func (u *SigninUsecase) Execute(username string, password string) (*entities.User, error) {
 	return u.repository.Signin(username, password)
 }
