@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Test
         run: go test -v ./... -coverprofile=coverage.out
-
+#upload ecr
   lint:
     name: lint
     runs-on: ubuntu-latest
