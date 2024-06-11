@@ -13,10 +13,13 @@ import {
 } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { useGetPosts } from '../../api/api'
+import { useNavigate } from 'react-router-dom'
 
 export const PostsRoute = () => {
   // API取得
   const { data, isLoading, isError } = useGetPosts()
+  const navigate = useNavigate()
+
   return (
     <Container>
       <Heading size="lg">投稿一覧</Heading>
@@ -32,7 +35,16 @@ export const PostsRoute = () => {
       )}
       <VStack w="full">
         {data?.map((post) => (
-          <Card key={post.id} variant="outline" w="full">
+          <Card
+            key={post.id}
+            variant="outline"
+            w="full"
+            onClick={() => navigate(`/pages/${post.id}`)}
+            _hover={{
+              cursor: 'pointer',
+              bgColor: 'gray.50'
+            }}
+          >
             <CardHeader>
               <Heading size="md">{post.title}</Heading>
             </CardHeader>
