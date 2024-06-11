@@ -1,27 +1,36 @@
-import { Container, Text, HStack, Heading, Divider } from '@yamada-ui/react'
-import { useState } from 'react'
-import { MOCK_POSTS, post } from '../../../shared/models'
+import { Container, Text, HStack, Heading, Divider, Center, Loading } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { useParams, Link } from 'react-router-dom'
+import { useGetPostsPostId } from '../../../api/api'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
-  const [post, setPost] = useState<post>(() => {
-    const foundPost = MOCK_POSTS.find((post) => post.id === id)
-    return foundPost || MOCK_POSTS[0]
-  })
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const { data, isLoading, isError } = useGetPostsPostId(Number(id!))
 
   return (
     <Container>
-      <Heading size="lg">{post.title}</Heading>
-      <HStack>
-        <AttributeDisplay labelName="作成日時：" value={dayjs(post.createdAt).format('YYYY年M月D日 HH:mm:ss')} />
-        <AttributeDisplay labelName="更新日時：" value={dayjs(post.updatedAt).format('YYYY年M月D日 HH:mm:ss')} />
-        <AttributeDisplay labelName="ユーザー名：" value={post.userName} />
-      </HStack>
+      <Heading size="lg">{data?.title}</Heading>
+      {isLoading && (
+        <Center>
+          <Loading variant="circles" size="6xl" color="cyan.500" />
+        </Center>
+      )}
+      {isError && (
+        <Center>
+          <Heading>エラーが発生しました</Heading>
+        </Center>
+      )}
+      {data && (
+        <HStack>
+          <AttributeDisplay labelName="作成日時：" value={dayjs(data?.created_at).format('YYYY年M月D日 HH:mm:ss')} />
+          <AttributeDisplay labelName="更新日時：" value={dayjs(data?.updated_at).format('YYYY年M月D日 HH:mm:ss')} />
+          <AttributeDisplay labelName="ユーザー名：" value={data?.user_name} />
+        </HStack>
+      )}
       <Divider variant="solid" />
-      <Text>{post.body}</Text>
+      <Text>{data?.body}</Text>
       <Link to="/">戻る</Link>
     </Container>
   )
