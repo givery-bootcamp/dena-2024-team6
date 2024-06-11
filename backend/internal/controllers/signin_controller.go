@@ -6,6 +6,7 @@ import (
 	"myapp/internal/usecases"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type SigninParams struct {
@@ -19,7 +20,7 @@ func SigninController(ctx *gin.Context) {
 
 	var params SigninParams
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		handleError(ctx, 400, err)
+		handleError(ctx, 400, errors.New("invalid request"))
 		return
 	}
 
@@ -30,6 +31,10 @@ func SigninController(ctx *gin.Context) {
 
 	result, err := usecase.Execute(params.Username, params.Password)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			handleError(ctx, 400, errors.New("username or password is incorrect"))
+			return
+		}
 		handleError(ctx, 500, err)
 		return
 	}
