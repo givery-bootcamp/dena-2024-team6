@@ -15,46 +15,46 @@ import type {
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query'
-import * as axios from 'axios';
-import type {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse
-} from 'axios'
 import type {
   Post
 } from './model'
+import { customInstance } from '../shared/libs/axios';
 
+
+type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
 
 
 /**
  * @summary 投稿の一覧
  */
 export const getPosts = (
-     options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Post[]>> => {
     
-    return axios.default.get(
-      `/posts`,options
-    );
-  }
-
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Post[]>(
+      {url: `/posts`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getGetPostsQueryKey = () => {
     return [`/posts`] as const;
     }
 
     
-export const getGetPostsQueryOptions = <TData = Awaited<ReturnType<typeof getPosts>>, TError = AxiosError<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>, axios?: AxiosRequestConfig}
+export const getGetPostsQueryOptions = <TData = Awaited<ReturnType<typeof getPosts>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetPostsQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = ({ signal }) => getPosts({ signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = ({ signal }) => getPosts(requestOptions, signal);
 
       
 
@@ -64,13 +64,13 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetPostsQueryResult = NonNullable<Awaited<ReturnType<typeof getPosts>>>
-export type GetPostsQueryError = AxiosError<void>
+export type GetPostsQueryError = void
 
 /**
  * @summary 投稿の一覧
  */
-export const useGetPosts = <TData = Awaited<ReturnType<typeof getPosts>>, TError = AxiosError<void>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>, axios?: AxiosRequestConfig}
+export const useGetPosts = <TData = Awaited<ReturnType<typeof getPosts>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
@@ -90,30 +90,33 @@ export const useGetPosts = <TData = Awaited<ReturnType<typeof getPosts>>, TError
  * @summary 投稿の一覧
  */
 export const getPostsPostId = (
-    postId: number, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Post>> => {
-    
-    return axios.default.get(
-      `/posts/${postId}`,options
-    );
-  }
-
+    postId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Post>(
+      {url: `/posts/${postId}`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getGetPostsPostIdQueryKey = (postId: number,) => {
     return [`/posts/${postId}`] as const;
     }
 
     
-export const getGetPostsPostIdQueryOptions = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = AxiosError<void>>(postId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>, axios?: AxiosRequestConfig}
+export const getGetPostsPostIdQueryOptions = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = void>(postId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetPostsPostIdQueryKey(postId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsPostId>>> = ({ signal }) => getPostsPostId(postId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsPostId>>> = ({ signal }) => getPostsPostId(postId, requestOptions, signal);
 
       
 
@@ -123,13 +126,13 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetPostsPostIdQueryResult = NonNullable<Awaited<ReturnType<typeof getPostsPostId>>>
-export type GetPostsPostIdQueryError = AxiosError<void>
+export type GetPostsPostIdQueryError = void
 
 /**
  * @summary 投稿の一覧
  */
-export const useGetPostsPostId = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = AxiosError<void>>(
- postId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>, axios?: AxiosRequestConfig}
+export const useGetPostsPostId = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = void>(
+ postId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
