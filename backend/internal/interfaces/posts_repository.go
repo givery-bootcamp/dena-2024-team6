@@ -6,4 +6,5 @@ import (
 
 type PostsRepository interface {
 	List() ([]*entities.Post, error)
+	Get(postID int) (*entities.Post, error)
 }
