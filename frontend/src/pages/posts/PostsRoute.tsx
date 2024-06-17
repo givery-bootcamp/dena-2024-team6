@@ -39,7 +39,7 @@ export const PostsRoute = () => {
             key={post.id}
             variant="outline"
             w="full"
-            onClick={() => navigate(`/pages/${post.id}`)}
+            onClick={() => navigate(`/posts/${post.id}`)}
             _hover={{
               cursor: 'pointer',
               bgColor: 'gray.50'
