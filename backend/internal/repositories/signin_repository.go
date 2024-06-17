@@ -32,10 +32,8 @@ func (r *SigninRepository) Signin(username string, password string) (*entities.U
 		return nil, err
 	}
 
-	ent_user := &entities.User{
+	return &entities.User{
 		ID:       user.ID,
 		Username: user.Name,
-	}
-	return ent_user, nil
-
+	}, nil
 }
