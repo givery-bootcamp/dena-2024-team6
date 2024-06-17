@@ -5,6 +5,7 @@ on:
     paths:
     #todo pushされるたびに動くのは危険
       - ".github/**"
+      - "backend/**"
 
 
 env:
