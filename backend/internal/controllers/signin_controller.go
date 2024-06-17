@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"fmt"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
 
@@ -29,8 +30,7 @@ func SigninController(ctx *gin.Context) {
 		return
 	}
 
-	_, token, err := usecase.Execute(params.Username, params.Password)
-	// result, token, err := usecase.Execute(params.Username, params.Password)
+	result, token, err := usecase.Execute(params.Username, params.Password)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			handleError(ctx, 404, errors.New("username or password is incorrect"))
@@ -39,10 +39,13 @@ func SigninController(ctx *gin.Context) {
 		handleError(ctx, 500, err)
 		return
 	}
+	jwtKey := []byte("my_secret_key")
+	signedToken, err := token.SignedString(jwtKey)
+	if err != nil {
+		fmt.Printf("Unable to sign token: %v", err)
+	}
 	// 本番環境ではSecureをtrueにする
 	// 本番環境でlocalhostを実際のドメインに変更する
-	ctx.SetCookie("token", token.Raw, 3600*24, "/", "localhost", false, true)
-	cookie, _ := ctx.Cookie("token")
-	// ctx.JSON(200, result)
-	ctx.JSON(200, cookie)
+	ctx.SetCookie("token", signedToken, 3600*24, "/", "localhost", false, true)
+	ctx.JSON(200, result)
 }
