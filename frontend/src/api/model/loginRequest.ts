@@ -7,6 +7,10 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export * from './loginRequest';
-export * from './post';
-export * from './user';
+/**
+ * ログインのリクエストモデル
+ */
+export interface LoginRequest {
+  password: string;
+  user_name: string;
+}
