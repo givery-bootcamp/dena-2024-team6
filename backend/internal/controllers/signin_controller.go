@@ -32,7 +32,7 @@ func SigninController(ctx *gin.Context) {
 	result, token, err := usecase.Execute(params.Username, params.Password)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			handleError(ctx, 400, errors.New("username or password is incorrect"))
+			handleError(ctx, 404, errors.New("username or password is incorrect"))
 			return
 		}
 		handleError(ctx, 500, err)
