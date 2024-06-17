@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -16,9 +15,10 @@ func UserController(ctx *gin.Context) {
 	usecase := usecases.NewUserUsecase(repository)
 
 	token, err := ctx.Cookie("token")
+	// userがログインしていない場合
 	if err != nil {
 		fmt.Println(err)
-		handleError(ctx, 401, errors.New("unauthorized1"))
+		handleError(ctx, 401, errors.New("unauthorized"))
 		return
 	}
 
@@ -26,23 +26,26 @@ func UserController(ctx *gin.Context) {
 	claims, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
+	// tokenが不正な場合
 	if err != nil {
-		handleError(ctx, 401, errors.New("unauthorized2"))
+		handleError(ctx, 400, errors.New("invalid token"))
 		return
 	}
 
 	claimsMap, ok := claims.Claims.(jwt.MapClaims)
+	// claimsがMapClaims型でない場合
 	if !ok {
-		handleError(ctx, 401, errors.New("unauthorized3"))
+		handleError(ctx, 500, errors.New("claimsMap type error"))
 		return
 	}
 
 	userID, ok := claimsMap["ID"].(float64)
+	// IDがfloat64型でない場合
 	if !ok {
-		fmt.Println(reflect.TypeOf(claimsMap["ID"]))
-		handleError(ctx, 401, errors.New("unauthorized4"))
+		handleError(ctx, 500, errors.New("userID type error"))
 		return
 	}
+
 	result, err := usecase.Execute(int(userID))
 	if err != nil {
 		handleError(ctx, 500, err)
