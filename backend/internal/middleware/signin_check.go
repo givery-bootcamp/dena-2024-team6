@@ -8,6 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type User struct {
+	ID   int
+	Name string
+}
+
 func SigninCheck() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token, err := ctx.Cookie("token")
@@ -51,7 +56,9 @@ func SigninCheck() gin.HandlerFunc {
 			ctx.AbortWithError(500, errors.New("db type error"))
 			return
 		}
-		err = db.Table("users").First(&struct{}{}, "id = ?", int(userID)).Error
+		// ユーザーが存在するか確認
+		var user User
+		err = db.Table("users").First(&user, "id = ?", int(userID)).Error
 		if err != nil {
 			ctx.AbortWithError(404, errors.New("user not found"))
 			return
