@@ -3,8 +3,8 @@ package application
 
 import (
 	"context"
-	"myapp/core/model"
-	"myapp/core/repository"
+	"myapp/domain/model"
+	"myapp/domain/repository"
 
 	"github.com/samber/do"
 )

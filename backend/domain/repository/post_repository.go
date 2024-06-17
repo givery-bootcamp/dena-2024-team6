@@ -3,7 +3,7 @@ package repository
 
 import (
 	"context"
-	"myapp/core/model"
+	"myapp/domain/model"
 )
 
 type PostRepository interface {
