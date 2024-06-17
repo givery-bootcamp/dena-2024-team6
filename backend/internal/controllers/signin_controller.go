@@ -29,7 +29,8 @@ func SigninController(ctx *gin.Context) {
 		return
 	}
 
-	result, token, err := usecase.Execute(params.Username, params.Password)
+	_, token, err := usecase.Execute(params.Username, params.Password)
+	// result, token, err := usecase.Execute(params.Username, params.Password)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			handleError(ctx, 404, errors.New("username or password is incorrect"))
@@ -41,5 +42,7 @@ func SigninController(ctx *gin.Context) {
 	// 本番環境ではSecureをtrueにする
 	// 本番環境でlocalhostを実際のドメインに変更する
 	ctx.SetCookie("token", token.Raw, 3600*24, "/", "localhost", false, true)
-	ctx.JSON(200, result)
+	cookie, _ := ctx.Cookie("token")
+	// ctx.JSON(200, result)
+	ctx.JSON(200, cookie)
 }
