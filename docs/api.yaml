@@ -48,6 +48,29 @@ components:
         - user_id
         - user_name
         - created_at
+    LoginRequest:
+      description: ログインのリクエストモデル
+      type: object
+      properties:
+        user_name:
+          type: string
+          example: Funobu
+        password:
+          type: string
+          example: hogehoge
+      required:
+        - user_name
+        - password
+    User:
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        user_name:
+          type: string
+          example: "Funobu"
+
+
 
 paths:
   /posts:
@@ -90,3 +113,38 @@ paths:
           description: Not Found
         "500":
           description: Internal Server Error
+  /signin:
+    post:
+      summary: ログイン
+      requestBody:
+        description: ログインするためのリクエスト
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+              example:
+                user_name: "Funobu"
+                password: "hogehoge"
+      responses:
+        "200":
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /signout:
+    post:
+      summary: ログアウト
+      responses:
+        "200":
+          description: ログアウト成功
+  /user:
+    get:
+      summary: 現在ログインしているユーザを取得
+      responses:
+        "200":
+          description: ユーザ取得成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
