@@ -5,5 +5,5 @@ import (
 )
 
 type UserRepository interface {
-	Get() (*entities.User, error)
+	Get(id int) (*entities.User, error)
 }
