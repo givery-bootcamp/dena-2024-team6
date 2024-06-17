@@ -1,92 +1,99 @@
 openapi: 3.0.3
-
 info:
-  title: "Web開発研修 API"
-  version: "1.0.0"
-  description: |
-    FY24卒Web開発研修6班のAPI仕様書です。
-
-servers:
-  - url: http://localhost:9000
-    description: ローカル開発環境 (API)
-  - url: https://prod.example.com
-    description: 本番環境 (API)
-
-components:
-  schemas:
-    Post:
-      description: 投稿のモデル
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        title:
-          type: string
-          example: Funobu1周年記念YouTubeライブ開催決定！
-        body:
-          type: string
-          example: 2024年3月5日19:00からYouTubeの公式チャンネルにて、Funobuの音楽ライブ配信が行われます！
-        user_id:
-          type: integer
-          example: 35
-        user_name:
-          type: string
-          example: Funobu
-        created_at:
-          type: string
-          format: date-time
-          example: "2024-03-05T00:00:00+09:00"
-        updated_at:
-          type: string
-          format: date-time
-          example: "2024-03-05T00:00:00+09:00"
-      # Both properties are required
-      required:
-        - id
-        - title
-        - user_id
-        - user_name
-        - created_at
-
+  description: FY24卒Web開発研修6班のAPI仕様書です
+  title: Web開発研修6班 API
+  version: 1.0.0
 paths:
+  /:
+    get:
+      operationId: healthCheck
+      responses:
+        "204":
+          description: No Content
+      summary: APIのセルフチェック
+      tags:
+      - operation
   /posts:
     get:
-      summary: 投稿の一覧
+      operationId: listPosts
       responses:
-        "200":
-          description: OK
+        "202":
           content:
             application/json:
               schema:
-                type: array
                 items:
-                  $ref: "#/components/schemas/Post"
-        "404":
-          description: Not Found
-        "500":
-          description: Internal Server Error
-
-  /posts/{postId}:
-    get:
-      summary: 投稿の一覧
-      parameters:
-        - name: postId
-          in: path
-          required: true
-          description: 取得したい対象の投稿ID
-          schema:
-            type: integer
-            format: int64
-            minimum: 1
+                  $ref: '#/components/schemas/SchemaPostResponse'
+                type: array
+          description: Accepted
+      summary: 投稿の一覧を取得
+      tags:
+      - post
+  /signin:
+    post:
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaLoginRequest'
       responses:
-        "200":
-          description: OK
+        "202":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Post"
-        "404":
-          description: Not Found
-        "500":
-          description: Internal Server Error
+                $ref: '#/components/schemas/SchemaUserResponse'
+          description: Accepted
+      summary: ユーザのログインを実行
+      tags:
+      - auth
+  /signout:
+    post:
+      operationId: signOut
+      responses:
+        "204":
+          description: No Content
+      summary: ユーザのログアウトを実行
+      tags:
+      - auth
+  /user:
+    get:
+      operationId: getCurrentUser
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaUserResponse'
+          description: Accepted
+      summary: 現在ログインしているユーザを取得
+      tags:
+      - auth
+components:
+  schemas:
+    SchemaLoginRequest:
+      properties:
+        password:
+          type: string
+        user_name:
+          type: string
+      type: object
+    SchemaPostResponse:
+      properties:
+        body:
+          type: string
+        post_id:
+          type: integer
+        title:
+          type: string
+        user_id:
+          type: integer
+        user_name:
+          type: string
+      type: object
+    SchemaUserResponse:
+      properties:
+        user_id:
+          type: integer
+        user_name:
+          type: string
+      type: object
