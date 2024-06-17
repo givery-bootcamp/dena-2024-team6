@@ -16,7 +16,7 @@ func NewUserRepository(conn *gorm.DB) *UserRepository {
 	}
 }
 
-func (r *UserRepository) Get(userID int) (*entities.User, error) {
+func (r *UserRepository) Get() (*entities.User, error) {
 	return &entities.User{
 		ID:       42,
 		Username: "Yakisoba Taro",
