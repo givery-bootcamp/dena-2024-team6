@@ -64,7 +64,7 @@ export const SigninRoute = () => {
         { data: { user_name: username, password: password } },
         {
           onSuccess: () => {
-            navigate(`/posts`)
+            navigate(`/`)
           },
           onError: () => {
             console.log('error')
