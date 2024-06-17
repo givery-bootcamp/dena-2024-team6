@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
 
@@ -42,7 +41,8 @@ func SigninController(ctx *gin.Context) {
 	jwtKey := []byte("my_secret_key")
 	signedToken, err := token.SignedString(jwtKey)
 	if err != nil {
-		fmt.Printf("Unable to sign token: %v", err)
+		handleError(ctx, 500, err)
+		return
 	}
 	// 本番環境ではSecureをtrueにする
 	// 本番環境でlocalhostを実際のドメインに変更する
