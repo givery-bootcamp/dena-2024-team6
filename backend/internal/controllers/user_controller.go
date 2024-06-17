@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
 
@@ -17,7 +16,6 @@ func UserController(ctx *gin.Context) {
 	token, err := ctx.Cookie("token")
 	// userがログインしていない場合
 	if err != nil {
-		fmt.Println(err)
 		handleError(ctx, 401, errors.New("unauthorized"))
 		return
 	}
