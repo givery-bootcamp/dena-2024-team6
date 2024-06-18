@@ -1,24 +1,77 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"myapp/api/controller"
+	"myapp/api/router"
+	"myapp/application"
+	"myapp/config"
+	"myapp/domain/repository"
+	"myapp/infrastructure/store"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
-	"myapp/internal/config"
-	"myapp/internal/external"
-	"myapp/internal/middleware"
+	"github.com/jmoiron/sqlx"
+	"github.com/samber/do"
+	"github.com/swaggest/openapi-go/openapi3"
 )
 
 func main() {
-	// Initialize database
-	external.SetupDB()
+	ctx := context.Background()
 
-	// Setup webserver
+	injector := do.New()
+	injectDependencies(injector)
+
 	app := gin.Default()
-	app.Use(middleware.Transaction())
-	app.Use(middleware.Cors())
-	middleware.SetupRoutes(app)
+	router.SetupRoutes(injector, app)
 
-	if err := app.Run(fmt.Sprintf("%s:%d", config.HostName, config.Port)); err != nil {
-		panic(err)
+	server := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", config.HostName, config.Port),
+		Handler: app.Handler(),
 	}
+
+	// スキーマ情報からOpenAPIファイルの自動生成
+	// appDoc := do.MustInvoke[*openapi3.Reflector](injector)
+	// generatedDoc, err := appDoc.Spec.MarshalYAML()
+	// if err != nil {
+	// 	log.Printf("failed to generate openapi doc; %+v\n", err)
+	// } else {
+	// 	f, err := os.Create("../docs/api.yaml")
+	// 	if err != nil {
+	// 		log.Fatalf("failed to load file; %+v\n", err)
+	// 	}
+	// 	defer f.Close()
+	// 	f.Write(generatedDoc)
+	// }
+
+	// 裏側でサーバを起動
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("failed to start server: %+v\n", err)
+		}
+	}()
+
+	// ctrl + cでサーバをシャットダウンする
+	injector.ShutdownOnSIGTERM()
+	server.Shutdown(ctx)
+}
+
+func injectDependencies(i *do.Injector) {
+	// Inject external resources
+	do.Provide[*openapi3.Reflector](i, router.NewAppDoc)
+	do.Provide[*sqlx.DB](i, store.NewStore)
+
+	// Inject repository resources
+	do.Provide[repository.HelloWorldRepository](i, store.NewHelloWorldRepository)
+	do.Provide[repository.PostRepository](i, store.NewPostRepository)
+
+	// Inject application usecase resources
+	do.Provide[application.ListPostUsecase](i, application.NewListPostUsecase)
+	do.Provide[application.GetPostDetailUsecase](i, application.NewGetPostDetailUsecase)
+
+	// Inject controller resources
+	do.Provide[*controller.PostController](i, controller.NewPostController)
+	do.Provide[*controller.AuthController](i, controller.NewAuthController)
 }

@@ -2,10 +2,11 @@ package external
 
 import (
 	"fmt"
+	"myapp/config"
+	"os"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"myapp/internal/config"
-	"os"
 )
 
 var DB *gorm.DB
