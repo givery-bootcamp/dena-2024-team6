@@ -1,8 +1,74 @@
 openapi: 3.0.3
 info:
-  description: FY24卒Web開発研修6班のAPI仕様書です
-  title: Web開発研修6班 API
-  version: 1.0.0
+  title: "Web開発研修 API"
+  version: "1.0.0"
+  description: |
+    FY24卒Web開発研修6班のAPI仕様書です。
+
+servers:
+  - url: http://localhost:9000
+    description: ローカル開発環境 (API)
+  - url: https://prod.example.com
+    description: 本番環境 (API)
+
+components:
+  schemas:
+    Post:
+      description: 投稿のモデル
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Funobu1周年記念YouTubeライブ開催決定！
+        body:
+          type: string
+          example: 2024年3月5日19:00からYouTubeの公式チャンネルにて、Funobuの音楽ライブ配信が行われます！
+        user_id:
+          type: integer
+          example: 35
+        user_name:
+          type: string
+          example: Funobu
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-03-05T00:00:00+09:00"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-03-05T00:00:00+09:00"
+      # Both properties are required
+      required:
+        - id
+        - title
+        - user_id
+        - user_name
+        - created_at
+    LoginRequest:
+      description: ログインのリクエストモデル
+      type: object
+      properties:
+        user_name:
+          type: string
+          example: Funobu
+        password:
+          type: string
+          example: hogehoge
+      required:
+        - user_name
+        - password
+    User:
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        user_name:
+          type: string
+          example: "Funobu"
+
 paths:
   /:
     get:
@@ -41,59 +107,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaUserResponse'
-          description: Accepted
-      summary: ユーザのログインを実行
-      tags:
-      - auth
+                $ref: "#/components/schemas/Post"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+
   /signout:
     post:
-      operationId: signOut
+      summary: ログアウト
       responses:
-        "204":
-          description: No Content
-      summary: ユーザのログアウトを実行
-      tags:
-      - auth
+        "200":
+          description: ログアウト成功
   /user:
     get:
-      operationId: getCurrentUser
+      summary: 現在ログインしているユーザを取得
       responses:
-        "202":
+        "200":
+          description: ユーザ取得成功
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaUserResponse'
-          description: Accepted
-      summary: 現在ログインしているユーザを取得
-      tags:
-      - auth
-components:
-  schemas:
-    SchemaLoginRequest:
-      properties:
-        password:
-          type: string
-        user_name:
-          type: string
-      type: object
-    SchemaPostResponse:
-      properties:
-        body:
-          type: string
-        post_id:
-          type: integer
-        title:
-          type: string
-        user_id:
-          type: integer
-        user_name:
-          type: string
-      type: object
-    SchemaUserResponse:
-      properties:
-        user_id:
-          type: integer
-        user_name:
-          type: string
-      type: object
+                $ref: "#/components/schemas/User"

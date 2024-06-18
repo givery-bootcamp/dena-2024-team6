@@ -7,54 +7,60 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query'
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query'
-import * as axios from 'axios';
 import type {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse
-} from 'axios'
-import type {
-  Post
+  LoginRequest,
+  Post,
+  User
 } from './model'
+import { customInstance } from '../shared/libs/axios';
 
+
+type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
 
 
 /**
  * @summary 投稿の一覧
  */
 export const getPosts = (
-     options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Post[]>> => {
     
-    return axios.default.get(
-      `/posts`,options
-    );
-  }
-
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Post[]>(
+      {url: `/posts`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getGetPostsQueryKey = () => {
     return [`/posts`] as const;
     }
 
     
-export const getGetPostsQueryOptions = <TData = Awaited<ReturnType<typeof getPosts>>, TError = AxiosError<void>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>, axios?: AxiosRequestConfig}
+export const getGetPostsQueryOptions = <TData = Awaited<ReturnType<typeof getPosts>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetPostsQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = ({ signal }) => getPosts({ signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPosts>>> = ({ signal }) => getPosts(requestOptions, signal);
 
       
 
@@ -64,13 +70,13 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetPostsQueryResult = NonNullable<Awaited<ReturnType<typeof getPosts>>>
-export type GetPostsQueryError = AxiosError<void>
+export type GetPostsQueryError = void
 
 /**
  * @summary 投稿の一覧
  */
-export const useGetPosts = <TData = Awaited<ReturnType<typeof getPosts>>, TError = AxiosError<void>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>, axios?: AxiosRequestConfig}
+export const useGetPosts = <TData = Awaited<ReturnType<typeof getPosts>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPosts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
@@ -90,30 +96,33 @@ export const useGetPosts = <TData = Awaited<ReturnType<typeof getPosts>>, TError
  * @summary 投稿の一覧
  */
 export const getPostsPostId = (
-    postId: number, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Post>> => {
-    
-    return axios.default.get(
-      `/posts/${postId}`,options
-    );
-  }
-
+    postId: number,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Post>(
+      {url: `/posts/${postId}`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getGetPostsPostIdQueryKey = (postId: number,) => {
     return [`/posts/${postId}`] as const;
     }
 
     
-export const getGetPostsPostIdQueryOptions = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = AxiosError<void>>(postId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>, axios?: AxiosRequestConfig}
+export const getGetPostsPostIdQueryOptions = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = void>(postId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetPostsPostIdQueryKey(postId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsPostId>>> = ({ signal }) => getPostsPostId(postId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPostsPostId>>> = ({ signal }) => getPostsPostId(postId, requestOptions, signal);
 
       
 
@@ -123,17 +132,193 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetPostsPostIdQueryResult = NonNullable<Awaited<ReturnType<typeof getPostsPostId>>>
-export type GetPostsPostIdQueryError = AxiosError<void>
+export type GetPostsPostIdQueryError = void
 
 /**
  * @summary 投稿の一覧
  */
-export const useGetPostsPostId = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = AxiosError<void>>(
- postId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>, axios?: AxiosRequestConfig}
+export const useGetPostsPostId = <TData = Awaited<ReturnType<typeof getPostsPostId>>, TError = void>(
+ postId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPostsPostId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const queryOptions = getGetPostsPostIdQueryOptions(postId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary ログイン
+ */
+export const postSignin = (
+    loginRequest: LoginRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<User>(
+      {url: `/signin`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: loginRequest
+    },
+      options);
+    }
+  
+
+
+export const getPostSigninMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignin>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postSignin>>, TError,{data: LoginRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postSignin>>, {data: LoginRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postSignin(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostSigninMutationResult = NonNullable<Awaited<ReturnType<typeof postSignin>>>
+    export type PostSigninMutationBody = LoginRequest
+    export type PostSigninMutationError = unknown
+
+    /**
+ * @summary ログイン
+ */
+export const usePostSignin = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignin>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postSignin>>,
+        TError,
+        {data: LoginRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getPostSigninMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * @summary ログアウト
+ */
+export const postSignout = (
+    
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/signout`, method: 'POST'
+    },
+      options);
+    }
+  
+
+
+export const getPostSignoutMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postSignout>>, TError,void, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postSignout>>, void> = () => {
+          
+
+          return  postSignout(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostSignoutMutationResult = NonNullable<Awaited<ReturnType<typeof postSignout>>>
+    
+    export type PostSignoutMutationError = unknown
+
+    /**
+ * @summary ログアウト
+ */
+export const usePostSignout = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postSignout>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getPostSignoutMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * @summary 現在ログインしているユーザを取得
+ */
+export const getUser = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<User>(
+      {url: `/user`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetUserQueryKey = () => {
+    return [`/user`] as const;
+    }
+
+    
+export const getGetUserQueryOptions = <TData = Awaited<ReturnType<typeof getUser>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUser>>> = ({ signal }) => getUser(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetUserQueryResult = NonNullable<Awaited<ReturnType<typeof getUser>>>
+export type GetUserQueryError = unknown
+
+/**
+ * @summary 現在ログインしているユーザを取得
+ */
+export const useGetUser = <TData = Awaited<ReturnType<typeof getUser>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetUserQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
