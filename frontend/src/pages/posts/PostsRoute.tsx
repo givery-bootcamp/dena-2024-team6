@@ -9,16 +9,16 @@ import {
   Heading,
   CardFooter,
   VStack,
-  Center
+  Center,
+  Button
 } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { useGetPosts } from '../../api/api'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 export const PostsRoute = () => {
   // API取得
   const { data, isLoading, isError } = useGetPosts()
-  const navigate = useNavigate()
 
   return (
     <Container>
@@ -39,25 +39,26 @@ export const PostsRoute = () => {
             key={post.id}
             variant="outline"
             w="full"
-            onClick={() => navigate(`/posts/${post.id}`)}
             _hover={{
               cursor: 'pointer',
               bgColor: 'gray.50'
             }}
           >
-            <CardHeader>
-              <Heading size="md">{post.title}</Heading>
-            </CardHeader>
+            <Link to={`/posts/${post.id}`}>
+              <CardHeader>
+                <Heading size="md">{post.title}</Heading>
+              </CardHeader>
 
-            <CardBody>
-              <Text>{post.body}</Text>
-            </CardBody>
-            <CardFooter>
-              <HStack>
-                <Text>{post.user_name}</Text>
-                <Text>更新日時： {dayjs(post.updated_at).format('YYYY年M月D日 HH:mm:ss')}</Text>
-              </HStack>
-            </CardFooter>
+              <CardBody>
+                <Text>{post.body}</Text>
+              </CardBody>
+              <CardFooter>
+                <HStack>
+                  <Text>{post.user_name}</Text>
+                  <Text>更新日時： {dayjs(post.updated_at).format('YYYY年M月D日 HH:mm:ss')}</Text>
+                </HStack>
+              </CardFooter>
+            </Link>
           </Card>
         ))}
       </VStack>
