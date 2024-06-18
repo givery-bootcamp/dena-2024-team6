@@ -26,7 +26,7 @@ func (r *SigninRepository) Signin(username string, password string) (*entities.U
 	err := r.Conn.Table("users").Select(`
 		id,
 		name
-	`).Where("name = ? AND password = ?", username, password).First(&user).Error
+	`).Where("BINARY name = ? AND BINARY password = ?", username, password).First(&user).Error
 
 	if err != nil {
 		return nil, err
