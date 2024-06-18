@@ -8,5 +8,5 @@ import (
 
 type PostRepository interface {
 	List(ctx context.Context) ([]model.Post, error)
-	GetDetail(ctx context.Context, id int) (model.Post, error)
+	GetDetail(ctx context.Context, id int) (model.PostDetail, error)
 }

@@ -41,10 +41,10 @@ func (m *MockPostRepository) EXPECT() *MockPostRepositoryMockRecorder {
 }
 
 // GetDetail mocks base method.
-func (m *MockPostRepository) GetDetail(ctx context.Context, id int) (model.Post, error) {
+func (m *MockPostRepository) GetDetail(ctx context.Context, id int) (model.PostDetail, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDetail", ctx, id)
-	ret0, _ := ret[0].(model.Post)
+	ret0, _ := ret[0].(model.PostDetail)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
