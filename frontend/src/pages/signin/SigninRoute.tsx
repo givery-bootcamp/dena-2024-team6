@@ -65,9 +65,9 @@ export const SigninRoute = () => {
         {
           onSuccess: () => {
             navigate(`/`)
+            // TODO: トーストでログイン成功を表示
           },
           onError: () => {
-            console.log('error')
             snack({
               title: 'エラー',
               description: 'ユーザーが登録されていません',
