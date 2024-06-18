@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"myapp/internal/config"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
 
@@ -38,7 +39,7 @@ func SigninController(ctx *gin.Context) {
 		handleError(ctx, 500, err)
 		return
 	}
-	jwtKey := []byte("my_secret_key")
+	jwtKey := []byte(config.JwtKey)
 	signedToken, err := token.SignedString(jwtKey)
 	if err != nil {
 		handleError(ctx, 500, err)

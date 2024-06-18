@@ -6,49 +6,27 @@ import (
 	"myapp/internal/usecases"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 func UserController(ctx *gin.Context) {
 	repository := repositories.NewUserRepository(DB(ctx))
 	usecase := usecases.NewUserUsecase(repository)
 
-	token, err := ctx.Cookie("token")
-	// userがログインしていない場合
-	if err != nil {
-		handleError(ctx, 401, errors.New("unauthorized"))
-		return
-	}
-
-	secret := []byte("my_secret_key")
-	claims, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
-	})
-	// tokenが不正な場合
-	if err != nil {
-		handleError(ctx, 400, errors.New("invalid token"))
-		return
-	}
-
-	claimsMap, ok := claims.Claims.(jwt.MapClaims)
-	// claimsがMapClaims型でない場合
+	userIDCtx, ok := ctx.Get("userID")
 	if !ok {
-		handleError(ctx, 500, errors.New("claimsMap type error"))
+		handleError(ctx, 500, errors.New("user not found"))
 		return
 	}
-
-	userID, ok := claimsMap["ID"].(float64)
-	// IDがfloat64型でない場合
+	userID, ok := userIDCtx.(int)
 	if !ok {
 		handleError(ctx, 500, errors.New("userID type error"))
 		return
 	}
 
-	result, err := usecase.Execute(int(userID))
+	result, err := usecase.Execute(userID)
 	if err != nil {
 		handleError(ctx, 500, err)
 		return
 	}
-
 	ctx.JSON(200, result)
 }
