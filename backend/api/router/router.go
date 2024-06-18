@@ -2,6 +2,7 @@ package router
 
 import (
 	"myapp/api/controller"
+	"myapp/api/middleware"
 	"myapp/api/schema"
 	"net/http"
 
@@ -26,6 +27,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		WithVersion("1.0.0").
 		WithDescription("FY24卒Web開発研修6班のAPI仕様書です")
 
+	app.Use(middleware.CorsMiddleware())
 	// HealthCheckOpe / GET
 	app.GET("/", func(ctx *gin.Context) {
 		ctx.String(200, "It works")
