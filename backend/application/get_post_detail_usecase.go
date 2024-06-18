@@ -3,6 +3,7 @@ package application
 
 import (
 	"context"
+	apperror "myapp/domain/apperror"
 	"myapp/domain/model"
 	"myapp/domain/repository"
 
@@ -18,7 +19,7 @@ type GetPostDetailUsecaseInput struct {
 }
 
 type GetPostDetailUsecaseOutput struct {
-	Post model.Post
+	Post model.PostDetail
 }
 
 func NewGetPostDetailUsecase(i *do.Injector) (GetPostDetailUsecase, error) {
@@ -33,10 +34,13 @@ type getPostDetailUsecaseInteractor struct {
 }
 
 // Execute implements GetPostDetailUsecase.
-func (g *getPostDetailUsecaseInteractor) Execute(ctx context.Context, input GetPostDetailUsecaseInput) (GetPostDetailUsecaseOutput, error) {
+func (g getPostDetailUsecaseInteractor) Execute(ctx context.Context, input GetPostDetailUsecaseInput) (GetPostDetailUsecaseOutput, error) {
 	post, err := g.postRepository.GetDetail(ctx, input.ID)
 	if err != nil {
-		return GetPostDetailUsecaseOutput{}, err
+		return GetPostDetailUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, "failed to get post detail")
+	}
+	if post.IsEmpty() {
+		return GetPostDetailUsecaseOutput{}, apperror.New(apperror.CodeNotFound, "post is not found")
 	}
 
 	return GetPostDetailUsecaseOutput{
