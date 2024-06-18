@@ -27,29 +27,33 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	}, nil
 }
 
-func (pc PostController) ListPost(ctx *gin.Context) {
-	pc.listPostUsecase.Execute(ctx)
-	// TODO: 一旦仮のデータを返す
-	ctx.JSON(200, []schema.PostResponse{
-		{
-			ID:    1,
-			Title: "hoge",
-			Body:  "hogehoge",
+func (pc PostController) ListPost(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	result, err := pc.listPostUsecase.Execute(ctx)
+	if apperror.Is(err, apperror.CodeNotFound) {
+		c.JSON(404, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	resp := make([]schema.PostResponse, len(result.Posts))
+	for i, p := range result.Posts {
+		resp[i] = schema.PostResponse{
+			ID:    p.ID,
+			Title: p.Title,
 			UserResponse: schema.UserResponse{
-				ID:       2,
-				UserName: "fugafuga",
+				ID:       p.UserID,
+				UserName: p.UserName,
 			},
-		},
-		{
-			ID:    2,
-			Title: "hoge",
-			Body:  "hogehoge",
-			UserResponse: schema.UserResponse{
-				ID:       2,
-				UserName: "fugafuga",
-			},
-		},
-	})
+		}
+	}
+
+	c.JSON(200, resp)
 }
 
 func (pc PostController) GetPost(c *gin.Context) {

@@ -86,8 +86,8 @@ func (p PostRepositoryImpl) List(ctx context.Context) ([]model.Post, error) {
 
 	// テーブルのモデルからドメインモデルに変換
 	domainPosts := make([]model.Post, len(posts))
-	for _, post := range posts {
-		domainPosts = append(domainPosts, dao.ConvertPostTableToDomainPost(post))
+	for i, post := range posts {
+		domainPosts[i] = dao.ConvertPostTableToDomainPost(post)
 	}
 
 	return domainPosts, nil

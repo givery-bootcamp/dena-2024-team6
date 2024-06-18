@@ -3,7 +3,7 @@ package application
 
 import (
 	"context"
-	apperror "myapp/domain/apperror"
+	"myapp/domain/apperror"
 	"myapp/domain/model"
 	"myapp/domain/repository"
 

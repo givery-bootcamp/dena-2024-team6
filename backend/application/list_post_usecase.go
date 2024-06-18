@@ -3,6 +3,7 @@ package application
 
 import (
 	"context"
+	"myapp/domain/apperror"
 	"myapp/domain/model"
 	"myapp/domain/repository"
 
@@ -32,7 +33,10 @@ type listPostUsecaseInteractor struct {
 func (l *listPostUsecaseInteractor) Execute(ctx context.Context) (ListPostUsecaseOutput, error) {
 	posts, err := l.postRepository.List(ctx)
 	if err != nil {
-		return ListPostUsecaseOutput{}, err
+		return ListPostUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, "failed to get posts")
+	}
+	if len(posts) == 0 {
+		return ListPostUsecaseOutput{}, apperror.New(apperror.CodeNotFound, "there is no post")
 	}
 
 	return ListPostUsecaseOutput{
