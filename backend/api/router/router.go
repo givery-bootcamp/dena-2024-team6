@@ -1,8 +1,8 @@
 package router
 
 import (
-	"myapp/cmd/api/controller"
-	"myapp/cmd/api/schema"
+	"myapp/api/controller"
+	"myapp/api/schema"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
