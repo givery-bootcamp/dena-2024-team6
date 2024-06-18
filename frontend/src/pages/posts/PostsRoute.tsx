@@ -10,7 +10,9 @@ import {
   CardFooter,
   VStack,
   Center,
-  Button
+  Button,
+  Flex,
+  Spacer
 } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { useGetPosts } from '../../api/api'
@@ -23,10 +25,13 @@ export const PostsRoute = () => {
   return (
     <Container>
       <Heading size="lg">
-        投稿一覧
-        <Button>
-          <Link to="/posts/new">新規作成</Link>
-        </Button>
+        <Flex gap="md">
+          <Text> 投稿一覧</Text>
+          <Spacer />
+          <Link to="/posts/new">
+            <Button colorScheme="primary">新規作成</Button>
+          </Link>
+        </Flex>
       </Heading>
       {isLoading && (
         <Center>
