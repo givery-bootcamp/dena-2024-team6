@@ -8,9 +8,10 @@ import (
 var HostName = "127.0.0.1"
 var Port = 9000
 var CorsAllowOrigin = "http://localhost:3000"
-var DBHostName = "localhost"
+var DBHostName = "db"
 var DBPort = 3306
 var DBName = "training"
+var DefaultTimeoutSecond = 3
 
 func init() {
 	if v := os.Getenv("HOSTNAME"); v != "" {
