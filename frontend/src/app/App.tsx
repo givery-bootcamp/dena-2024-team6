@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppRoute } from './AppRoute'
-import { Button, Spacer, Box } from '@yamada-ui/react'
+import { Button, Box } from '@yamada-ui/react'
 
 import './App.scss'
 
