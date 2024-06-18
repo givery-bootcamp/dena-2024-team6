@@ -22,7 +22,12 @@ export const PostsRoute = () => {
 
   return (
     <Container>
-      <Heading size="lg">投稿一覧</Heading>
+      <Heading size="lg">
+        投稿一覧
+        <Button>
+          <Link to="/posts/new">新規作成</Link>
+        </Button>
+      </Heading>
       {isLoading && (
         <Center>
           <Loading variant="circles" size="6xl" color="cyan.500" />
