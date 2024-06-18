@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"myapp/cmd/api/schema"
+	"myapp/api/schema"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
