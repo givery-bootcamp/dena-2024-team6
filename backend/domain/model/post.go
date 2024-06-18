@@ -7,9 +7,14 @@ import "time"
 type Post struct {
 	ID        int
 	Title     string
-	UserID    string
+	UserID    int
+	UserName  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+func (p Post) IsEmpty() bool {
+	return p.ID == 0
 }
 
 // PostDetail は投稿の詳細
@@ -18,7 +23,12 @@ type PostDetail struct {
 	ID        int
 	Title     string
 	Body      string
-	UserID    string
+	UserID    int
+	UserName  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+func (p PostDetail) IsEmpty() bool {
+	return p.ID == 0
 }
