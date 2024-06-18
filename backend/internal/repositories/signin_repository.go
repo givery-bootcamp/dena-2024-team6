@@ -27,7 +27,6 @@ func NewSigninRepository(conn *gorm.DB) *SigninRepository {
 func (r *SigninRepository) Signin(username string, password string) (*entities.User, error) {
 	var user User
 	hashedPassword := sha256.Sum256([]byte(password))
-	// strPassword := string(hashedPassword[:])
 	strPassword := hex.EncodeToString(hashedPassword[:])
 	fmt.Println(strPassword)
 	err := r.Conn.Table("users").Select(`
