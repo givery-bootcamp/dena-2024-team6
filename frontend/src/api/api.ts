@@ -7,16 +7,22 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query'
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
-  Post
+  LoginRequest,
+  Post,
+  User
 } from './model'
 import { customInstance } from '../shared/libs/axios';
 
@@ -137,6 +143,182 @@ export const useGetPostsPostId = <TData = Awaited<ReturnType<typeof getPostsPost
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
   const queryOptions = getGetPostsPostIdQueryOptions(postId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary ログイン
+ */
+export const postSignin = (
+    loginRequest: LoginRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<User>(
+      {url: `/signin`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: loginRequest
+    },
+      options);
+    }
+  
+
+
+export const getPostSigninMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignin>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postSignin>>, TError,{data: LoginRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postSignin>>, {data: LoginRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postSignin(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostSigninMutationResult = NonNullable<Awaited<ReturnType<typeof postSignin>>>
+    export type PostSigninMutationBody = LoginRequest
+    export type PostSigninMutationError = unknown
+
+    /**
+ * @summary ログイン
+ */
+export const usePostSignin = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignin>>, TError,{data: LoginRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postSignin>>,
+        TError,
+        {data: LoginRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getPostSigninMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * @summary ログアウト
+ */
+export const postSignout = (
+    
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<void>(
+      {url: `/signout`, method: 'POST'
+    },
+      options);
+    }
+  
+
+
+export const getPostSignoutMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postSignout>>, TError,void, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postSignout>>, void> = () => {
+          
+
+          return  postSignout(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostSignoutMutationResult = NonNullable<Awaited<ReturnType<typeof postSignout>>>
+    
+    export type PostSignoutMutationError = unknown
+
+    /**
+ * @summary ログアウト
+ */
+export const usePostSignout = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postSignout>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof postSignout>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getPostSignoutMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * @summary 現在ログインしているユーザを取得
+ */
+export const getUser = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<User>(
+      {url: `/user`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetUserQueryKey = () => {
+    return [`/user`] as const;
+    }
+
+    
+export const getGetUserQueryOptions = <TData = Awaited<ReturnType<typeof getUser>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUser>>> = ({ signal }) => getUser(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetUserQueryResult = NonNullable<Awaited<ReturnType<typeof getUser>>>
+export type GetUserQueryError = unknown
+
+/**
+ * @summary 現在ログインしているユーザを取得
+ */
+export const useGetUser = <TData = Awaited<ReturnType<typeof getUser>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetUserQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
