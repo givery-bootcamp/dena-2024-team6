@@ -7,6 +7,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export * from './loginRequest';
-export * from './post';
-export * from './user';
+export interface User {
+  user_id?: number;
+  user_name?: string;
+}
