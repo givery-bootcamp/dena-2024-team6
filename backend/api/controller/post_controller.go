@@ -6,6 +6,7 @@ import (
 	"myapp/application"
 	"myapp/config"
 	"myapp/domain/apperror"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -55,8 +56,15 @@ func (pc PostController) GetPost(c *gin.Context) {
 	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
 	defer cancel()
 
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
 	result, err := pc.getPostUsecase.Execute(ctx, application.GetPostDetailUsecaseInput{
-		ID: 1,
+		ID: postID,
 	})
 	if apperror.Is(err, apperror.CodeNotFound) {
 		c.JSON(404, schema.NewErrorResponse(err))
