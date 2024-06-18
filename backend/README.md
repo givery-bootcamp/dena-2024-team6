@@ -2,24 +2,32 @@
 
 ```
 .
-├── cmd/ #実行するアプリ (例：API,マイグレーションコマンドなど) 単位で管理するディレクトリ
-│   ├── api/ #APIのロジックや実行を司るディレクトリ
-│   │   ├── controller/ #APIの各エンドポイントの処理をここに記述
-│   │   ├── middleware/ #認証・認可の共通処理をここに記述
-│   │   ├── schema/ APIスキーマモデルをここに定義する
-│   │   ├── di/ APIに必要な依存関係を組み立てる処理をここに記述
-│   │   └── api.go #APIの起動・実行をここに記述 (これを go run api.goするイメージ)
-│   └── migration/ #マイグレーションの実行を司るディレクトリ
+├── api/ #APIのロジックや実行を司るディレクトリ
+│   ├── controller/ #APIの各エンドポイントの処理をここに記述
+│   │   └── posts_controller.go
+│   ├── middleware/ #認証・認可の共通処理をここに記述
+│   │   └── cors.go
+│   ├── schema/ APIスキーマモデルをここに定義する
+│   │   └── post_schema.go
+│   └── router/ ルーティング設定やミドルウェアの埋め込みをここで記述
+│       └── router.go
+├── application/ #API全体の具体的なロジック(ユースケース)をここに記述
+│   ├── list_posts_usecase.go
+│   └── get_post_usecase.go
 ├── config/ #環境変数などで読み取る共通の設定をここに置く
 │   └── config.go
-├── core/ #プロジェクト全体
-│   ├── model/
-│   │   └── habit.go
-│   ├── repository/
-│   │   └── post_repository.go
-│   └── usecase/
-└── pkg/
-    └── store/ #MySQLの呼び出しやRepositoryの実装をここに書く (自動生成できるといいな)
-        ├── store.go
-        └── post_repository_impl.go
+├── domain/ #APIのコアな部分
+│   ├── apperror/ #API共通のエラー
+│   ├── model/ #API共通のドメインモデル
+│   │   └── post.go
+│   └── repository/ #ドメインモデルをCRUD操作するためのインタフェース
+│       └── post_repository.go
+├── infrastructure/
+│   └── store/ #MySQLの呼び出しやRepositoryの実装をここに書く (自動生成できるといいな)
+│       ├── dao/ #テーブル定義をここに書く
+│       │   ├── post.go
+│       │   └── user.go
+│       ├── store.go
+│       └── post_repository_impl.go
+└── main.go #実行ファイル & DI
 ```
