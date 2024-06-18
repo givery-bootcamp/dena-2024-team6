@@ -12,6 +12,7 @@ var DBHostName = "db"
 var DBPort = 3306
 var DBName = "training"
 var DBPassword = ""
+var DBUser = "root"
 
 func init() {
 	if v := os.Getenv("HOSTNAME"); v != "" {
@@ -34,5 +35,8 @@ func init() {
 	}
 	if v := os.Getenv("DB_PASSWORD"); v != "" {
 		DBPassword = v
+	}
+	if v := os.Getenv("DB_USER"); v != "" {
+		DBUser = v
 	}
 }
