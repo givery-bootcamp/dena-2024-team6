@@ -38,7 +38,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	healthCheckOpe.SetID("healthCheck")
 	healthCheckOpe.SetSummary("APIのセルフチェック")
 	healthCheckOpe.SetTags("operation")
-	appDoc.AddOperation(healthCheckOpe)
+	if err := appDoc.AddOperation(healthCheckOpe); err != nil {
+		return err
+	}
 
 	// listPostsOpe /posts GET
 	app.GET("/posts", postController.ListPost)
@@ -47,7 +49,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	listPostsOpe.SetSummary("投稿の一覧を取得")
 	listPostsOpe.SetTags("post")
 	listPostsOpe.AddRespStructure(new([]schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
-	appDoc.AddOperation(listPostsOpe)
+	if err := appDoc.AddOperation(listPostsOpe); err != nil {
+		return err
+	}
 
 	// getPostOpe /posts/{id} GET
 	app.GET("/posts/:postid", postController.GetPost)
@@ -56,7 +60,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getPostOpe.SetSummary("投稿をIDから取得")
 	getPostOpe.SetTags("post")
 	getPostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
-	appDoc.AddOperation(getPostOpe)
+	if err := appDoc.AddOperation(getPostOpe); err != nil {
+		return err
+	}
 
 	// signInOpe /signin POST
 	app.POST("/signin", authController.SignIn)
@@ -66,7 +72,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signInOpe.SetTags("auth")
 	signInOpe.AddReqStructure(new(schema.LoginRequest))
 	signInOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
-	appDoc.AddOperation(signInOpe)
+	if err := appDoc.AddOperation(signInOpe); err != nil {
+		return err
+	}
 
 	authRequired := app.Group("/")
 	authRequired.Use(authorizationMiddleware.Exec())
@@ -77,7 +85,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signOutOpe.SetID("signOut")
 	signOutOpe.SetTags("auth")
 	signOutOpe.SetSummary("ユーザのログアウトを実行")
-	appDoc.AddOperation(signOutOpe)
+	if err := appDoc.AddOperation(signOutOpe); err != nil {
+		return err
+	}
 
 	// getCurrentUserOpe /user GET
 	authRequired.GET("/user", authController.GetCurrentUser)
@@ -86,7 +96,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getCurrentUserOpe.SetSummary("現在ログインしているユーザを取得")
 	getCurrentUserOpe.SetTags("auth")
 	getCurrentUserOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
-	appDoc.AddOperation(getCurrentUserOpe)
+	if err := appDoc.AddOperation(getCurrentUserOpe); err != nil {
+		return err
+	}
 
 	return nil
 }

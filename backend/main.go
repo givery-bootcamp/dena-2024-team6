@@ -28,7 +28,9 @@ func main() {
 	injectDependencies(injector)
 
 	app := gin.Default()
-	router.SetupRoutes(injector, app)
+	if err := router.SetupRoutes(injector, app); err != nil {
+		log.Fatalf("failed to setup routes: %+v\n", err)
+	}
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", config.HostName, config.Port),
@@ -57,8 +59,12 @@ func main() {
 	}()
 
 	// ctrl + cでサーバをシャットダウンする
-	injector.ShutdownOnSIGTERM()
-	server.Shutdown(ctx)
+	if err := injector.ShutdownOnSIGTERM(); err != nil {
+		log.Fatalf("failed to signal shutdown; %+v\n", err)
+	}
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("something is wrong on shutdown server; %+v\n", err)
+	}
 }
 
 func injectDependencies(i *do.Injector) {
