@@ -27,7 +27,7 @@ func DeletePostController(ctx *gin.Context) {
 
 	userID, ok := rawUserID.(int)
 	if !ok {
-		handleError(ctx, 500, errors.New("userID is invalid"))
+		handleError(ctx, 500, errors.New("unauthorized"))
 		return
 	}
 
