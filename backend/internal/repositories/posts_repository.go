@@ -22,6 +22,7 @@ type Post struct {
 	Username  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
 }
 
 type Comment struct {
@@ -32,6 +33,7 @@ type Comment struct {
 	Username  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
 }
 
 func NewPostsRepository(conn *gorm.DB) *PostsRepository {
@@ -135,6 +137,23 @@ func (r *PostsRepository) UpdateComment(userID int, CommentID int, postID int, b
 		return nil, err
 	}
 	return r.Get(postID)
+}
+
+func (r *PostsRepository) DeleteComment(userID int, CommentID int) error {
+	var comment Comment
+	err := r.Conn.Table("Comments").Where("id = ?", CommentID).First(&comment).Error
+	if err != nil {
+		return errors.New("not found")
+	}
+	if comment.UserId != userID {
+		return errors.New("unauthorized")
+	}
+
+	err = r.Conn.Table("Comments").Where("id = ?", CommentID).Delete(&Comment{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
