@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"fmt"
 	"myapp/domain/apperror"
 	"myapp/domain/model"
 	"myapp/domain/repository"
@@ -53,7 +54,7 @@ func (s *signinUsecaseInteractor) Execute(ctx context.Context, input SigninUseca
 	strUID := strconv.Itoa(user.ID)
 	token, err := s.idTokenService.Generate(strUID)
 	if err != nil {
-		return SigninUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, "failed to generate credentials")
+		return SigninUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, fmt.Sprintf("failed to generate credentials: %v", err))
 	}
 
 	return SigninUsecaseOutput{
