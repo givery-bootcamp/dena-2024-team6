@@ -9,6 +9,8 @@ import (
 	"myapp/application"
 	"myapp/config"
 	"myapp/domain/repository"
+	"myapp/domain/service"
+	"myapp/infrastructure/idtoken"
 	"myapp/infrastructure/store"
 	"net/http"
 
@@ -63,13 +65,18 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[*openapi3.Reflector](i, router.NewAppDoc)
 	do.Provide[*sqlx.DB](i, store.NewStore)
 
+	// Inject service resources
+	do.Provide[service.IdtokenService](i, idtoken.NewIDTokenJwtImpl)
+
 	// Inject repository resources
 	do.Provide[repository.HelloWorldRepository](i, store.NewHelloWorldRepository)
 	do.Provide[repository.PostRepository](i, store.NewPostRepository)
+	do.Provide[repository.UserRepository](i, store.NewUserRepositoryImpl)
 
 	// Inject application usecase resources
 	do.Provide[application.ListPostUsecase](i, application.NewListPostUsecase)
 	do.Provide[application.GetPostDetailUsecase](i, application.NewGetPostDetailUsecase)
+	do.Provide[application.SigninUsecase](i, application.NewSigninUsecase)
 
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)
