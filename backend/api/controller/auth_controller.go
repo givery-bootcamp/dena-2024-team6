@@ -14,11 +14,17 @@ import (
 )
 
 type AuthController struct {
-	signinUsecase application.SigninUsecase
+	signinUsecase  application.SigninUsecase
+	getUserUsecase application.GetUserUsecase
 }
 
 func NewAuthController(i *do.Injector) (*AuthController, error) {
-	return &AuthController{}, nil
+	signinUsecase := do.MustInvoke[application.SigninUsecase](i)
+	getUserUsecase := do.MustInvoke[application.GetUserUsecase](i)
+	return &AuthController{
+		signinUsecase:  signinUsecase,
+		getUserUsecase: getUserUsecase,
+	}, nil
 }
 
 func (ac AuthController) SignIn(c *gin.Context) {
@@ -56,9 +62,25 @@ func (ac AuthController) SignOut(ctx *gin.Context) {
 	// TODO: あとで実装する
 }
 
-func (ac AuthController) GetCurrentUser(ctx *gin.Context) {
+func (ac AuthController) GetCurrentUser(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	userIDAny, ok := c.Get("userID")
+	if !ok {
+		c.JSON(401, "unauthorized")
+	}
+	userID, ok := userIDAny.(int)
+	if !ok {
+		c.JSON(500, "failed to login")
+	}
+
+	ac.getUserUsecase.Execute(ctx, application.GetUserUsecaseInput{
+		ID: userID,
+	})
+
 	// TODO: 一旦仮のデータを返す
-	ctx.JSON(200, schema.UserResponse{
+	c.JSON(200, schema.UserResponse{
 		ID:       2,
 		UserName: "fugafuga",
 	})
