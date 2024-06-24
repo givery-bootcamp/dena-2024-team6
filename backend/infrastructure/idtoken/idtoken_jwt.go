@@ -27,7 +27,7 @@ func (i *IDTokenJwtImpl) Generate(id string) (string, error) {
 		"ExpiresAt": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	signedToken, err := token.SignedString(i.key)
+	signedToken, err := token.SignedString([]byte(i.key))
 	if err != nil {
 		return "", err
 	}
