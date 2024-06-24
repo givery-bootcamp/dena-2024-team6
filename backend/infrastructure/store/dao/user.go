@@ -16,6 +16,7 @@ type UserTable struct {
 // ConvertUserTableToDomainUser はテーブルのモデルからドメインモデルに変換する
 func ConvertUserTableToDomainUser(ut UserTable) model.User {
 	return model.User{
+		ID:       ut.ID,
 		Name:     ut.Name,
 		Password: ut.Password,
 	}
