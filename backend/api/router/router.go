@@ -57,6 +57,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	app.GET("/posts/:postid", postController.GetPost)
 	getPostOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/{id}")
 	getPostOpe.SetID("getPost")
+	getPostOpe.AddReqStructure(new(schema.PostRequest))
 	getPostOpe.SetSummary("投稿をIDから取得")
 	getPostOpe.SetTags("post")
 	getPostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
