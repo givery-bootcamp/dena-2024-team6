@@ -24,6 +24,16 @@ type Post struct {
 	UpdatedAt time.Time
 }
 
+type Comment struct {
+	ID        int
+	Body      string
+	UserId    int
+	PostId    int
+	Username  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
 func NewPostsRepository(conn *gorm.DB) *PostsRepository {
 	return &PostsRepository{
 		Conn: conn,
@@ -73,12 +83,46 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 	return convertPostRepositoryModelToEntity(&post), nil
 }
 
+func (r *PostsRepository) CreateComment(userID int, postID int, body string) (*entities.Post, error) {
+	type CommentComment struct {
+		ID     int
+		Body   string
+		UserId int
+		PostID int
+	}
+
+	Comment := CommentComment{
+		Body:   body,
+		UserId: userID,
+		PostID: postID,
+	}
+
+	err := r.Conn.Table("Comments").Create(&Comment).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(Comment.PostID)
+}
+
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
 	return &entities.Post{
 		ID:        v.ID,
 		Title:     v.Title,
 		Body:      v.Body,
 		UserId:    v.UserId,
+		Username:  v.Username,
+		CreatedAt: v.CreatedAt,
+		UpdatedAt: v.UpdatedAt,
+	}
+}
+
+func convertCommentRepositoryModelToEntity(v *Comment) *entities.Comment {
+	return &entities.Comment{
+		ID:        v.ID,
+		Body:      v.Body,
+		UserId:    v.UserId,
+		PostID:    v.PostId,
 		Username:  v.Username,
 		CreatedAt: v.CreatedAt,
 		UpdatedAt: v.UpdatedAt,
