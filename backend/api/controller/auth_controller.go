@@ -51,7 +51,7 @@ func (ac AuthController) SignIn(c *gin.Context) {
 	}
 
 	c.SetCookie("token", result.Token, 3600*24, "/", config.HostName, false, true)
-	// TODO: 一旦仮のデータを返す
+
 	c.JSON(200, schema.UserResponse{
 		ID:       result.User.ID,
 		UserName: result.User.Name,
