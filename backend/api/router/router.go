@@ -44,7 +44,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	listPostsOpe.SetID("listPosts")
 	listPostsOpe.SetSummary("投稿の一覧を取得")
 	listPostsOpe.SetTags("post")
-	listPostsOpe.AddRespStructure(new([]schema.PostResponse), openapi.WithHTTPStatus(http.StatusAccepted))
+	listPostsOpe.AddRespStructure(new([]schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
 	appDoc.AddOperation(listPostsOpe)
 
 	// getPostOpe /posts/{id} GET
@@ -53,7 +53,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getPostOpe.SetID("getPost")
 	getPostOpe.SetSummary("投稿をIDから取得")
 	getPostOpe.SetTags("post")
-	getPostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusAccepted))
+	getPostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
 	appDoc.AddOperation(getPostOpe)
 
 	// signInOpe /signin POST
@@ -63,7 +63,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signInOpe.SetSummary("ユーザのログインを実行")
 	signInOpe.SetTags("auth")
 	signInOpe.AddReqStructure(new(schema.LoginRequest))
-	signInOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusAccepted))
+	signInOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
 	appDoc.AddOperation(signInOpe)
 
 	// signOutOpe /signout POST
@@ -80,7 +80,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getCurrentUserOpe.SetID("getCurrentUser")
 	getCurrentUserOpe.SetSummary("現在ログインしているユーザを取得")
 	getCurrentUserOpe.SetTags("auth")
-	getCurrentUserOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusAccepted))
+	getCurrentUserOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
 	appDoc.AddOperation(getCurrentUserOpe)
 
 	return nil
