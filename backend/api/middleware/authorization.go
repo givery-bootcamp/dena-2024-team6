@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"errors"
+	"myapp/application"
+	"myapp/domain/model"
 	"myapp/domain/service"
 
 	"github.com/gin-gonic/gin"
@@ -10,12 +12,15 @@ import (
 
 type AuthorizationMiddleware struct {
 	idTokenService service.IdtokenService
+	userUsecase    application.GetUserUsecase
 }
 
 func NewAuthorizationMiddleware(i *do.Injector) (*AuthorizationMiddleware, error) {
 	idTokenService := do.MustInvoke[service.IdtokenService](i)
+	userUsecase := do.MustInvoke[application.GetUserUsecase](i)
 	return &AuthorizationMiddleware{
 		idTokenService: idTokenService,
+		userUsecase:    userUsecase,
 	}, nil
 }
 
@@ -32,9 +37,30 @@ func (am *AuthorizationMiddleware) Exec() gin.HandlerFunc {
 			_ = c.AbortWithError(401, errors.New("unauthorized"))
 		}
 
-		// TODO: ユーザの存在チェック
+		result, err := am.userUsecase.Execute(c, application.GetUserUsecaseInput{
+			ID: userID,
+		})
+		if err != nil {
+			_ = c.AbortWithError(401, errors.New("unauthorized"))
+		}
 
-		c.Set("userID", userID)
+		SetUserAuthContext(c, result.User)
 		c.Next()
 	}
+}
+
+func SetUserAuthContext(c *gin.Context, user model.User) {
+	c.Set("user", user)
+}
+
+func GetUserAuthContext(c *gin.Context) (model.User, bool) {
+	userAny, ok := c.Get("user")
+	if !ok {
+		return model.User{}, false
+	}
+	user, ok := userAny.(model.User)
+	if !ok {
+		return model.User{}, false
+	}
+	return user, false
 }
