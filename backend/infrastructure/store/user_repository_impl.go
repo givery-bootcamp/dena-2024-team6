@@ -2,7 +2,9 @@ package store
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"log"
 	"myapp/domain/model"
@@ -50,6 +52,9 @@ func (u UserRepositoryImpl) GetByID(ctx context.Context, id int) (model.User, er
 
 // GetByUserNameAndPassword implements repository.UserRepository.
 func (u UserRepositoryImpl) GetByUserNameAndPassword(ctx context.Context, userName string, password string) (model.User, error) {
+	hashedPassword := sha256.Sum256([]byte(password))
+	strPassword := hex.EncodeToString(hashedPassword[:])
+
 	user := dao.UserTable{}
 	if err := u.db.GetContext(ctx, &user, `
 		SELECT
@@ -59,10 +64,10 @@ func (u UserRepositoryImpl) GetByUserNameAndPassword(ctx context.Context, userNa
 		FROM
 			users
 		WHERE
-			name=?
+			BINARY name=?
 		AND
-			password=?
-	`, userName, password); err != nil {
+			BINARY password=?
+	`, userName, strPassword); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return model.User{}, nil
 		}
