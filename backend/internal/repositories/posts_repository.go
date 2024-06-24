@@ -73,6 +73,28 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 	return convertPostRepositoryModelToEntity(&post), nil
 }
 
+func (r *PostsRepository) Create(userID int, title string, body string) (*entities.Post, error) {
+	type PostPost struct {
+		ID     int
+		Title  string
+		Body   string
+		UserId int
+	}
+
+	post := PostPost{
+		Title:  title,
+		Body:   body,
+		UserId: userID,
+	}
+
+	err := r.Conn.Table("posts").Create(&post).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(post.ID)
+}
+
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
 	return &entities.Post{
 		ID:        v.ID,
