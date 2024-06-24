@@ -20,7 +20,7 @@ func PostController(ctx *gin.Context) {
 
 	var params PostParams
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		handleError(ctx, 400, errors.New(fmt.Sprintf("invalid request: %v", err)))
+		handleError(ctx, 400, fmt.Errorf("invalid request: %v", err))
 		return
 	}
 
