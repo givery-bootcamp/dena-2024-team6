@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
 	"strconv"
@@ -10,18 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CommentParams struct {
-	PostID string `json:"post_id"`
-	Body   string `json:"body"`
-}
-
-func CreateCommentController(ctx *gin.Context) {
+func UpdateCommentController(ctx *gin.Context) {
 	repository := repositories.NewPostsRepository(DB(ctx))
-	usecase := usecases.NewCommentUsecase(repository)
+	usecase := usecases.NewUpdateCommentUsecase(repository)
+
+	CommentID, err := strconv.Atoi(ctx.Param("commentId"))
+	if err != nil {
+		handleError(ctx, 400, err)
+		return
+	}
 
 	var params CommentParams
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		handleError(ctx, 400, fmt.Errorf("invalid request: %v", err))
+		handleError(ctx, 400, errors.New("invalid request"))
 		return
 	}
 
@@ -41,18 +41,17 @@ func CreateCommentController(ctx *gin.Context) {
 		handleError(ctx, 500, errors.New("userID is invalid"))
 		return
 	}
-
 	intPostID, err := strconv.Atoi(params.PostID)
 	if err != nil {
 		handleError(ctx, 400, errors.New("post_id must be a number"))
 		return
 	}
 
-	comment, err := usecase.Execute(userID, intPostID, params.Body)
+	Comment, err := usecase.Execute(userID, CommentID, intPostID, params.Body)
 	if err != nil {
 		handleError(ctx, 400, err)
 		return
 	}
 
-	ctx.JSON(200, comment)
+	ctx.JSON(200, Comment)
 }

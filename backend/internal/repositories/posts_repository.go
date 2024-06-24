@@ -84,14 +84,14 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 }
 
 func (r *PostsRepository) CreateComment(userID int, postID int, body string) (*entities.Post, error) {
-	type CommentComment struct {
+	type PostComment struct {
 		ID     int
 		Body   string
 		UserId int
 		PostID int
 	}
 
-	Comment := CommentComment{
+	Comment := PostComment{
 		Body:   body,
 		UserId: userID,
 		PostID: postID,
@@ -103,6 +103,38 @@ func (r *PostsRepository) CreateComment(userID int, postID int, body string) (*e
 	}
 
 	return r.Get(Comment.PostID)
+}
+
+func (r *PostsRepository) UpdateComment(userID int, CommentID int, postID int, body string) (*entities.Post, error) {
+	oldComment, err := r.Get(postID)
+	if err != nil {
+		return nil, err
+	}
+	if oldComment == nil {
+		return nil, errors.New("not found")
+	}
+	if oldComment.UserId != userID {
+		return nil, errors.New("unauthorized")
+	}
+
+	type PostComment struct {
+		ID     int
+		Body   string
+		UserId int
+		PostID int
+	}
+
+	Comment := PostComment{
+		Body:   body,
+		UserId: userID,
+		PostID: postID,
+	}
+
+	err = r.Conn.Table("Comments").Where("id = ?", CommentID).Updates(&Comment).Error
+	if err != nil {
+		return nil, err
+	}
+	return r.Get(postID)
 }
 
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {

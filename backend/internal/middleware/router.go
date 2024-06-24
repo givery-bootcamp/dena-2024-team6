@@ -22,4 +22,5 @@ func SetupRoutes(app *gin.Engine) {
 	authRequeried.GET("/user", controllers.UserController)
 
 	authRequeried.POST("/comments", controllers.CreateCommentController)
+	authRequeried.PUT("/comments/:commentId", controllers.UpdateCommentController)
 }
