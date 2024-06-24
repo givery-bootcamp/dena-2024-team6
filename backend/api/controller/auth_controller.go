@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"myapp/api/middleware"
 	"myapp/api/schema"
 	"myapp/application"
 	"myapp/config"
@@ -71,17 +72,13 @@ func (ac AuthController) GetCurrentUser(c *gin.Context) {
 	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
 	defer cancel()
 
-	userIDAny, ok := c.Get("userID")
+	user, ok := middleware.GetUserAuthContext(c)
 	if !ok {
 		c.JSON(401, "unauthorized")
 	}
-	userID, ok := userIDAny.(int)
-	if !ok {
-		c.JSON(500, "failed to login")
-	}
 
 	result, err := ac.getUserUsecase.Execute(ctx, application.GetUserUsecaseInput{
-		ID: userID,
+		ID: user.ID,
 	})
 	if apperror.Is(err, apperror.CodeNotFound) {
 		c.JSON(404, schema.NewErrorResponse(err))
