@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"myapp/api/controller"
+	"myapp/api/middleware"
 	"myapp/api/router"
 	"myapp/application"
 	"myapp/config"
@@ -81,4 +82,7 @@ func injectDependencies(i *do.Injector) {
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)
 	do.Provide[*controller.AuthController](i, controller.NewAuthController)
+
+	// Inject middleware resources
+	do.Provide[*middleware.AuthorizationMiddleware](i, middleware.NewAuthorizationMiddleware)
 }

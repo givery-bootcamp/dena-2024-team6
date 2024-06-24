@@ -17,6 +17,8 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	postController := do.MustInvoke[*controller.PostController](i)
 	authController := do.MustInvoke[*controller.AuthController](i)
 
+	authorizationMiddleware := do.MustInvoke[*middleware.AuthorizationMiddleware](i)
+
 	// OpenAPIの依存関係の取得
 	appDoc := do.MustInvoke[*openapi3.Reflector](i)
 
@@ -66,8 +68,11 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signInOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
 	appDoc.AddOperation(signInOpe)
 
+	authRequired := app.Group("/")
+	authRequired.Use(authorizationMiddleware.Exec())
+
 	// signOutOpe /signout POST
-	app.POST("/signout", authController.SignOut)
+	authRequired.POST("/signout", authController.SignOut)
 	signOutOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signout")
 	signOutOpe.SetID("signOut")
 	signOutOpe.SetTags("auth")
@@ -75,7 +80,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	appDoc.AddOperation(signOutOpe)
 
 	// getCurrentUserOpe /user GET
-	app.GET("/user", authController.GetCurrentUser)
+	authRequired.GET("/user", authController.GetCurrentUser)
 	getCurrentUserOpe, _ := appDoc.NewOperationContext(http.MethodGet, "/user")
 	getCurrentUserOpe.SetID("getCurrentUser")
 	getCurrentUserOpe.SetSummary("現在ログインしているユーザを取得")
