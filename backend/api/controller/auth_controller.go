@@ -49,6 +49,10 @@ func (ac AuthController) SignIn(c *gin.Context) {
 		c.JSON(500, schema.NewErrorResponse(err))
 		return
 	}
+	if err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
 
 	c.SetCookie("token", result.Token, 3600*24, "/", config.HostName, false, true)
 
@@ -75,13 +79,24 @@ func (ac AuthController) GetCurrentUser(c *gin.Context) {
 		c.JSON(500, "failed to login")
 	}
 
-	ac.getUserUsecase.Execute(ctx, application.GetUserUsecaseInput{
+	result, err := ac.getUserUsecase.Execute(ctx, application.GetUserUsecaseInput{
 		ID: userID,
 	})
+	if apperror.Is(err, apperror.CodeNotFound) {
+		c.JSON(404, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+	if err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
 
-	// TODO: 一旦仮のデータを返す
 	c.JSON(200, schema.UserResponse{
-		ID:       2,
-		UserName: "fugafuga",
+		ID:       result.User.ID,
+		UserName: result.User.Name,
 	})
 }
