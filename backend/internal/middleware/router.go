@@ -22,4 +22,5 @@ func SetupRoutes(app *gin.Engine) {
 	authRequeried.GET("/user", controllers.UserController)
 
 	authRequeried.POST("/posts", controllers.PostController)
+	authRequeried.PUT("/posts/:postid", controllers.UpdatePostController)
 }
