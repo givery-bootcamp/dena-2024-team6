@@ -78,7 +78,7 @@ func (pc PostController) GetPost(c *gin.Context) {
 		c.JSON(500, schema.NewErrorResponse(err))
 		return
 	}
-	// TODO: 一旦仮のデータを返す
+
 	c.JSON(200, schema.PostResponse{
 		ID:    result.Post.ID,
 		Title: result.Post.Title,
