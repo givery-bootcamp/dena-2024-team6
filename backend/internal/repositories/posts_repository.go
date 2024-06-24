@@ -167,15 +167,3 @@ func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
 		UpdatedAt: v.UpdatedAt,
 	}
 }
-
-func convertCommentRepositoryModelToEntity(v *Comment) *entities.Comment {
-	return &entities.Comment{
-		ID:        v.ID,
-		Body:      v.Body,
-		UserId:    v.UserId,
-		PostID:    v.PostId,
-		Username:  v.Username,
-		CreatedAt: v.CreatedAt,
-		UpdatedAt: v.UpdatedAt,
-	}
-}
