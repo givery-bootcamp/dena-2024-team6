@@ -95,6 +95,35 @@ func (r *PostsRepository) Create(userID int, title string, body string) (*entiti
 	return r.Get(post.ID)
 }
 
+func (r *PostsRepository) Update(userID int, postID int, title string, body string) (*entities.Post, error) {
+	oldPost, err := r.Get(postID)
+	if err != nil {
+		return nil, err
+	}
+	if oldPost == nil {
+		return nil, errors.New("not found")
+	}
+	if oldPost.UserId != userID {
+		return nil, errors.New("unauthorized")
+	}
+
+	type PostPut struct {
+		Title string
+		Body  string
+	}
+
+	post := PostPut{
+		Title: title,
+		Body:  body,
+	}
+
+	err = r.Conn.Table("posts").Where("id = ?", postID).Updates(&post).Error
+	if err != nil {
+		return nil, err
+	}
+	return r.Get(postID)
+}
+
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
 	return &entities.Post{
 		ID:        v.ID,
