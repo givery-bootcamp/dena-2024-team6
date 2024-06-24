@@ -62,8 +62,9 @@ func (ac AuthController) SignIn(c *gin.Context) {
 	})
 }
 
-func (ac AuthController) SignOut(ctx *gin.Context) {
-	// TODO: あとで実装する
+func (ac AuthController) SignOut(c *gin.Context) {
+	c.SetCookie("token", "", -1, "/", config.HostName, false, true)
+	c.Status(200)
 }
 
 func (ac AuthController) GetCurrentUser(c *gin.Context) {
