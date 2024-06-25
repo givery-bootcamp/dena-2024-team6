@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Container, Divider, FormControl, HStack, Heading, Input,useSnacks } from '@yamada-ui/react'
+import { Button, Container, Divider, FormControl, HStack, Heading, Input, useSnacks } from '@yamada-ui/react'
 import MarkdownEditor from '@uiw/react-markdown-editor'
 import { Link } from 'react-router-dom'
 import { usePostPosts } from '../../api/api'
@@ -9,10 +9,10 @@ export const CreatePostRoute = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
 
-  const {snack} = useSnacks()
+  const { snack } = useSnacks()
 
   const navigate = useNavigate()
-  const {mutate} = usePostPosts()
+  const { mutate } = usePostPosts()
 
   const validdateTitle = (value: string) => {
     if (value === '') {
@@ -50,27 +50,24 @@ export const CreatePostRoute = () => {
 
     if (isTitleValid && isContentValid) {
       mutate(
-        {data:{title:title, body:content}},
+        { data: { title: title, body: content } },
         {
           onSuccess: () => {
             snack({
               status: 'success',
               description: '投稿に成功しました。'
-            
             })
             navigate('/')
           },
           onError: () => {
-            snack(
-              {
-                status: 'error',
-                description: '投稿に失敗しました。'
-              }
-            )
+            snack({
+              status: 'error',
+              description: '投稿に失敗しました。'
+            })
           }
         }
       )
-    console.log('submit', { title, content })
+      console.log('submit', { title, content })
     }
   }
 

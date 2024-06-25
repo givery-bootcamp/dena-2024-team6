@@ -16,7 +16,7 @@ import type {
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query'
-import type { LoginRequest, Post,CreatePost, User } from './model'
+import type { LoginRequest, Post, CreatePost, User } from './model'
 import { customInstance } from '../shared/libs/axios'
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1]

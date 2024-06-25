@@ -6,70 +6,107 @@
 
  * OpenAPI spec version: 1.0.0
  */
-import {
-  faker
-} from '@faker-js/faker'
-import {
-  HttpResponse,
-  delay,
-  http
-} from 'msw'
-import type {
-  Post,
-  User
-} from './model'
+import { faker } from '@faker-js/faker'
+import { HttpResponse, delay, http } from 'msw'
+import type { Post, User } from './model'
 
-export const getGetPostsResponseMock = (): Post[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({body: faker.helpers.arrayElement([faker.word.sample(), undefined]), created_at: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), title: faker.word.sample(), updated_at: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]), user_id: faker.number.int({min: undefined, max: undefined}), user_name: faker.word.sample()})))
+export const getGetPostsResponseMock = (): Post[] =>
+  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+    body: faker.helpers.arrayElement([faker.word.sample(), undefined]),
+    created_at: `${faker.date.past().toISOString().split('.')[0]}Z`,
+    id: faker.number.int({ min: undefined, max: undefined }),
+    title: faker.word.sample(),
+    updated_at: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]),
+    user_id: faker.number.int({ min: undefined, max: undefined }),
+    user_name: faker.word.sample()
+  }))
 
-export const getGetPostsPostIdResponseMock = (overrideResponse: Partial< Post > = {}): Post => ({body: faker.helpers.arrayElement([faker.word.sample(), undefined]), created_at: `${faker.date.past().toISOString().split('.')[0]}Z`, id: faker.number.int({min: undefined, max: undefined}), title: faker.word.sample(), updated_at: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]), user_id: faker.number.int({min: undefined, max: undefined}), user_name: faker.word.sample(), ...overrideResponse})
+export const getGetPostsPostIdResponseMock = (overrideResponse: Partial<Post> = {}): Post => ({
+  body: faker.helpers.arrayElement([faker.word.sample(), undefined]),
+  created_at: `${faker.date.past().toISOString().split('.')[0]}Z`,
+  id: faker.number.int({ min: undefined, max: undefined }),
+  title: faker.word.sample(),
+  updated_at: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]),
+  user_id: faker.number.int({ min: undefined, max: undefined }),
+  user_name: faker.word.sample(),
+  ...overrideResponse
+})
 
-export const getPostSigninResponseMock = (overrideResponse: Partial< User > = {}): User => ({user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+export const getPostSigninResponseMock = (overrideResponse: Partial<User> = {}): User => ({
+  user_id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
+  user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]),
+  ...overrideResponse
+})
 
-export const getGetUserResponseMock = (overrideResponse: Partial< User > = {}): User => ({user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+export const getGetUserResponseMock = (overrideResponse: Partial<User> = {}): User => ({
+  user_id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
+  user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]),
+  ...overrideResponse
+})
 
-
-export const getGetPostsMockHandler = (overrideResponse?: Post[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Post[])) => {
+export const getGetPostsMockHandler = (
+  overrideResponse?: Post[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Post[])
+) => {
   return http.get('*/posts', async (info) => {
-    await delay(1000);
-    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
-            ? (typeof overrideResponse === "function" ? overrideResponse(info) : overrideResponse) 
-            : getGetPostsResponseMock()),
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? overrideResponse(info)
+            : overrideResponse
+          : getGetPostsResponseMock()
+      ),
       {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         }
       }
     )
   })
 }
 
-export const getGetPostsPostIdMockHandler = (overrideResponse?: Post | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Post)) => {
+export const getGetPostsPostIdMockHandler = (
+  overrideResponse?: Post | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Post)
+) => {
   return http.get('*/posts/:postId', async (info) => {
-    await delay(1000);
-    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
-            ? (typeof overrideResponse === "function" ? overrideResponse(info) : overrideResponse) 
-            : getGetPostsPostIdResponseMock()),
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? overrideResponse(info)
+            : overrideResponse
+          : getGetPostsPostIdResponseMock()
+      ),
       {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         }
       }
     )
   })
 }
 
-export const getPostSigninMockHandler = (overrideResponse?: User | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => User)) => {
+export const getPostSigninMockHandler = (
+  overrideResponse?: User | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => User)
+) => {
   return http.post('*/signin', async (info) => {
-    await delay(1000);
-    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
-            ? (typeof overrideResponse === "function" ? overrideResponse(info) : overrideResponse) 
-            : getPostSigninResponseMock()),
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? overrideResponse(info)
+            : overrideResponse
+          : getPostSigninResponseMock()
+      ),
       {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         }
       }
     )
@@ -78,28 +115,33 @@ export const getPostSigninMockHandler = (overrideResponse?: User | ((info: Param
 
 export const getPostSignoutMockHandler = () => {
   return http.post('*/signout', async () => {
-    await delay(1000);
-    return new HttpResponse(null,
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        }
+    await delay(1000)
+    return new HttpResponse(null, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
       }
-    )
+    })
   })
 }
 
-export const getGetUserMockHandler = (overrideResponse?: User | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => User)) => {
+export const getGetUserMockHandler = (
+  overrideResponse?: User | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => User)
+) => {
   return http.get('*/user', async (info) => {
-    await delay(1000);
-    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
-            ? (typeof overrideResponse === "function" ? overrideResponse(info) : overrideResponse) 
-            : getGetUserResponseMock()),
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? overrideResponse(info)
+            : overrideResponse
+          : getGetUserResponseMock()
+      ),
       {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         }
       }
     )
