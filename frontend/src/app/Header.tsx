@@ -1,33 +1,33 @@
 import { Box, Button } from '@yamada-ui/react'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getUser } from '../api/api'
 
 export const Header = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  // const currentUser = getUser()
   const navigate = useNavigate()
 
-  const handleButtonClick = () => {
-    if (isAuthenticated) {
-      // サインアウト処理
-      console.log('Signout 処理')
-      setIsAuthenticated(false)
-    } else {
-      // サインイン処理
-      console.log('Signin 処理')
-      navigate('/signin')
-      setIsAuthenticated(true)
-    }
-  }
+  // console.log({ currentUser })
+
+  // const handleButtonClick = () => {
+  //   if (currentUser !== null) {
+  //     // サインアウト処理
+  //     console.log('SignOut 処理')
+  //   } else {
+  //     // サインイン処理
+  //     console.log('Signin 処理')
+  //     navigate('/signin')
+  //   }
+  // }
 
   return (
     <header className="app-header">
       サンプルアプリケーション
-      <Box display="flex" alignItems="center">
-        {isAuthenticated && <Box mr={2}>ユーザー</Box>}
+      {/* <Box display="flex" alignItems="center">
+        {currentUser !== null && <Box mr={2}>ユーザー</Box>}
         <Button variant="solid" onClick={handleButtonClick}>
-          {isAuthenticated ? 'サインアウト' : 'サインイン'}
+          {currentUser !== null ? 'サインアウト' : 'サインイン'}
         </Button>
-      </Box>
+      </Box> */}
     </header>
   )
 }
