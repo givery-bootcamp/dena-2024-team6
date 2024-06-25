@@ -294,7 +294,11 @@ export const usePostPosts = <TError = unknown, TContext = unknown>(options?: {
 /**
  * @summary 投稿を更新
  */
-export const updatePost = (postId: string|undefined, post: UpdatePost, options?: SecondParameter<typeof customInstance>) => {
+export const updatePost = (
+  postId: string | undefined,
+  post: UpdatePost,
+  options?: SecondParameter<typeof customInstance>
+) => {
   return customInstance<Post>(
     { url: `/posts/${postId}`, method: 'PUT', headers: { 'Content-Type': 'application/json' }, data: post },
     options
@@ -310,7 +314,7 @@ export const getUpdatePostMutationOptions = <TError = unknown, TContext = unknow
   const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePost>>, { data: UpdatePost }> = (props) => {
     const { data } = props ?? {}
 
-    return updatePost(data.id,data, requestOptions)
+    return updatePost(data.id, data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -328,6 +332,42 @@ export const useUpdatePost = <TError = unknown, TContext = unknown>(options?: {
   request?: SecondParameter<typeof customInstance>
 }): UseMutationResult<Awaited<ReturnType<typeof updatePost>>, TError, { data: UpdatePost }, TContext> => {
   const mutationOptions = getUpdatePostMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+
+/**
+ * @summary 投稿を削除
+ */
+export const deletePost = (postId: number, options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<number>({ url: `/posts/${postId}`, method: 'DELETE' }, options)
+}
+
+export const getDeletePostMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError, number, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError, number, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePost>>, number> = (props) => {
+    return deletePost(props, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DeletePostMutationResult = NonNullable<Awaited<ReturnType<typeof deletePost>>>
+export type DeletePostMutationBody = number
+export type DeletePostMutationError = unknown
+
+/**
+ * @summary 投稿を削除
+ */
+export const useDeletePost = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError, number, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof deletePost>>, TError, number, TContext> => {
+  const mutationOptions = getDeletePostMutationOptions(options)
 
   return useMutation(mutationOptions)
 }

@@ -1,13 +1,18 @@
-import { Container, Text, HStack, Heading, Divider, Center, Loading,Button } from '@yamada-ui/react'
+import { Container, Text, HStack, Heading, Divider, Center, Loading, Button } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { useParams, Link } from 'react-router-dom'
-import { useGetPostsPostId } from '../../../api/api'
+import { useDeletePost, useGetPostsPostId } from '../../../api/api'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { data, isLoading, isError } = useGetPostsPostId(Number(id!))
+  const { mutate } = useDeletePost()
+
+  const handleDelete = () => {
+    mutate(Number(id!))
+  }
 
   return (
     <Container>
@@ -31,18 +36,20 @@ export const PostDetailRoute = () => {
       )}
       <Divider variant="solid" />
       <Text>{data?.body}</Text>
-      
+
       <HStack>
         <Link to={`/posts/${id}/edit`}>
-        <Button onClick={() => console.log("edit")} colorScheme="primary">
-          編集
-        </Button>
+          <Button onClick={() => console.log('edit')} colorScheme="primary">
+            編集
+          </Button>
         </Link>
-        <Button onClick={() => console.log("delete")} colorScheme="primary">
-          削除
-        </Button>
         <Link to="/">
-          <Button  colorScheme="primary" variant={'outline'}>
+          <Button onClick={handleDelete} colorScheme="primary">
+            削除
+          </Button>
+        </Link>
+        <Link to="/">
+          <Button colorScheme="primary" variant={'outline'}>
             戻る
           </Button>
         </Link>
