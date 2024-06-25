@@ -22,6 +22,18 @@ type Post struct {
 	Username  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
+}
+
+type Comment struct {
+	ID        int
+	Body      string
+	UserId    int
+	PostId    int
+	Username  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt
 }
 
 func NewPostsRepository(conn *gorm.DB) *PostsRepository {
@@ -72,6 +84,7 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 
 	return convertPostRepositoryModelToEntity(&post), nil
 }
+
 
 func (r *PostsRepository) Create(userID int, title string, body string) (*entities.Post, error) {
 	type PostPost struct {
@@ -139,6 +152,78 @@ func (r *PostsRepository) Update(userID int, postID int, title string, body stri
 		return nil, err
 	}
 	return r.Get(postID)
+}
+
+
+func (r *PostsRepository) CreateComment(userID int, postID int, body string) (*entities.Post, error) {
+	type PostComment struct {
+		ID     int
+		Body   string
+		UserId int
+		PostID int
+	}
+
+	Comment := PostComment{
+		Body:   body,
+		UserId: userID,
+		PostID: postID,
+	}
+
+	err := r.Conn.Table("Comments").Create(&Comment).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(Comment.PostID)
+}
+
+func (r *PostsRepository) UpdateComment(userID int, CommentID int, postID int, body string) (*entities.Post, error) {
+	oldComment, err := r.Get(postID)
+	if err != nil {
+		return nil, err
+	}
+	if oldComment == nil {
+		return nil, errors.New("not found")
+	}
+	if oldComment.UserId != userID {
+		return nil, errors.New("unauthorized")
+	}
+
+	type PostComment struct {
+		ID     int
+		Body   string
+		UserId int
+		PostID int
+	}
+
+	Comment := PostComment{
+		Body:   body,
+		UserId: userID,
+		PostID: postID,
+	}
+
+	err = r.Conn.Table("Comments").Where("id = ?", CommentID).Updates(&Comment).Error
+	if err != nil {
+		return nil, err
+	}
+	return r.Get(postID)
+}
+
+func (r *PostsRepository) DeleteComment(userID int, CommentID int) error {
+	var comment Comment
+	err := r.Conn.Table("Comments").Where("id = ?", CommentID).First(&comment).Error
+	if err != nil {
+		return errors.New("not found")
+	}
+	if comment.UserId != userID {
+		return errors.New("unauthorized")
+	}
+
+	err = r.Conn.Table("Comments").Where("id = ?", CommentID).Delete(&Comment{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func convertPostRepositoryModelToEntity(v *Post) *entities.Post {
