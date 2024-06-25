@@ -2,25 +2,26 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"myapp/internal/repositories"
 	"myapp/internal/usecases"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type PostParams struct {
-	Title string `json:"title"`
-	Body  string `json:"body"`
-}
-
-func PostController(ctx *gin.Context) {
+func UpdatePostController(ctx *gin.Context) {
 	repository := repositories.NewPostsRepository(DB(ctx))
-	usecase := usecases.NewPostUsecase(repository)
+	usecase := usecases.NewUpdatePostUsecase(repository)
+
+	postID, err := strconv.Atoi(ctx.Param("postid"))
+	if err != nil {
+		handleError(ctx, 400, err)
+		return
+	}
 
 	var params PostParams
 	if err := ctx.ShouldBindJSON(&params); err != nil {
-		handleError(ctx, 400, fmt.Errorf("invalid request: %v", err))
+		handleError(ctx, 400, errors.New("invalid request"))
 		return
 	}
 
@@ -46,7 +47,7 @@ func PostController(ctx *gin.Context) {
 		return
 	}
 
-	post, err := usecase.Execute(userID, params.Title, params.Body)
+	post, err := usecase.Execute(userID, postID, params.Title, params.Body)
 	if err != nil {
 		handleError(ctx, 500, err)
 		return
