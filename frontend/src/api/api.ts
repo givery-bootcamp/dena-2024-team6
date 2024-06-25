@@ -249,3 +249,44 @@ export const useGetUser = <TData = Awaited<ReturnType<typeof getUser>>, TError =
 
   return query
 }
+
+/**
+ * @summary 新しい投稿を作成
+ */
+export const postPosts = (post: Post, options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<Post>(
+    { url: `/posts`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: post },
+    options
+  )
+}
+
+export const getPostPostsMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postPosts>>, TError, { data: Post }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof postPosts>>, TError, { data: Post }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPosts>>, { data: Post }> = (props) => {
+    const { data } = props ?? {}
+
+    return postPosts(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostPostsMutationResult = NonNullable<Awaited<ReturnType<typeof postPosts>>>
+export type PostPostsMutationBody = Post
+export type PostPostsMutationError = unknown
+
+/**
+ * @summary 新しい投稿を作成
+ */
+export const usePostPosts = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postPosts>>, TError, { data: Post }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof postPosts>>, TError, { data: Post }, TContext> => {
+  const mutationOptions = getPostPostsMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
