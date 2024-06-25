@@ -79,12 +79,14 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[repository.HelloWorldRepository](i, store.NewHelloWorldRepository)
 	do.Provide[repository.PostRepository](i, store.NewPostRepository)
 	do.Provide[repository.UserRepository](i, store.NewUserRepositoryImpl)
+	do.Provide[repository.CommentRepository](i, store.NewCommentRepositoryImpl)
 
 	// Inject application usecase resources
 	do.Provide[application.ListPostUsecase](i, application.NewListPostUsecase)
 	do.Provide[application.GetPostDetailUsecase](i, application.NewGetPostDetailUsecase)
 	do.Provide[application.SigninUsecase](i, application.NewSigninUsecase)
 	do.Provide[application.GetUserUsecase](i, application.NewGetUserUsecase)
+	do.Provide[application.ListCommentsUsecase](i, application.NewListCommentsUsecase)
 
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)
