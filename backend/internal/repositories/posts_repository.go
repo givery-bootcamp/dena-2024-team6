@@ -95,6 +95,23 @@ func (r *PostsRepository) Create(userID int, title string, body string) (*entiti
 	return r.Get(post.ID)
 }
 
+func (r *PostsRepository) Delete(UserId int, postID int) error {
+	//削除する投稿がログインユーザーのものか確認
+	deletetarget := Post{}
+	err := r.Conn.Table("posts").Where("id = ?", postID).First(&deletetarget).Error
+	if err != nil {
+		return err
+	}
+	targetUserID := deletetarget.UserId
+	if targetUserID != UserId {
+		return errors.New("this post is not yours")
+	}
+	err = r.Conn.Table("posts").Where("id = ?", postID).Delete(&Post{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (r *PostsRepository) Update(userID int, postID int, title string, body string) (*entities.Post, error) {
 	oldPost, err := r.Get(postID)
 	if err != nil {
