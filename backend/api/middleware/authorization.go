@@ -35,6 +35,7 @@ func (am *AuthorizationMiddleware) Exec() gin.HandlerFunc {
 		userID, err := am.idTokenService.VerifyIDToken(token)
 		if err != nil {
 			_ = c.AbortWithError(401, errors.New("unauthorized"))
+			return
 		}
 
 		result, err := am.userUsecase.Execute(c, application.GetUserUsecaseInput{
@@ -42,6 +43,7 @@ func (am *AuthorizationMiddleware) Exec() gin.HandlerFunc {
 		})
 		if err != nil {
 			_ = c.AbortWithError(401, errors.New("unauthorized"))
+			return
 		}
 
 		SetUserAuthContext(c, result.User)
