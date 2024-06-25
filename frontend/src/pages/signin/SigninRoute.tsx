@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Button, Container, FormControl, Input } from '@yamada-ui/react'
+import { useNavigate } from 'react-router-dom'
+import { Button, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
+import { usePostSignin } from '../../api/api'
 
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
@@ -7,29 +9,38 @@ export const SigninRoute = () => {
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
 
+  const { snack, snacks } = useSnacks()
+
+  const navigate = useNavigate()
+  const { mutate, isPending } = usePostSignin()
+
   const validateUsername = (value: string) => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
-      return
+      return false
     }
     const regex = /^[a-zA-Z0-9]+$/
     if (!regex.test(value)) {
       setUsernameError('ユーザー名は英数のみ許可されます。記号は使用できません。')
+      return false
     } else {
       setUsernameError('')
+      return true
     }
   }
 
   const validatePassword = (value: string) => {
     if (value === '') {
       setPasswordError('パスワードを入力してください。')
-      return
+      return false
     }
-    const regex = /^[\x20-\x7E]+$/ // ASCII範囲の印刷可能な文字
+    const regex = /^[\x20-\x7E]+$/
     if (!regex.test(value)) {
       setPasswordError('パスワードはASCII範囲の英数記号のみ許可されます。')
+      return false
     } else {
       setPasswordError('')
+      return true
     }
   }
 
@@ -45,31 +56,52 @@ export const SigninRoute = () => {
     validatePassword(value)
   }
 
+  const handleSubmit = async () => {
+    const isUsernameValid = validateUsername(username)
+    const isPasswordValid = validatePassword(password)
+    if (isUsernameValid && isPasswordValid) {
+      mutate(
+        { data: { user_name: username, password: password } },
+        {
+          onSuccess: () => {
+            navigate(`/`)
+            // TODO: トーストでログイン成功を表示
+          },
+          onError: () => {
+            snack({
+              title: 'エラー',
+              description: 'ユーザーが登録されていません',
+              variant: 'solid',
+              status: 'error'
+            })
+          }
+        }
+      )
+    }
+  }
+
   return (
     <Container>
+      <Snacks snacks={snacks} gutter={[0, 'md']} />
       <FormControl label="ユーザー名" isRequired isInvalid={usernameError !== ''} errorMessage={usernameError}>
         <Input
           type="text"
           placeholder="ユーザー名を入力してください。"
+          isRequired
           value={username}
           onChange={handleUsernameChange}
         />
       </FormControl>
-
       <FormControl label="パスワード" isRequired isInvalid={passwordError !== ''} errorMessage={passwordError}>
         <Input
           type="password"
           placeholder="パスワードを入力してください。"
+          isRequired
           value={password}
           onChange={handlePasswordChange}
         />
       </FormControl>
-
-      <Button
-        onClick={() => {
-          // TODO: エラーがない場合にサインインAPIを叩き、ルーティング
-        }}
-      >
+      <Button onClick={handleSubmit} isLoading={isPending} loadingIcon="dots" colorScheme="primary">
         サインイン
       </Button>
     </Container>
