@@ -1,6 +1,9 @@
 package repositories
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"myapp/internal/entities"
 
 	"gorm.io/gorm"
@@ -23,10 +26,13 @@ func NewSigninRepository(conn *gorm.DB) *SigninRepository {
 
 func (r *SigninRepository) Signin(username string, password string) (*entities.User, error) {
 	var user User
+	hashedPassword := sha256.Sum256([]byte(password))
+	strPassword := hex.EncodeToString(hashedPassword[:])
+	fmt.Println(strPassword)
 	err := r.Conn.Table("users").Select(`
 		id,
 		name
-	`).Where("name = ? AND password = ?", username, password).First(&user).Error
+	`).Where("BINARY name = ? AND BINARY password = ?", username, strPassword).First(&user).Error
 
 	if err != nil {
 		return nil, err
