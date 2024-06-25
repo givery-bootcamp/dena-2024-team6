@@ -28,13 +28,13 @@ func (am *AuthorizationMiddleware) Exec() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token, err := c.Cookie("token")
 		if err != nil {
-			_ = c.AbortWithError(401, errors.New("unauthorized"))
+			_ = c.AbortWithError(401, errors.New("unauthorized1"))
 			return
 		}
 
 		userID, err := am.idTokenService.VerifyIDToken(token)
 		if err != nil {
-			_ = c.AbortWithError(401, errors.New("unauthorized"))
+			_ = c.AbortWithError(401, errors.New("unauthorized2"))
 			return
 		}
 
@@ -42,7 +42,7 @@ func (am *AuthorizationMiddleware) Exec() gin.HandlerFunc {
 			ID: userID,
 		})
 		if err != nil {
-			_ = c.AbortWithError(401, errors.New("unauthorized"))
+			_ = c.AbortWithError(401, errors.New("unauthorized3"))
 			return
 		}
 
@@ -64,5 +64,5 @@ func GetUserAuthContext(c *gin.Context) (model.User, bool) {
 	if !ok {
 		return model.User{}, false
 	}
-	return user, false
+	return user, true
 }

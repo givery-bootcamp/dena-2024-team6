@@ -2,8 +2,10 @@ package idtoken
 
 import (
 	"errors"
+	"log"
 	"myapp/config"
 	"myapp/domain/service"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -50,10 +52,12 @@ func (i *IDTokenJwtImpl) VerifyIDToken(token string) (int, error) {
 	if !ok {
 		return 0, errors.New("invalid credentials")
 	}
-	userID, ok := claimsMap["id"].(int)
+	userIDraw, ok := claimsMap["ID"].(string)
 	if !ok {
+		log.Println(userIDraw)
 		return 0, errors.New("invalid id credentials")
 	}
+	userID, err := strconv.Atoi(userIDraw)
 
 	return userID, nil
 }
