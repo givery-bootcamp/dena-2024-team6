@@ -58,6 +58,9 @@ func (i *IDTokenJwtImpl) VerifyIDToken(token string) (int, error) {
 		return 0, errors.New("invalid id credentials")
 	}
 	userID, err := strconv.Atoi(userIDraw)
+	if err != nil {
+		return 0, err
+	}
 
 	return userID, nil
 }
