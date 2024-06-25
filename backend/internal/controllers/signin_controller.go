@@ -11,7 +11,7 @@ import (
 )
 
 type SigninParams struct {
-	Username string `json:"username"`
+	Username string `json:"user_name"`
 	Password string `json:"password"`
 }
 

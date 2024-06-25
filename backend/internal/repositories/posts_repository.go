@@ -85,6 +85,76 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 	return convertPostRepositoryModelToEntity(&post), nil
 }
 
+
+func (r *PostsRepository) Create(userID int, title string, body string) (*entities.Post, error) {
+	type PostPost struct {
+		ID     int
+		Title  string
+		Body   string
+		UserId int
+	}
+
+	post := PostPost{
+		Title:  title,
+		Body:   body,
+		UserId: userID,
+	}
+
+	err := r.Conn.Table("posts").Create(&post).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Get(post.ID)
+}
+
+func (r *PostsRepository) Delete(UserId int, postID int) error {
+	//削除する投稿がログインユーザーのものか確認
+	deletetarget := Post{}
+	err := r.Conn.Table("posts").Where("id = ?", postID).First(&deletetarget).Error
+	if err != nil {
+		return err
+	}
+	targetUserID := deletetarget.UserId
+	if targetUserID != UserId {
+		return errors.New("this post is not yours")
+	}
+	err = r.Conn.Table("posts").Where("id = ?", postID).Delete(&Post{}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (r *PostsRepository) Update(userID int, postID int, title string, body string) (*entities.Post, error) {
+	oldPost, err := r.Get(postID)
+	if err != nil {
+		return nil, err
+	}
+	if oldPost == nil {
+		return nil, errors.New("not found")
+	}
+	if oldPost.UserId != userID {
+		return nil, errors.New("unauthorized")
+	}
+
+	type PostPut struct {
+		Title string
+		Body  string
+	}
+
+	post := PostPut{
+		Title: title,
+		Body:  body,
+	}
+
+	err = r.Conn.Table("posts").Where("id = ?", postID).Updates(&post).Error
+	if err != nil {
+		return nil, err
+	}
+	return r.Get(postID)
+}
+
+
 func (r *PostsRepository) CreateComment(userID int, postID int, body string) (*entities.Post, error) {
 	type PostComment struct {
 		ID     int
