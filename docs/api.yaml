@@ -1,74 +1,8 @@
 openapi: 3.0.3
 info:
-  title: "Web開発研修 API"
-  version: "1.0.0"
-  description: |
-    FY24卒Web開発研修6班のAPI仕様書です。
-
-servers:
-  - url: http://localhost:9000
-    description: ローカル開発環境 (API)
-  - url: https://prod.example.com
-    description: 本番環境 (API)
-
-components:
-  schemas:
-    Post:
-      description: 投稿のモデル
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        title:
-          type: string
-          example: Funobu1周年記念YouTubeライブ開催決定！
-        body:
-          type: string
-          example: 2024年3月5日19:00からYouTubeの公式チャンネルにて、Funobuの音楽ライブ配信が行われます！
-        user_id:
-          type: integer
-          example: 35
-        user_name:
-          type: string
-          example: Funobu
-        created_at:
-          type: string
-          format: date-time
-          example: "2024-03-05T00:00:00+09:00"
-        updated_at:
-          type: string
-          format: date-time
-          example: "2024-03-05T00:00:00+09:00"
-      # Both properties are required
-      required:
-        - id
-        - title
-        - user_id
-        - user_name
-        - created_at
-    LoginRequest:
-      description: ログインのリクエストモデル
-      type: object
-      properties:
-        user_name:
-          type: string
-          example: Funobu
-        password:
-          type: string
-          example: hogehoge
-      required:
-        - user_name
-        - password
-    User:
-      properties:
-        user_id:
-          type: integer
-          example: 1
-        user_name:
-          type: string
-          example: "Funobu"
-
+  description: FY24卒Web開発研修6班のAPI仕様書です
+  title: Web開発研修6班 API
+  version: 1.0.0
 paths:
   /:
     get:
@@ -83,14 +17,32 @@ paths:
     get:
       operationId: listPosts
       responses:
-        "202":
+        "200":
           content:
             application/json:
               schema:
                 items:
                   $ref: '#/components/schemas/SchemaPostResponse'
                 type: array
-          description: Accepted
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: 投稿の一覧を取得
       tags:
       - post
@@ -103,29 +55,184 @@ paths:
             schema:
               $ref: '#/components/schemas/SchemaLoginRequest'
       responses:
-        "202":
+        "200":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Post"
-        "404":
-          description: Not Found
-        "500":
-          description: Internal Server Error
-
+                $ref: '#/components/schemas/SchemaUserResponse'
+          description: OK
+      summary: ユーザのログインを実行
+      tags:
+      - auth
   /signout:
     post:
-      summary: ログアウト
+      operationId: signOut
       responses:
-        "200":
-          description: ログアウト成功
+        "204":
+          description: No Content
+      summary: ユーザのログアウトを実行
+      tags:
+      - auth
   /user:
     get:
-      summary: 現在ログインしているユーザを取得
+      operationId: getCurrentUser
       responses:
         "200":
-          description: ユーザ取得成功
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/SchemaUserResponse'
+          description: OK
+      summary: 現在ログインしているユーザを取得
+      tags:
+      - auth
+  posts/{id}:
+    get:
+      operationId: getPost
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaPostResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 投稿をIDから取得
+      tags:
+      - post
+  posts/{postId}/comments:
+    get:
+      operationId: listPostComments
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SchemaCommentResponse'
+                type: array
+          description: OK
+      summary: 対象の投稿のコメント一覧を取得
+      tags:
+      - post
+    post:
+      operationId: createPostComments
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaCreateCommentRequest'
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaCommentResponse'
+          description: Created
+      summary: 対象の投稿のコメントを追加
+      tags:
+      - post
+components:
+  schemas:
+    SchemaCommentResponse:
+      properties:
+        body:
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        id:
+          type: integer
+        post_id:
+          type: integer
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          type: integer
+        user_name:
+          type: string
+      type: object
+    SchemaCreateCommentRequest:
+      properties:
+        body:
+          type: string
+      type: object
+    SchemaErrorResponse:
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+      type: object
+    SchemaLoginRequest:
+      properties:
+        password:
+          type: string
+        user_name:
+          type: string
+      type: object
+    SchemaPostResponse:
+      properties:
+        body:
+          type: string
+        post_id:
+          type: integer
+        title:
+          type: string
+        user_id:
+          type: integer
+        user_name:
+          type: string
+      type: object
+    SchemaUserResponse:
+      properties:
+        user_id:
+          type: integer
+        user_name:
+          type: string
+      type: object
