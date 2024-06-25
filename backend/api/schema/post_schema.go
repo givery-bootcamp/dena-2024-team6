@@ -1,5 +1,7 @@
 package schema
 
+import "time"
+
 type PostRequest struct {
 	ID string `path:"id" example:"1"`
 }
@@ -10,4 +12,17 @@ type PostResponse struct {
 	Title string `json:"title"`
 	Body  string `json:"body"`
 	UserResponse
+}
+
+type CommentListRequest struct {
+	PostID string `path:"postId" example:"1"`
+}
+
+type CommentResponse struct {
+	ID     int    `json:"id"`
+	PostID int    `json:"post_id"`
+	Body   string `json:"body"`
+	UserResponse
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

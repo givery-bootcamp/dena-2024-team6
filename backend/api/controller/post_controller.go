@@ -89,3 +89,21 @@ func (pc PostController) GetPost(c *gin.Context) {
 		},
 	})
 }
+
+func (pc PostController) ListComments(c *gin.Context) {
+
+	// TODO: 値を返す
+	resp := make([]schema.CommentResponse, 1)
+	resp[0] = schema.CommentResponse{
+		ID:     1,
+		PostID: 1,
+		Body:   "hoge",
+		UserResponse: schema.UserResponse{
+			ID:       1,
+			UserName: "funobu",
+		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	c.JSON(200, resp)
+}
