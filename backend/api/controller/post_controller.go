@@ -14,16 +14,19 @@ import (
 )
 
 type PostController struct {
-	listPostUsecase application.ListPostUsecase
-	getPostUsecase  application.GetPostDetailUsecase
+	listPostUsecase     application.ListPostUsecase
+	getPostUsecase      application.GetPostDetailUsecase
+	listCommentsUsecase application.ListCommentsUsecase
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
 	listPostUsecase := do.MustInvoke[application.ListPostUsecase](i)
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
+	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
 	return &PostController{
-		listPostUsecase: listPostUsecase,
-		getPostUsecase:  getPostUsecase,
+		listPostUsecase:     listPostUsecase,
+		getPostUsecase:      getPostUsecase,
+		listCommentsUsecase: listCommentsUsecase,
 	}, nil
 }
 
@@ -91,19 +94,39 @@ func (pc PostController) GetPost(c *gin.Context) {
 }
 
 func (pc PostController) ListComments(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
 
-	// TODO: 値を返す
-	resp := make([]schema.CommentResponse, 1)
-	resp[0] = schema.CommentResponse{
-		ID:     1,
-		PostID: 1,
-		Body:   "hoge",
-		UserResponse: schema.UserResponse{
-			ID:       1,
-			UserName: "funobu",
-		},
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
+	result, err := pc.listCommentsUsecase.Execute(ctx, application.ListCommentsUsecaseInput{
+		PostID: postID,
+	})
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+	}
+
+	resp := make([]schema.CommentResponse, len(result.Comments))
+	for i, com := range result.Comments {
+		resp[i] = schema.CommentResponse{
+			ID:     com.ID,
+			PostID: com.PostID,
+			Body:   com.Body,
+			UserResponse: schema.UserResponse{
+				ID:       com.UserID,
+				UserName: com.UserName,
+			},
+			CreatedAt: com.CreatedAt,
+			UpdatedAt: com.UpdatedAt,
+		}
 	}
 	c.JSON(200, resp)
 }
