@@ -26,7 +26,7 @@ func CreateCommentController(ctx *gin.Context) {
 	}
 
 	if params.PostID == "" || params.Body == "" {
-		handleError(ctx, 400, errors.New("title and body are required"))
+		handleError(ctx, 400, errors.New("PostID and body are required"))
 		return
 	}
 
