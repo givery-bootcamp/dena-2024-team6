@@ -14,6 +14,7 @@ import (
 	"myapp/infrastructure/idtoken"
 	"myapp/infrastructure/store"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -38,18 +39,18 @@ func main() {
 	}
 
 	// スキーマ情報からOpenAPIファイルの自動生成
-	// appDoc := do.MustInvoke[*openapi3.Reflector](injector)
-	// generatedDoc, err := appDoc.Spec.MarshalYAML()
-	// if err != nil {
-	// 	log.Printf("failed to generate openapi doc; %+v\n", err)
-	// } else {
-	// 	f, err := os.Create("../docs/api.yaml")
-	// 	if err != nil {
-	// 		log.Fatalf("failed to load file; %+v\n", err)
-	// 	}
-	// 	defer f.Close()
-	// 	f.Write(generatedDoc)
-	// }
+	appDoc := do.MustInvoke[*openapi3.Reflector](injector)
+	generatedDoc, err := appDoc.Spec.MarshalYAML()
+	if err != nil {
+		log.Printf("failed to generate openapi doc; %+v\n", err)
+	} else {
+		f, err := os.Create("../docs/api.yaml")
+		if err != nil {
+			log.Fatalf("failed to load file; %+v\n", err)
+		}
+		defer f.Close()
+		f.Write(generatedDoc)
+	}
 
 	// 裏側でサーバを起動
 	go func() {
