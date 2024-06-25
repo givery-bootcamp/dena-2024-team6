@@ -49,6 +49,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	listPostsOpe.SetSummary("投稿の一覧を取得")
 	listPostsOpe.SetTags("post")
 	listPostsOpe.AddRespStructure(new([]schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
+	listPostsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	listPostsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	listPostsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(listPostsOpe); err != nil {
 		return err
 	}
@@ -61,6 +64,10 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getPostOpe.SetSummary("投稿をIDから取得")
 	getPostOpe.SetTags("post")
 	getPostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
+	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusNotFound))
+	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(getPostOpe); err != nil {
 		return err
 	}
@@ -73,6 +80,10 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	listCommnetsOpe.SetSummary("対象の投稿のコメント一覧を取得")
 	listCommnetsOpe.SetTags("post")
 	listCommnetsOpe.AddRespStructure(new([]schema.CommentResponse), openapi.WithHTTPStatus(http.StatusOK))
+	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(listCommnetsOpe); err != nil {
 		return err
 	}
@@ -85,6 +96,10 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	createCommnetsOpe.SetSummary("対象の投稿のコメントを追加")
 	createCommnetsOpe.SetTags("post")
 	createCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(createCommnetsOpe); err != nil {
 		return err
 	}
@@ -97,6 +112,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signInOpe.SetTags("auth")
 	signInOpe.AddReqStructure(new(schema.LoginRequest))
 	signInOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
+	signInOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	signInOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	signInOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(signInOpe); err != nil {
 		return err
 	}
@@ -110,6 +128,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signOutOpe.SetID("signOut")
 	signOutOpe.SetTags("auth")
 	signOutOpe.SetSummary("ユーザのログアウトを実行")
+	signOutOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	signOutOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	signOutOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(signOutOpe); err != nil {
 		return err
 	}
@@ -121,6 +142,8 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getCurrentUserOpe.SetSummary("現在ログインしているユーザを取得")
 	getCurrentUserOpe.SetTags("auth")
 	getCurrentUserOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
+	getCurrentUserOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	getCurrentUserOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(getCurrentUserOpe); err != nil {
 		return err
 	}

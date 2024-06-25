@@ -61,6 +61,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaUserResponse'
           description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: ユーザのログインを実行
       tags:
       - auth
@@ -68,8 +86,24 @@ paths:
     post:
       operationId: signOut
       responses:
-        "204":
-          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: ユーザのログアウトを実行
       tags:
       - auth
@@ -83,6 +117,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaUserResponse'
           description: OK
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: 現在ログインしているユーザを取得
       tags:
       - auth
@@ -149,6 +195,30 @@ paths:
                   $ref: '#/components/schemas/SchemaCommentResponse'
                 type: array
           description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: 対象の投稿のコメント一覧を取得
       tags:
       - post
@@ -173,6 +243,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaCommentResponse'
           description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
       summary: 対象の投稿のコメントを追加
       tags:
       - post
