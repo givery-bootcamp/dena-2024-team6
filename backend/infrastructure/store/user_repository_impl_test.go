@@ -40,7 +40,7 @@ func TestGetByUserNameAndPassword(t *testing.T) {
 	// Not found
 	t.Run("username = fr and password = fr should be nil", func(t *testing.T) {
 		result, err := userRepo.GetByUserNameAndPassword(ctx, "fr", "fr")
-		if err == nil {
+		if err != nil {
 			t.Errorf("Repository returns error: %v", nil)
 		}
 		if !result.IsEmpty() {
