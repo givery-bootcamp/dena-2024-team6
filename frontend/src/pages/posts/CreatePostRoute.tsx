@@ -8,6 +8,8 @@ import { usePostPosts } from '../../api/api'
 export const CreatePostRoute = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [titleError, setTitleError] = useState('')
+  const [contentError, setContentError] = useState('')
 
   const { snack } = useSnacks()
 
@@ -16,31 +18,35 @@ export const CreatePostRoute = () => {
 
   const validdateTitle = (value: string) => {
     if (value === '') {
-      snack({
-        status: 'error',
-        description: 'タイトルを入力してください。'
-      })
+      setTitleError('タイトルを入力してください。')
       return false
     }
     if (value.length > 100) {
-      snack({
-        status: 'error',
-        description: 'タイトルは100文字以内で入力してください。'
-      })
+      setTitleError('タイトルは100文字以内で入力してください。')
       return false
     }
+    setTitleError('')
     return true
   }
 
   const validateContent = (value: string) => {
     if (value === '') {
-      snack({
-        status: 'error',
-        description: '内容を入力してください。'
-      })
+      setContentError('内容を入力してください。')
       return false
     }
+    setContentError('')
     return true
+  }
+
+  const handleTitleChange = (event: { target: { value: string } }) => {
+    const value = event.target.value
+    setTitle(value)
+    validdateTitle(value)
+  }
+
+  const handleContentChange = (value: string) => {
+    setContent(value)
+    validateContent(value)
   }
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
@@ -75,16 +81,11 @@ export const CreatePostRoute = () => {
       <Heading size="lg">新しい投稿を作成する</Heading>
       <Divider variant="solid" />
       <form onSubmit={handleSubmit}>
-        <FormControl label="タイトル" isRequired mb={4}>
-          <Input
-            type="text"
-            placeholder="タイトルを入力してください。"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+        <FormControl label="タイトル" isRequired isInvalid={titleError !== ''} errorMessage={titleError} mb={4}>
+          <Input type="text" placeholder="タイトルを入力してください。" value={title} onChange={handleTitleChange} />
         </FormControl>
-        <FormControl label="内容" isRequired mb={4}>
-          <MarkdownEditor value={content} height="200px" onChange={(value) => setContent(value)} />
+        <FormControl label="内容" isRequired isInvalid={contentError !== ''} errorMessage={contentError} mb={4}>
+          <MarkdownEditor value={content} height="200px" onChange={handleContentChange} />
         </FormControl>
         <HStack>
           <Link to="/">
