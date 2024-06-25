@@ -1,14 +1,15 @@
-import { Box, Button } from '@yamada-ui/react'
+import { Box, Button, Text } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
-import { usePostSignout, useGetUser } from '../api/api'
+import { usePostSignout } from '../api/api'
+import { useUser } from '../shared/hooks/UserProvider'
 
 export const Header = () => {
-  const { data: user, isLoading, isError } = useGetUser()
   const navigate = useNavigate()
-
-  const signoutMutation = usePostSignout({
+  const { user, setUser } = useUser()
+  const { mutate: signoutMutate } = usePostSignout({
     mutation: {
       onSuccess: () => {
+        setUser(undefined)
         navigate('/signin')
       }
     }
@@ -16,7 +17,7 @@ export const Header = () => {
 
   const handleButtonClick = () => {
     if (user) {
-      signoutMutation.mutate()
+      signoutMutate()
     } else {
       navigate('/signin')
     }
@@ -26,14 +27,10 @@ export const Header = () => {
     <header className="app-header">
       サンプルアプリケーション
       <Box display="flex" alignItems="center">
-        {/* {isLoading && <div>Loading...</div>} */}
-        {/* {isError && <div>ユーザー情報の取得に失敗しました。</div>} */}
-        {user && <Box mr={2}>{user.user_name}</Box>}
-        {/* {!isLoading && !isError && ( */}
+        {user && <Text mr={2}>{user.user_name}</Text>}
         <Button variant="solid" onClick={handleButtonClick}>
           {user ? 'サインアウト' : 'サインイン'}
         </Button>
-        {/* } */}
       </Box>
     </header>
   )
