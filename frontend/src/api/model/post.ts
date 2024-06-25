@@ -23,3 +23,8 @@ export interface CreatePost {
   body?: string
   title: string
 }
+export interface UpdatePost {
+  id: number
+  body?: string
+  title: string
+}

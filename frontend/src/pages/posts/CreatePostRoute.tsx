@@ -67,7 +67,6 @@ export const CreatePostRoute = () => {
           }
         }
       )
-      console.log('submit', { title, content })
     }
   }
 

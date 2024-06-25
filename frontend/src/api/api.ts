@@ -16,7 +16,7 @@ import type {
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query'
-import type { LoginRequest, Post, CreatePost, User } from './model'
+import type { LoginRequest, Post, CreatePost, User, UpdatePost } from './model'
 import { customInstance } from '../shared/libs/axios'
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1]
@@ -287,6 +287,47 @@ export const usePostPosts = <TError = unknown, TContext = unknown>(options?: {
   request?: SecondParameter<typeof customInstance>
 }): UseMutationResult<Awaited<ReturnType<typeof postPosts>>, TError, { data: CreatePost }, TContext> => {
   const mutationOptions = getPostPostsMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+
+/**
+ * @summary 投稿を更新
+ */
+export const updatePost = (postId: number, post: UpdatePost, options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<Post>(
+    { url: `/posts/${postId}`, method: 'PUT', headers: { 'Content-Type': 'application/json' }, data: post },
+    options
+  )
+}
+
+export const getUpdatePostMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof updatePost>>, TError, { data: UpdatePost }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof updatePost>>, TError, { data: UpdatePost }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePost>>, { data: UpdatePost }> = (props) => {
+    const { data } = props ?? {}
+
+    return updatePost(data.id,data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type UpdatePostMutationResult = NonNullable<Awaited<ReturnType<typeof updatePost>>>
+export type UpdatePostMutationBody = UpdatePost
+export type UpdatePostMutationError = unknown
+
+/**
+ * @summary 投稿を更新
+ */
+export const useUpdatePost = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof updatePost>>, TError, { data: UpdatePost }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof updatePost>>, TError, { data: UpdatePost }, TContext> => {
+  const mutationOptions = getUpdatePostMutationOptions(options)
 
   return useMutation(mutationOptions)
 }

@@ -1,4 +1,4 @@
-import { Container, Text, HStack, Heading, Divider, Center, Loading } from '@yamada-ui/react'
+import { Container, Text, HStack, Heading, Divider, Center, Loading,Button } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { useParams, Link } from 'react-router-dom'
@@ -31,7 +31,22 @@ export const PostDetailRoute = () => {
       )}
       <Divider variant="solid" />
       <Text>{data?.body}</Text>
-      <Link to="/">戻る</Link>
+      
+      <HStack>
+        <Link to={`/posts/${id}/edit`}>
+        <Button onClick={() => console.log("edit")} colorScheme="primary">
+          編集
+        </Button>
+        </Link>
+        <Button onClick={() => console.log("delete")} colorScheme="primary">
+          削除
+        </Button>
+        <Link to="/">
+          <Button  colorScheme="primary" variant={'outline'}>
+            戻る
+          </Button>
+        </Link>
+      </HStack>
     </Container>
   )
 }
