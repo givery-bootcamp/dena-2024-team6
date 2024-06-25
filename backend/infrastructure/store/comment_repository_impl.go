@@ -25,12 +25,33 @@ func NewCommentRepositoryImpl(i *do.Injector) (repository.CommentRepository, err
 }
 
 // CreateComment implements repository.CommentRepository.
-func (c CommentRepositoryImpl) CreateComment(ctx context.Context, int int, userID int, body string) (model.Comment, error) {
-	panic("unimplemented")
+func (c CommentRepositoryImpl) Create(ctx context.Context, postID int, userID int, body string) error {
+	_, err := c.db.ExecContext(ctx,
+		`
+                INSERT INTO
+                        comments
+                (
+                        comments.post_id,
+                        comments.user_id,
+                        comments.body,
+                )
+                VALUES
+                (
+                        ?,
+                        ?,
+                        ?
+                )
+        `, postID, userID, body)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
 }
 
 // DeleteComment implements repository.CommentRepository.
-func (c CommentRepositoryImpl) DeleteComment(ctx context.Context, int int, commentID int) error {
+func (c CommentRepositoryImpl) Delete(ctx context.Context, int int, commentID int) error {
 	panic("unimplemented")
 }
 
@@ -78,6 +99,6 @@ func (c CommentRepositoryImpl) List(ctx context.Context, postID int) ([]model.Co
 }
 
 // UpdateComment implements repository.CommentRepository.
-func (c CommentRepositoryImpl) UpdateComment(ctx context.Context, int int, userID int, commentID int, body string) (model.Comment, error) {
+func (c CommentRepositoryImpl) Update(ctx context.Context, int int, userID int, commentID int, body string) error {
 	panic("unimplemented")
 }

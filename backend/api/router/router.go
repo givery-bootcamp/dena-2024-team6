@@ -77,6 +77,18 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	// createPostComments /posts/{postId}/comments POST
+	app.POST("/posts/:postid/comments", postController.CreateComment)
+	createCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/comments")
+	createCommnetsOpe.SetID("createPostComments")
+	createCommnetsOpe.AddReqStructure(new(schema.CreateCommentRequest))
+	createCommnetsOpe.SetSummary("対象の投稿のコメントを追加")
+	createCommnetsOpe.SetTags("post")
+	createCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	if err := appDoc.AddOperation(createCommnetsOpe); err != nil {
+		return err
+	}
+
 	// signInOpe /signin POST
 	app.POST("/signin", authController.SignIn)
 	signInOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signin")

@@ -18,6 +18,11 @@ type CommentListRequest struct {
 	PostID string `path:"postId" example:"1"`
 }
 
+type CreateCommentRequest struct {
+	PostID string `path:"postId" example:"1"`
+	Body   string `json:"body"`
+}
+
 type CommentResponse struct {
 	ID     int    `json:"id"`
 	PostID int    `json:"post_id"`

@@ -14,9 +14,10 @@ import (
 )
 
 type PostController struct {
-	listPostUsecase     application.ListPostUsecase
-	getPostUsecase      application.GetPostDetailUsecase
-	listCommentsUsecase application.ListCommentsUsecase
+	listPostUsecase      application.ListPostUsecase
+	getPostUsecase       application.GetPostDetailUsecase
+	listCommentsUsecase  application.ListCommentsUsecase
+	createCommentUsecase application.CreateCommentUsecase
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
@@ -129,4 +130,43 @@ func (pc PostController) ListComments(c *gin.Context) {
 		}
 	}
 	c.JSON(200, resp)
+}
+
+func (p PostController) CreateComment(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
+	body := c.Param("body")
+
+	result, err := p.createCommentUsecase.Execute(ctx, application.CreateCommentUsecaseInput{
+		PostID: postID,
+		Body:   body,
+	})
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+	}
+
+	resp := schema.CommentResponse{
+		ID:     result.Comment.ID,
+		PostID: result.Comment.PostID,
+		Body:   result.Comment.Body,
+		UserResponse: schema.UserResponse{
+			ID:       result.Comment.UserID,
+			UserName: result.Comment.UserName,
+		},
+		CreatedAt: result.Comment.CreatedAt,
+		UpdatedAt: result.Comment.UpdatedAt,
+	}
+
+	c.JSON(201, resp)
 }
