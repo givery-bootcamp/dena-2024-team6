@@ -5,7 +5,7 @@ import { usePostSignout, useGetUser } from '../api/api'
 
 export const Header = () => {
   const navigate = useNavigate()
-  const { data: user, isError, refetch } = useGetUser()
+  const { data: user, isError } = useGetUser()
   const [currentUser, setCurrentUser] = useState(user)
 
   const { mutate: signoutMutate } = usePostSignout({
@@ -18,29 +18,25 @@ export const Header = () => {
   })
 
   useEffect(() => {
-    if (!isError) {
-      setCurrentUser(user)
-    } else {
+    if (isError) {
       setCurrentUser(undefined)
+    } else {
+      setCurrentUser(user)
     }
   }, [user, isError])
-
-  const handleButtonClick = () => {
-    if (currentUser) {
-      signoutMutate()
-    } else {
-      navigate('/signin')
-    }
-  }
 
   return (
     <header className="app-header">
       サンプルアプリケーション
       <Box display="flex" alignItems="center">
-        {currentUser && <Text mr={2}>{currentUser.user_name}</Text>}
-        <Button variant="solid" onClick={handleButtonClick}>
-          {currentUser ? 'サインアウト' : 'サインイン'}
-        </Button>
+        {isError || !currentUser ? (
+          <Button onClick={() => signoutMutate()}>サインイン</Button>
+        ) : (
+          <>
+            <Text mr={2}>{currentUser.user_name}</Text>
+            <Button onClick={() => signoutMutate()}>サインアウト</Button>
+          </>
+        )}
       </Box>
     </header>
   )
