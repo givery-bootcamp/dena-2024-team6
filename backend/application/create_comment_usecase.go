@@ -3,7 +3,6 @@ package application
 import (
 	"context"
 	"myapp/domain/apperror"
-	"myapp/domain/model"
 	"myapp/domain/repository"
 
 	"github.com/samber/do"
@@ -20,7 +19,7 @@ type CreateCommentUsecaseInput struct {
 }
 
 type CreateCommentUsecaseOutput struct {
-	Comment model.Comment
+	CommentID int
 }
 
 func NewCreateCommentUsecase(i *do.Injector) (CreateCommentUsecase, error) {
@@ -47,12 +46,12 @@ func (c *createCommentUsecaseInteractor) Execute(ctx context.Context, input Crea
 		return CreateCommentUsecaseOutput{}, apperror.New(apperror.CodeForbidden, "cannot access to comments of this post id")
 	}
 
-	comment, err := c.commentRepository.Create(ctx, post.ID, input.UserID, input.Body)
+	id, err := c.commentRepository.Create(ctx, post.ID, input.UserID, input.Body)
 	if err != nil {
 		return CreateCommentUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, "failed to create comment")
 	}
 
 	return CreateCommentUsecaseOutput{
-		Comment: comment,
+		CommentID: id,
 	}, nil
 }
