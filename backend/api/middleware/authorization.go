@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"log"
 	"myapp/application"
 	"myapp/domain/model"
 	"myapp/domain/service"
@@ -45,7 +46,7 @@ func (am *AuthorizationMiddleware) Exec() gin.HandlerFunc {
 			_ = c.AbortWithError(401, errors.New("unauthorized3"))
 			return
 		}
-
+		log.Default().Printf("aaaaa%v", result.User)
 		SetUserAuthContext(c, result.User)
 		c.Next()
 	}
@@ -58,10 +59,12 @@ func SetUserAuthContext(c *gin.Context, user model.User) {
 func GetUserAuthContext(c *gin.Context) (model.User, bool) {
 	userAny, ok := c.Get("user")
 	if !ok {
+		log.Default().Println("GetUserAuthContext1")
 		return model.User{}, false
 	}
 	user, ok := userAny.(model.User)
 	if !ok {
+		log.Default().Println("GetUserAuthContext2")
 		return model.User{}, false
 	}
 	return user, true

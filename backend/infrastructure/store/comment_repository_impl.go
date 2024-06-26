@@ -103,5 +103,15 @@ func (c CommentRepositoryImpl) List(ctx context.Context, postID int) ([]model.Co
 
 // UpdateComment implements repository.CommentRepository.
 func (c CommentRepositoryImpl) Update(ctx context.Context, int int, userID int, commentID int, body string) error {
-	panic("unimplemented")
+	_, err := c.db.ExecContext(ctx,
+		`
+									UPDATE comments SET body = ? WHERE id = ? 
+									
+					`, body, commentID)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
 }

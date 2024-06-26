@@ -11,7 +11,6 @@ require (
 	github.com/samber/do v1.6.0
 	github.com/swaggest/openapi-go v0.2.51
 	go.uber.org/mock v0.4.0
-	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.10
 )
 

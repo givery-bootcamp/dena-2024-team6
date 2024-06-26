@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"myapp/api/middleware"
 	"myapp/api/schema"
 	"myapp/application"
 	"myapp/config"
@@ -19,6 +20,7 @@ type PostController struct {
 	getPostUsecase       application.GetPostDetailUsecase
 	listCommentsUsecase  application.ListCommentsUsecase
 	createCommentUsecase application.CreateCommentUsecase
+	updateCommentUsecase application.UpdateCommentUsecase
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
@@ -26,11 +28,13 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
 	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
+	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
 	return &PostController{
 		listPostUsecase:      listPostUsecase,
 		getPostUsecase:       getPostUsecase,
 		listCommentsUsecase:  listCommentsUsecase,
 		createCommentUsecase: createCommentUsecase,
+		updateCommentUsecase: updateCommentUsecase,
 	}, nil
 }
 
@@ -157,9 +161,13 @@ func (p PostController) CreateComment(c *gin.Context) {
 		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "コメントの長さは1~100文字である必要があります")))
 		return
 	}
-
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
+		return
+	}
 	result, err := p.createCommentUsecase.Execute(ctx, application.CreateCommentUsecaseInput{
-		UserID: 1,
+		UserID: user.ID,
 		PostID: postID,
 		Body:   req.Body,
 	})
@@ -176,5 +184,61 @@ func (p PostController) CreateComment(c *gin.Context) {
 		// TODO: IDをとってくる
 		TargetID: result.CommentID,
 		Message:  "新しいコメントを投稿しました",
+	})
+}
+
+func (p PostController) UpdateComment(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	postID, err := strconv.Atoi(c.Param("postId"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+	commentID, err := strconv.Atoi(c.Param("commentId"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
+	var req schema.UpdateCommentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "リクエストの形式が誤っています")))
+		return
+	}
+	// TODO: そのうちバリデーションライブラリ導入したい
+	// RUNEを使っているのは、日本語の文字数をちゃんと正しく取るため
+	if utf8.RuneCountInString(req.Body) > 100 || len(req.Body) == 0 {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "コメントの長さは1~100文字である必要があります")))
+		return
+	}
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
+		return
+	}
+
+	err = p.updateCommentUsecase.Execute(ctx, application.UpdateCommentUsecaseInput{
+		UserID:    user.ID,
+		PostID:    postID,
+		CommentID: commentID,
+		Body:      req.Body,
+	})
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(201, schema.MutationSchema{
+		// TODO: IDをとってくる
+		TargetID: commentID,
+		Message:  "コメントを更新しました",
 	})
 }

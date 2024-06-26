@@ -89,6 +89,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[application.GetUserUsecase](i, application.NewGetUserUsecase)
 	do.Provide[application.ListCommentsUsecase](i, application.NewListCommentsUsecase)
 	do.Provide[application.CreateCommentUsecase](i, application.NewCreateCommentUsecase)
+	do.Provide[application.UpdateCommentUsecase](i, application.NewUpdateCommentUsecase)
 
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)

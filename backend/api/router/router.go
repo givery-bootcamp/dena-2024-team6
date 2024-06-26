@@ -126,6 +126,22 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	authRequired := app.Group("/")
 	authRequired.Use(authorizationMiddleware.Exec())
 
+	// createPostComments /posts/{postId}/comments POST
+	authRequired.PUT("/posts/:postId/comments/:commentId", postController.UpdateComment)
+	putCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/comments/{commentId}")
+	putCommnetsOpe.SetID("putPostComments")
+	putCommnetsOpe.AddReqStructure(new(schema.UpdateCommentRequest))
+	putCommnetsOpe.SetSummary("対象の投稿のコメントを変更")
+	putCommnetsOpe.SetTags("post")
+	putCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(putCommnetsOpe); err != nil {
+		return err
+	}
+
 	// signOutOpe /signout POST
 	authRequired.POST("/signout", authController.SignOut)
 	signOutOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signout")
