@@ -13,7 +13,7 @@ import {
   useSnacks
 } from '@yamada-ui/react'
 import MarkdownEditor from '@uiw/react-markdown-editor'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const UpdatePostRoute = () => {
   const { id } = useParams<{ id: string }>()
@@ -22,13 +22,18 @@ export const UpdatePostRoute = () => {
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [titleError, setTitleError] = useState('')
-  const [contentError, setContentError] = useState('')
+  const [titleError, setTitleError] = useState<string | null>(null)
+  const [contentError, setContentError] = useState<string | null>(null)
 
   const { snack } = useSnacks()
 
   const navigate = useNavigate()
   const { mutate } = useUpdatePost()
+
+  useEffect(() => {
+    setTitle(data?.title ?? '')
+    setContent(data?.body ?? '')
+  }, [data])
 
   const validdateTitle = (value: string) => {
     if (value === '') {
@@ -39,7 +44,7 @@ export const UpdatePostRoute = () => {
       setTitleError('タイトルは100文字以内で入力してください。')
       return false
     }
-    setTitleError('')
+    setTitleError(null)
     return true
   }
 
@@ -48,7 +53,7 @@ export const UpdatePostRoute = () => {
       setContentError('内容を入力してください。')
       return false
     }
-    setContentError('')
+    setContentError(null)
     return true
   }
 
@@ -105,7 +110,7 @@ export const UpdatePostRoute = () => {
       )}
       <Divider variant="solid" />
       <form onSubmit={handleSubmit}>
-        <FormControl label="タイトル" isRequired isInvalid={titleError !== ''} errorMessage={titleError} mb={4}>
+        <FormControl label="タイトル" isRequired isInvalid={!!titleError} errorMessage={titleError} mb={4}>
           <Input
             type="text"
             placeholder="タイトルを入力してください。"
@@ -113,7 +118,7 @@ export const UpdatePostRoute = () => {
             onChange={handleTitleChange}
           />
         </FormControl>
-        <FormControl label="内容" isRequired isInvalid={contentError !== ''} errorMessage={contentError} mb={4}>
+        <FormControl label="内容" isRequired isInvalid={!!contentError} errorMessage={contentError} mb={4}>
           <MarkdownEditor value={data?.body} height="200px" onChange={handleContentChange} />
         </FormControl>
         <HStack>

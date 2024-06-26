@@ -8,8 +8,8 @@ import { usePostPosts } from '../../api/api'
 export const CreatePostRoute = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [titleError, setTitleError] = useState('')
-  const [contentError, setContentError] = useState('')
+  const [titleError, setTitleError] = useState<string | null>(null)
+  const [contentError, setContentError] = useState<string | null>(null)
 
   const { snack } = useSnacks()
 
@@ -25,7 +25,7 @@ export const CreatePostRoute = () => {
       setTitleError('タイトルは100文字以内で入力してください。')
       return false
     }
-    setTitleError('')
+    setTitleError(null)
     return true
   }
 
@@ -34,7 +34,7 @@ export const CreatePostRoute = () => {
       setContentError('内容を入力してください。')
       return false
     }
-    setContentError('')
+    setContentError(null)
     return true
   }
 
@@ -81,10 +81,10 @@ export const CreatePostRoute = () => {
       <Heading size="lg">新しい投稿を作成する</Heading>
       <Divider variant="solid" />
       <form onSubmit={handleSubmit}>
-        <FormControl label="タイトル" isRequired isInvalid={titleError !== ''} errorMessage={titleError} mb={4}>
+        <FormControl label="タイトル" isRequired isInvalid={!!titleError} errorMessage={titleError} mb={4}>
           <Input type="text" placeholder="タイトルを入力してください。" value={title} onChange={handleTitleChange} />
         </FormControl>
-        <FormControl label="内容" isRequired isInvalid={contentError !== ''} errorMessage={contentError} mb={4}>
+        <FormControl label="内容" isRequired isInvalid={!!contentError} errorMessage={contentError} mb={4}>
           <MarkdownEditor value={content} height="200px" onChange={handleContentChange} />
         </FormControl>
         <HStack>
