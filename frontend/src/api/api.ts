@@ -294,11 +294,7 @@ export const usePostPosts = <TError = unknown, TContext = unknown>(options?: {
 /**
  * @summary 投稿を更新
  */
-export const updatePost = (
-  postId: number,
-  post: UpdatePost,
-  options?: SecondParameter<typeof customInstance>
-) => {
+export const updatePost = (postId: number, post: UpdatePost, options?: SecondParameter<typeof customInstance>) => {
   return customInstance<Post>(
     { url: `/posts/${postId}`, method: 'PUT', headers: { 'Content-Type': 'application/json' }, data: post },
     options
