@@ -2,16 +2,18 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
 import { usePostSignin } from '../../api/api'
-import { useUser } from '../../shared/hooks/UserProvider'
+import { useGetUser } from '../../api/api'
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+
   const { snack, snacks } = useSnacks()
-  const { setUser } = useUser() // useUserフックからsetUserを取得
+  const { refetch } = useGetUser()
   const navigate = useNavigate()
   const { mutate, isPending } = usePostSignin()
+
   const validateUsername = (value: string) => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
@@ -50,15 +52,15 @@ export const SigninRoute = () => {
     setPassword(value)
     validatePassword(value)
   }
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const isUsernameValid = validateUsername(username)
     const isPasswordValid = validatePassword(password)
     if (isUsernameValid && isPasswordValid) {
       mutate(
         { data: { user_name: username, password: password } },
         {
-          onSuccess: (data) => {
-            setUser(data) // サインイン成功後、ユーザー情報を設定
+          onSuccess: () => {
+            refetch()
             navigate('/')
           },
           onError: () => {
