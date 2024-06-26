@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { useParams, Link } from 'react-router-dom'
 import { useGetPostsPostId } from '../../../api/api'
+import { Markdown } from '@yamada-ui/markdown';
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
@@ -30,7 +31,9 @@ export const PostDetailRoute = () => {
         </HStack>
       )}
       <Divider variant="solid" />
-      <Text>{data?.body}</Text>
+      <Text>
+      <Markdown>{data?.body}</Markdown>
+    </Text>
       <Link to="/">戻る</Link>
     </Container>
   )
