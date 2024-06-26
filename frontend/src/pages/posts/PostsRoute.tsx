@@ -17,10 +17,14 @@ import {
 import dayjs from 'dayjs'
 import { useGetPosts } from '../../api/api'
 import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export const PostsRoute = () => {
   // API取得
-  const { data, isLoading, isError } = useGetPosts()
+  const { data, isLoading, isError, refetch } = useGetPosts()
+  useEffect(() => {
+    refetch()
+  }, [])
 
   return (
     <Container>
