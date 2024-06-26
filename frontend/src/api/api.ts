@@ -295,7 +295,7 @@ export const usePostPosts = <TError = unknown, TContext = unknown>(options?: {
  * @summary 投稿を更新
  */
 export const updatePost = (
-  postId: string | undefined,
+  postId: number,
   post: UpdatePost,
   options?: SecondParameter<typeof customInstance>
 ) => {

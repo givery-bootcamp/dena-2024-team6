@@ -24,7 +24,7 @@ export interface CreatePost {
   title: string
 }
 export interface UpdatePost {
-  id?: string
+  id: number
   body?: string
   title: string
 }

@@ -70,7 +70,7 @@ export const UpdatePostRoute = () => {
 
     if (isTitleValid && isContentValid) {
       mutate(
-        { data: { id: id, title: title, body: content } },
+        { data: { id: Number(id!), title: title, body: content } },
         {
           onSuccess: () => {
             snack({
