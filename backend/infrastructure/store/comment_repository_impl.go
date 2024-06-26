@@ -25,29 +25,32 @@ func NewCommentRepositoryImpl(i *do.Injector) (repository.CommentRepository, err
 }
 
 // CreateComment implements repository.CommentRepository.
-func (c CommentRepositoryImpl) Create(ctx context.Context, postID int, userID int, body string) error {
-	_, err := c.db.ExecContext(ctx,
+func (c CommentRepositoryImpl) Create(ctx context.Context, postID int, userID int, body string) (int, error) {
+	result, err := c.db.ExecContext(ctx,
 		`
-                INSERT INTO
-                        comments
+                INSERT INTO comments
                 (
-                        comments.post_id,
-                        comments.user_id,
-                        comments.body,
+					comments.post_id,
+					comments.user_id,
+					comments.body
                 )
                 VALUES
                 (
-                        ?,
-                        ?,
-                        ?
+					?,
+					?,
+					?
                 )
         `, postID, userID, body)
 	if err != nil {
 		log.Println(err)
-		return err
+		return 0, err
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
 	}
 
-	return nil
+	return int(id), nil
 }
 
 // DeleteComment implements repository.CommentRepository.
