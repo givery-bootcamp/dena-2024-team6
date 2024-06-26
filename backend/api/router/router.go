@@ -142,6 +142,21 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	authRequired.DELETE("/posts/:postId/comments/:commentId", postController.DeleteComment)
+	deleteCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodDelete, "posts/{postId}/comments/{commentId}")
+	deleteCommnetsOpe.SetID("deletePostComments")
+	deleteCommnetsOpe.AddReqStructure(new(schema.DeleteCommentRequest))
+	deleteCommnetsOpe.SetSummary("対象の投稿のコメントを削除")
+	deleteCommnetsOpe.SetTags("post")
+	deleteCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(deleteCommnetsOpe); err != nil {
+		return err
+	}
+
 	// signOutOpe /signout POST
 	authRequired.POST("/signout", authController.SignOut)
 	signOutOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signout")

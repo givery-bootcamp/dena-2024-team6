@@ -90,7 +90,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[application.ListCommentsUsecase](i, application.NewListCommentsUsecase)
 	do.Provide[application.CreateCommentUsecase](i, application.NewCreateCommentUsecase)
 	do.Provide[application.UpdateCommentUsecase](i, application.NewUpdateCommentUsecase)
-
+	do.Provide[application.DeleteCommentUsecase](i, application.NewDeleteCommentUsecase)
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)
 	do.Provide[*controller.AuthController](i, controller.NewAuthController)

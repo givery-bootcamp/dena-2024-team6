@@ -29,6 +29,11 @@ type UpdateCommentRequest struct {
 	Body      string `json:"body"`
 }
 
+type DeleteCommentRequest struct {
+	CommentID string `path:"commentId" example:"1"`
+	PostID    string `path:"postId" example:"1"`
+}
+
 type CommentResponse struct {
 	ID     int    `json:"id"`
 	PostID int    `json:"post_id"`

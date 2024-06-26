@@ -11,5 +11,5 @@ type CommentRepository interface {
 
 	Create(ctx context.Context, postID int, userID int, body string) (int, error)
 	Update(ctx context.Context, postID int, userID int, commentID int, body string) error
-	Delete(ctx context.Context, postID int, commentID int) error
+	Delete(ctx context.Context, commentID int) error
 }

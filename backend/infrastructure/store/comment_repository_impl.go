@@ -53,14 +53,32 @@ func (c CommentRepositoryImpl) Create(ctx context.Context, postID int, userID in
 	return int(id), nil
 }
 
-// DeleteComment implements repository.CommentRepository.
-func (c CommentRepositoryImpl) Delete(ctx context.Context, int int, commentID int) error {
-	panic("unimplemented")
-}
-
 // GetByID implements repository.CommentRepository.
 func (c CommentRepositoryImpl) GetByID(ctx context.Context, id int) (model.Comment, error) {
-	panic("unimplemented")
+	comment := dao.CommentTable{}
+	if err := c.db.GetContext(ctx, &comment, `
+		SELECT
+			id,
+			post_id,
+			user_id,
+			body,
+			created_at,
+			updated_at
+		FROM
+			comments
+		WHERE
+			id=?
+	`, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return model.Comment{}, nil
+		}
+
+		log.Println(err)
+
+		return model.Comment{}, err
+	}
+
+	return dao.ConvertCommentTableToDomainComment(comment), nil
 }
 
 // List implements repository.CommentRepository.
@@ -108,6 +126,20 @@ func (c CommentRepositoryImpl) Update(ctx context.Context, int int, userID int, 
 									UPDATE comments SET body = ? WHERE id = ? 
 									
 					`, body, commentID)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+// delete
+func (c CommentRepositoryImpl) Delete(ctx context.Context, commentID int) error {
+	_, err := c.db.ExecContext(ctx,
+		`
+		DELETE FROM comments WHERE id = ? 
+	`, commentID)
 	if err != nil {
 		log.Println(err)
 		return err

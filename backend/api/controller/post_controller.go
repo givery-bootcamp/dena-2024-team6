@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"log"
 	"myapp/api/middleware"
 	"myapp/api/schema"
 	"myapp/application"
@@ -21,6 +22,7 @@ type PostController struct {
 	listCommentsUsecase  application.ListCommentsUsecase
 	createCommentUsecase application.CreateCommentUsecase
 	updateCommentUsecase application.UpdateCommentUsecase
+	deleteCommentUsecase application.DeleteCommentUsecase
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
@@ -29,12 +31,14 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
 	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
 	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
+	deleteCommentUsecase := do.MustInvoke[application.DeleteCommentUsecase](i)
 	return &PostController{
 		listPostUsecase:      listPostUsecase,
 		getPostUsecase:       getPostUsecase,
 		listCommentsUsecase:  listCommentsUsecase,
 		createCommentUsecase: createCommentUsecase,
 		updateCommentUsecase: updateCommentUsecase,
+		deleteCommentUsecase: deleteCommentUsecase,
 	}, nil
 }
 
@@ -241,4 +245,39 @@ func (p PostController) UpdateComment(c *gin.Context) {
 		TargetID: commentID,
 		Message:  "コメントを更新しました",
 	})
+}
+
+func (p PostController) DeleteComment(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	commentID, err := strconv.Atoi(c.Param("commentId"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
+		return
+	}
+	log.Printf("user: %v", user)
+
+	err = p.deleteCommentUsecase.Execute(ctx, application.DeleteCommentUsecaseInput{
+		CommentID: commentID,
+	})
+
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	//204返す
+	c.Status(204)
 }
