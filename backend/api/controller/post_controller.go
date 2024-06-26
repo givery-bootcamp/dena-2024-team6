@@ -8,6 +8,7 @@ import (
 	"myapp/domain/apperror"
 	"strconv"
 	"time"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
@@ -24,10 +25,12 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	listPostUsecase := do.MustInvoke[application.ListPostUsecase](i)
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
+	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
 	return &PostController{
-		listPostUsecase:     listPostUsecase,
-		getPostUsecase:      getPostUsecase,
-		listCommentsUsecase: listCommentsUsecase,
+		listPostUsecase:      listPostUsecase,
+		getPostUsecase:       getPostUsecase,
+		listCommentsUsecase:  listCommentsUsecase,
+		createCommentUsecase: createCommentUsecase,
 	}, nil
 }
 
@@ -143,30 +146,35 @@ func (p PostController) CreateComment(c *gin.Context) {
 		))
 	}
 
-	body := c.Param("body")
+	var req schema.CreateCommentRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "リクエストの形式が誤っています")))
+		return
+	}
+	// TODO: そのうちバリデーションライブラリ導入したい
+	// RUNEを使っているのは、日本語の文字数をちゃんと正しく取るため
+	if utf8.RuneCountInString(req.Body) > 100 || len(req.Body) == 0 {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "コメントの長さは1~100文字である必要があります")))
+		return
+	}
 
 	result, err := p.createCommentUsecase.Execute(ctx, application.CreateCommentUsecaseInput{
+		UserID: 1,
 		PostID: postID,
-		Body:   body,
+		Body:   req.Body,
 	})
 	if apperror.Is(err, apperror.CodeForbidden) {
 		c.JSON(403, schema.NewErrorResponse(err))
+		return
 	}
 	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
 		c.JSON(500, schema.NewErrorResponse(err))
+		return
 	}
 
-	resp := schema.CommentResponse{
-		ID:     result.Comment.ID,
-		PostID: result.Comment.PostID,
-		Body:   result.Comment.Body,
-		UserResponse: schema.UserResponse{
-			ID:       result.Comment.UserID,
-			UserName: result.Comment.UserName,
-		},
-		CreatedAt: result.Comment.CreatedAt,
-		UpdatedAt: result.Comment.UpdatedAt,
-	}
-
-	c.JSON(201, resp)
+	c.JSON(201, schema.MutationSchema{
+		// TODO: IDをとってくる
+		TargetID: result.CommentID,
+		Message:  "新しいコメントを投稿しました",
+	})
 }
