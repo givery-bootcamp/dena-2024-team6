@@ -29,6 +29,10 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		WithVersion("1.0.0").
 		WithDescription("FY24卒Web開発研修6班のAPI仕様書です")
 
+	appDoc.Spec.Servers = append(appDoc.Spec.Servers, openapi3.Server{
+		URL: "http://localhost:9000",
+	})
+
 	app.Use(middleware.CorsMiddleware())
 	// HealthCheckOpe / GET
 	app.GET("/", func(ctx *gin.Context) {
@@ -128,6 +132,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signOutOpe.SetID("signOut")
 	signOutOpe.SetTags("auth")
 	signOutOpe.SetSummary("ユーザのログアウトを実行")
+	signOutOpe.AddSecurity("user auth")
 	signOutOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	signOutOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	signOutOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
@@ -141,6 +146,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getCurrentUserOpe.SetID("getCurrentUser")
 	getCurrentUserOpe.SetSummary("現在ログインしているユーザを取得")
 	getCurrentUserOpe.SetTags("auth")
+	getCurrentUserOpe.AddSecurity("user auth")
 	getCurrentUserOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
 	getCurrentUserOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	getCurrentUserOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))

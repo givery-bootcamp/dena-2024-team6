@@ -3,6 +3,8 @@ info:
   description: FY24卒Web開発研修6班のAPI仕様書です
   title: Web開発研修6班 API
   version: 1.0.0
+servers:
+- url: http://localhost:9000
 paths:
   /:
     get:
@@ -104,6 +106,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaErrorResponse'
           description: Internal Server Error
+      security:
+      - user auth: []
       summary: ユーザのログアウトを実行
       tags:
       - auth
@@ -129,6 +133,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaErrorResponse'
           description: Internal Server Error
+      security:
+      - user auth: []
       summary: 現在ログインしているユーザを取得
       tags:
       - auth
