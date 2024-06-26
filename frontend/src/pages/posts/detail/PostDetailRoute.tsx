@@ -1,7 +1,7 @@
-import { Container, Text, HStack, Heading, Divider, Center, Loading, Button } from '@yamada-ui/react'
+import { Container, Text, HStack, Heading, Divider, Center, Loading, Button, Modal, ModalBody, ModalFooter, ModalHeader, useDisclosure } from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
-import { useParams, Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPostsPostId, useGetUser } from '../../../api/api'
 
 export const PostDetailRoute = () => {
@@ -10,6 +10,7 @@ export const PostDetailRoute = () => {
   const { data, isLoading, isError } = useGetPostsPostId(Number(id!))
   const { data: user } = useGetUser()
   const { mutate } = useDeletePost()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const handleDelete = () => {
     mutate(Number(id!))
@@ -51,11 +52,28 @@ export const PostDetailRoute = () => {
                 編集
               </Button>
             </Link>
-            <Link to="/">
-              <Button onClick={handleDelete} colorScheme="primary">
+              <Button onClick={onOpen} colorScheme="primary">
                 削除
               </Button>
-            </Link>
+            <>
+          <Modal isOpen={isOpen} onClose={onClose}>
+          <Center><ModalHeader>警告</ModalHeader></Center>
+          <ModalBody>
+        削除したら元に戻せません。削除しますか？
+        </ModalBody>
+
+      <ModalFooter>
+        <Button variant="ghost" onClick={onClose}>
+          とじる
+        </Button>
+        <>
+        <Link to="/">
+        <Button onClick={handleDelete} colorScheme="primary">削除</Button>
+        </Link>
+        </>
+      </ModalFooter>
+    </Modal>
+          </>
           </>
         ) : null}
       </HStack>
