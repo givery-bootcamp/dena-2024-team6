@@ -48,6 +48,41 @@ paths:
       summary: 投稿の一覧を取得
       tags:
       - post
+    post:
+      operationId: createPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaCreatePostRequest'
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaPostResponse'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 投稿を追加
+      tags:
+      - post
   /signin:
     post:
       operationId: signIn
@@ -270,6 +305,104 @@ paths:
       summary: 対象の投稿のコメントを追加
       tags:
       - post
+  posts/{postId}/comments/{commentId}:
+    delete:
+      operationId: deletePostComments
+      parameters:
+      - in: path
+        name: commentId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaCommentResponse'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 対象の投稿のコメントを削除
+      tags:
+      - post
+    post:
+      operationId: putPostComments
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      - in: path
+        name: commentId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaUpdateCommentRequest'
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaCommentResponse'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+      summary: 対象の投稿のコメントを変更
+      tags:
+      - post
 components:
   schemas:
     SchemaCommentResponse:
@@ -294,6 +427,13 @@ components:
     SchemaCreateCommentRequest:
       properties:
         body:
+          type: string
+      type: object
+    SchemaCreatePostRequest:
+      properties:
+        body:
+          type: string
+        title:
           type: string
       type: object
     SchemaErrorResponse:
@@ -321,6 +461,11 @@ components:
         user_id:
           type: integer
         user_name:
+          type: string
+      type: object
+    SchemaUpdateCommentRequest:
+      properties:
+        body:
           type: string
       type: object
     SchemaUserResponse:
