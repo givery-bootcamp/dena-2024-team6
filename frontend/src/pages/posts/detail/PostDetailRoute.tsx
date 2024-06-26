@@ -1,4 +1,18 @@
-import { Container, Text, HStack, Heading, Divider, Center, Loading, Button, Modal, ModalBody, ModalFooter, ModalHeader, useDisclosure } from '@yamada-ui/react'
+import {
+  Container,
+  Text,
+  HStack,
+  Heading,
+  Divider,
+  Center,
+  Loading,
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure
+} from '@yamada-ui/react'
 import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { Link, useParams } from 'react-router-dom'
@@ -52,28 +66,30 @@ export const PostDetailRoute = () => {
                 編集
               </Button>
             </Link>
-              <Button onClick={onOpen} colorScheme="primary">
-                削除
-              </Button>
+            <Button onClick={onOpen} colorScheme="primary">
+              削除
+            </Button>
             <>
-          <Modal isOpen={isOpen} onClose={onClose}>
-          <Center><ModalHeader>警告</ModalHeader></Center>
-          <ModalBody>
-        削除したら元に戻せません。削除しますか？
-        </ModalBody>
+              <Modal isOpen={isOpen} onClose={onClose}>
+                <Center>
+                  <ModalHeader>警告</ModalHeader>
+                </Center>
+                <ModalBody>削除したら元に戻せません。削除しますか？</ModalBody>
 
-      <ModalFooter>
-        <Button variant="ghost" onClick={onClose}>
-          とじる
-        </Button>
-        <>
-        <Link to="/">
-        <Button onClick={handleDelete} colorScheme="primary">削除</Button>
-        </Link>
-        </>
-      </ModalFooter>
-    </Modal>
-          </>
+                <ModalFooter>
+                  <Button variant="ghost" onClick={onClose}>
+                    とじる
+                  </Button>
+                  <>
+                    <Link to="/">
+                      <Button onClick={handleDelete} colorScheme="primary">
+                        削除
+                      </Button>
+                    </Link>
+                  </>
+                </ModalFooter>
+              </Modal>
+            </>
           </>
         ) : null}
       </HStack>
