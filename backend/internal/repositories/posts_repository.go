@@ -52,7 +52,7 @@ func (r *PostsRepository) List() ([]*entities.Post, error) {
         users.name as username,
         posts.created_at,
         posts.updated_at
-    `).Joins("inner join users on posts.user_id = users.id").Order("posts.id DESC").Scan(&posts).Error; err != nil {
+    `).Joins("inner join users on posts.user_id = users.id").Where("posts.deleted_at is null").Order("posts.id DESC").Scan(&posts).Error; err != nil {
 		return nil, err
 	}
 	var ent_posts []*entities.Post
@@ -84,7 +84,6 @@ func (r *PostsRepository) Get(postID int) (*entities.Post, error) {
 
 	return convertPostRepositoryModelToEntity(&post), nil
 }
-
 
 func (r *PostsRepository) Create(userID int, title string, body string) (*entities.Post, error) {
 	type PostPost struct {
@@ -153,7 +152,6 @@ func (r *PostsRepository) Update(userID int, postID int, title string, body stri
 	}
 	return r.Get(postID)
 }
-
 
 func (r *PostsRepository) CreateComment(userID int, postID int, body string) (*entities.Post, error) {
 	type PostComment struct {

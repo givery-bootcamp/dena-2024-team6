@@ -1,11 +1,25 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button, Container, Divider, FormControl, HStack, Heading, Input, useSnacks } from '@yamada-ui/react'
+import { useNavigate, useParams, Link } from 'react-router-dom'
+import { useGetPostsPostId, useUpdatePost } from '../../../api/api'
+import {
+  Button,
+  Center,
+  Container,
+  Divider,
+  FormControl,
+  HStack,
+  Heading,
+  Input,
+  Loading,
+  useSnacks
+} from '@yamada-ui/react'
 import MarkdownEditor from '@uiw/react-markdown-editor'
-import { Link } from 'react-router-dom'
-import { usePostPosts } from '../../api/api'
+import { useEffect, useState } from 'react'
 
-export const CreatePostRoute = () => {
+export const UpdatePostRoute = () => {
+  const { id } = useParams<{ id: string }>()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const { data, isLoading, isError } = useGetPostsPostId(Number(id!))
+
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [titleError, setTitleError] = useState<string | null>(null)
@@ -14,7 +28,12 @@ export const CreatePostRoute = () => {
   const { snack } = useSnacks()
 
   const navigate = useNavigate()
-  const { mutate } = usePostPosts()
+  const { mutate } = useUpdatePost()
+
+  useEffect(() => {
+    setTitle(data?.title ?? '')
+    setContent(data?.body ?? '')
+  }, [data])
 
   const validdateTitle = (value: string) => {
     if (value === '') {
@@ -56,19 +75,19 @@ export const CreatePostRoute = () => {
 
     if (isTitleValid && isContentValid) {
       mutate(
-        { data: { title: title, body: content } },
+        { data: { id: Number(id!), title: title, body: content } },
         {
           onSuccess: () => {
             snack({
               status: 'success',
-              description: '投稿に成功しました。'
+              description: '投稿の更新に成功しました。'
             })
             navigate('/')
           },
           onError: () => {
             snack({
               status: 'error',
-              description: '投稿に失敗しました。'
+              description: '投稿の更新に失敗しました。'
             })
           }
         }
@@ -78,23 +97,38 @@ export const CreatePostRoute = () => {
 
   return (
     <Container>
-      <Heading size="lg">新しい投稿を作成する</Heading>
+      <Heading size="lg">投稿を編集する</Heading>
+      {isLoading && (
+        <Center>
+          <Loading variant="circles" size="6xl" color="cyan.500" />
+        </Center>
+      )}
+      {isError && (
+        <Center>
+          <Heading>エラーが発生しました</Heading>
+        </Center>
+      )}
       <Divider variant="solid" />
       <form onSubmit={handleSubmit}>
         <FormControl label="タイトル" isRequired isInvalid={!!titleError} errorMessage={titleError} mb={4}>
-          <Input type="text" placeholder="タイトルを入力してください。" value={title} onChange={handleTitleChange} />
+          <Input
+            type="text"
+            placeholder="タイトルを入力してください。"
+            defaultValue={data?.title}
+            onChange={handleTitleChange}
+          />
         </FormControl>
         <FormControl label="内容" isRequired isInvalid={!!contentError} errorMessage={contentError} mb={4}>
-          <MarkdownEditor value={content} height="200px" onChange={handleContentChange} />
+          <MarkdownEditor value={data?.body} height="200px" onChange={handleContentChange} />
         </FormControl>
         <HStack>
-          <Link to="/">
+          <Link to={`/posts/${id}`}>
             <Button colorScheme="primary" variant={'outline'}>
               キャンセル
             </Button>
           </Link>
           <Button onClick={handleSubmit} type="submit" colorScheme="primary">
-            投稿する
+            変更を保存する
           </Button>
         </HStack>
       </form>
