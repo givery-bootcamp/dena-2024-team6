@@ -49,7 +49,9 @@ func main() {
 			log.Fatalf("failed to load file; %+v\n", err)
 		}
 		defer f.Close()
-		f.Write(generatedDoc)
+		if _, err = f.Write(generatedDoc); err != nil {
+			log.Fatalf("failed to generate doc; %+v\n", err)
+		}
 	}
 
 	// 裏側でサーバを起動
@@ -86,6 +88,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[application.CreatePostUsecase](i, application.NewCreatePostUsecase)
 	do.Provide[application.ListPostUsecase](i, application.NewListPostUsecase)
 	do.Provide[application.GetPostDetailUsecase](i, application.NewGetPostDetailUsecase)
+	do.Provide[application.UpdatePostUsecase](i, application.NewUpdatePostUsecase)
 	do.Provide[application.DeletePostUsecase](i, application.NewDeletePostUsecase)
 	do.Provide[application.SigninUsecase](i, application.NewSigninUsecase)
 	do.Provide[application.GetUserUsecase](i, application.NewGetUserUsecase)

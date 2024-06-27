@@ -78,6 +78,22 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	// updatePostOpe /posts/{id} UPDATE
+	authRequired.PUT("/posts/:postid", postController.UpdatePost)
+	updatePostOpe, _ := appDoc.NewOperationContext(http.MethodPut, "posts/{postid}")
+	updatePostOpe.AddReqStructure(new(schema.UpdatePostRequest))
+	updatePostOpe.SetID("updatePost")
+	updatePostOpe.SetSummary("投稿を更新")
+	updatePostOpe.SetTags("post")
+	updatePostOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusNoContent))
+	updatePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	updatePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	updatePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusNotFound))
+	updatePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(updatePostOpe); err != nil {
+		return err
+	}
+
 	//deletePostOpe /posts/{id} DELETE
 	authRequired.DELETE("/posts/:postid", postController.DeletePost)
 	deletePostOpe, _ := appDoc.NewOperationContext(http.MethodDelete, "posts/{postid}")
@@ -85,7 +101,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	deletePostOpe.SetID("deletePost")
 	deletePostOpe.SetSummary("投稿を削除")
 	deletePostOpe.SetTags("post")
-	deletePostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusNoContent))
+	deletePostOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusNoContent))
 	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusNotFound))
@@ -133,7 +149,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	createCommnetsOpe.AddReqStructure(new(schema.CreateCommentRequest))
 	createCommnetsOpe.SetSummary("対象の投稿のコメントを追加")
 	createCommnetsOpe.SetTags("post")
-	createCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	createCommnetsOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusCreated))
 	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
@@ -158,13 +174,13 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	}
 
 	// createPostComments /posts/{postId}/comments POST
-	authRequired.PUT("/posts/:postId/comments/:commentId", postController.UpdateComment)
+	authRequired.PUT("/posts/:postid/comments/:commentId", postController.UpdateComment)
 	putCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/comments/{commentId}")
 	putCommnetsOpe.SetID("putPostComments")
 	putCommnetsOpe.AddReqStructure(new(schema.UpdateCommentRequest))
 	putCommnetsOpe.SetSummary("対象の投稿のコメントを変更")
 	putCommnetsOpe.SetTags("post")
-	putCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	putCommnetsOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusCreated))
 	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
@@ -179,7 +195,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	deleteCommnetsOpe.AddReqStructure(new(schema.DeleteCommentRequest))
 	deleteCommnetsOpe.SetSummary("対象の投稿のコメントを削除")
 	deleteCommnetsOpe.SetTags("post")
-	deleteCommnetsOpe.AddRespStructure(new(schema.CommentResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	deleteCommnetsOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusCreated))
 	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	deleteCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))

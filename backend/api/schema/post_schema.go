@@ -19,6 +19,12 @@ type CreatePostRequest struct {
 	Body  string `json:"body"`
 }
 
+type UpdatePostRequest struct {
+	PostID string `path:"postid" example:"1"`
+	Title  string `json:"title"`
+	Body   string `json:"body"`
+}
+
 type DeletePostRequest struct {
 	PostID string `path:"postid" example:"1"`
 }
