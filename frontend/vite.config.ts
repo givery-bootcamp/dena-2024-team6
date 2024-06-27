@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import tsconfigPaths from 'vite-tsconfig-paths'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
@@ -11,5 +12,5 @@ export default defineConfig({
     //   "/api": "http://localhost:9000",
     // },
   },
-  plugins: [react()]
+  plugins: [react(), tsconfigPaths()]
 })

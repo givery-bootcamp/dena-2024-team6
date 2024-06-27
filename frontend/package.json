@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier ./src --write",
@@ -40,6 +40,7 @@
     "prettier": "^3.2.5",
     "sass": "^1.62.1",
     "typescript": "^5.4.5",
-    "vite": "^4.3.2"
+    "vite": "^4.3.2",
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }

@@ -4,7 +4,7 @@ export default defineConfig({
   api: {
     output: {
       mode: 'split',
-      target: 'src/api/api.ts',
+      target: 'src/api/hooks.ts',
       schemas: 'src/api/model',
       client: 'react-query',
       clean: true,
@@ -12,9 +12,9 @@ export default defineConfig({
       override: {
         mutator: {
           path: './src/shared/libs/axios.ts',
-          name: 'customInstance',
-        },
-      },
+          name: 'customInstance'
+        }
+      }
     },
     input: {
       target: '../docs/api.yaml'

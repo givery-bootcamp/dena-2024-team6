@@ -1,14 +1,14 @@
 import { Box, Button, Loading, Text } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { usePostSignout, useGetUser } from '../api/api'
+import { useSignOut, useGetCurrentUser } from '@api/hooks'
 
 export const Header = () => {
   const navigate = useNavigate()
-  const { data: user, isError, refetch, isFetching } = useGetUser()
+  const { data: user, isError, refetch, isFetching } = useGetCurrentUser()
   const [currentUser, setCurrentUser] = useState(user)
 
-  const { mutate: signoutMutate } = usePostSignout({
+  const { mutate: signoutMutate } = useSignOut({
     mutation: {
       onSuccess: () => {
         setCurrentUser(undefined)
@@ -32,7 +32,7 @@ export const Header = () => {
         {isFetching ? (
           <Loading variant="circles" size="6xl" color="cyan.500" />
         ) : isError || !currentUser ? (
-          <Button onClick={() => signoutMutate()}>サインイン</Button>
+          <Button onClick={() => navigate('/signin')}>サインイン</Button>
         ) : (
           <>
             <Text mr={2}>{currentUser.user_name}</Text>
