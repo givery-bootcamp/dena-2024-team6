@@ -7,6 +7,7 @@ import (
 
 var HostName = "localhost"
 var Port = 9000
+var AppEnv = "prod"
 var CorsAllowOrigin = "http://localhost:3000"
 var DBHostName = "db"
 var DBPort = 3306
@@ -44,4 +45,22 @@ func init() {
 	if v := os.Getenv("JWT_KEY"); v != "" {
 		JwtKey = v
 	}
+
+	// NOTE: 本番環境でEnvを追加するのがめんどいので、CORSのオリジンでDevかProdか判別する
+	if CorsAllowOrigin == "http://localhost:3000" {
+		AppEnv = "dev"
+	}
+
+}
+
+// GetDomainName はAPIのドメインネームを返す
+func GetDomainName() string {
+	if AppEnv == "prod" {
+		return HostName
+	}
+	return "localhost"
+}
+
+func GetIsSecured() bool {
+	return AppEnv == "prod"
 }
