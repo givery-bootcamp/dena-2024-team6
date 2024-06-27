@@ -9,20 +9,33 @@ import {
   Heading,
   CardFooter,
   VStack,
-  Center
+  Center,
+  Button,
+  Flex,
+  Spacer
 } from '@yamada-ui/react'
-import dayjs from 'dayjs'
-import { useGetPosts } from '../../api/api'
-import { useNavigate } from 'react-router-dom'
+import { useListPosts } from '@api/hooks'
+import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export const PostsRoute = () => {
   // API取得
-  const { data, isLoading, isError } = useGetPosts()
-  const navigate = useNavigate()
+  const { data, isLoading, isError, refetch } = useListPosts()
+  useEffect(() => {
+    refetch()
+  }, [])
 
   return (
     <Container>
-      <Heading size="lg">投稿一覧</Heading>
+      <Heading size="lg">
+        <Flex gap="md">
+          <Text> 投稿一覧</Text>
+          <Spacer />
+          <Link to="/posts/new">
+            <Button colorScheme="primary">新規作成</Button>
+          </Link>
+        </Flex>
+      </Heading>
       {isLoading && (
         <Center>
           <Loading variant="circles" size="6xl" color="cyan.500" />
@@ -36,28 +49,28 @@ export const PostsRoute = () => {
       <VStack w="full">
         {data?.map((post) => (
           <Card
-            key={post.id}
+            key={post.post_id}
             variant="outline"
             w="full"
-            onClick={() => navigate(`/posts/${post.id}`)}
             _hover={{
               cursor: 'pointer',
               bgColor: 'gray.50'
             }}
           >
-            <CardHeader>
-              <Heading size="md">{post.title}</Heading>
-            </CardHeader>
+            <Link to={`/posts/${post.post_id}`}>
+              <CardHeader>
+                <Heading size="md">{post.title}</Heading>
+              </CardHeader>
 
-            <CardBody>
-              <Text>{post.body}</Text>
-            </CardBody>
-            <CardFooter>
-              <HStack>
-                <Text>{post.user_name}</Text>
-                <Text>更新日時： {dayjs(post.updated_at).format('YYYY年M月D日 HH:mm:ss')}</Text>
-              </HStack>
-            </CardFooter>
+              <CardBody>
+                <Text>{post.body}</Text>
+              </CardBody>
+              <CardFooter>
+                <HStack>
+                  <Text>{post.user_name}</Text>
+                </HStack>
+              </CardFooter>
+            </Link>
           </Card>
         ))}
       </VStack>

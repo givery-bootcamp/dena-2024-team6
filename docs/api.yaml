@@ -50,6 +50,11 @@ paths:
       - post
     post:
       operationId: createPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaCreatePostRequest'
       responses:
         "201":
           content:
@@ -299,6 +304,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaErrorResponse'
           description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: 対象の投稿のコメントを追加
       tags:
       - post
@@ -397,6 +408,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaErrorResponse'
           description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
       summary: 対象の投稿のコメントを変更
       tags:
       - post
@@ -516,6 +533,13 @@ components:
     SchemaCreateCommentRequest:
       properties:
         body:
+          type: string
+      type: object
+    SchemaCreatePostRequest:
+      properties:
+        body:
+          type: string
+        title:
           type: string
       type: object
     SchemaErrorResponse:
