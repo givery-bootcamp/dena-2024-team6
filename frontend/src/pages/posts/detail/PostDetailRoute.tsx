@@ -72,28 +72,24 @@ export const PostDetailRoute = () => {
             <Button onClick={onOpen} colorScheme="primary">
               削除
             </Button>
-            <>
-              <Modal isOpen={isOpen} onClose={onClose}>
-                <Center>
-                  <ModalHeader>警告</ModalHeader>
-                </Center>
-                <Divider variant="solid" />
-                <ModalBody>削除したら元に戻せません。削除しますか？</ModalBody>
-                <Divider variant="solid" />
-                <ModalFooter>
-                  <Button variant="ghost" onClick={onClose}>
-                    とじる
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <Center>
+                <ModalHeader>警告</ModalHeader>
+              </Center>
+              <Divider variant="solid" />
+              <ModalBody>削除したら元に戻せません。削除しますか？</ModalBody>
+              <Divider variant="solid" />
+              <ModalFooter>
+                <Button variant="ghost" onClick={onClose}>
+                  とじる
+                </Button>
+                <Link to="/">
+                  <Button onClick={handleDelete} colorScheme="primary">
+                    削除
                   </Button>
-                  <>
-                    <Link to="/">
-                      <Button onClick={handleDelete} colorScheme="primary">
-                        削除
-                      </Button>
-                    </Link>
-                  </>
-                </ModalFooter>
-              </Modal>
-            </>
+                </Link>
+              </ModalFooter>
+            </Modal>
           </>
         ) : null}
       </HStack>
