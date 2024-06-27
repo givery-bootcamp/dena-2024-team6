@@ -14,14 +14,13 @@ import {
   Flex,
   Spacer
 } from '@yamada-ui/react'
-import dayjs from 'dayjs'
-import { useGetPosts } from '../../api/api'
+import { useListPosts } from '@api/hooks'
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
 
 export const PostsRoute = () => {
   // API取得
-  const { data, isLoading, isError, refetch } = useGetPosts()
+  const { data, isLoading, isError, refetch } = useListPosts()
   useEffect(() => {
     refetch()
   }, [])
@@ -50,7 +49,7 @@ export const PostsRoute = () => {
       <VStack w="full">
         {data?.map((post) => (
           <Card
-            key={post.id}
+            key={post.post_id}
             variant="outline"
             w="full"
             _hover={{
@@ -58,7 +57,7 @@ export const PostsRoute = () => {
               bgColor: 'gray.50'
             }}
           >
-            <Link to={`/posts/${post.id}`}>
+            <Link to={`/posts/${post.post_id}`}>
               <CardHeader>
                 <Heading size="md">{post.title}</Heading>
               </CardHeader>
@@ -69,7 +68,6 @@ export const PostsRoute = () => {
               <CardFooter>
                 <HStack>
                   <Text>{post.user_name}</Text>
-                  <Text>更新日時： {dayjs(post.updated_at).format('YYYY年M月D日 HH:mm:ss')}</Text>
                 </HStack>
               </CardFooter>
             </Link>

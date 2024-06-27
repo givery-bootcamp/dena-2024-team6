@@ -1,5 +1,5 @@
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { useGetPostsPostId, useUpdatePost } from '../../../api/api'
+import { useGetPost, useUpdatePost } from '@api/hooks'
 import {
   Button,
   Center,
@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 export const UpdatePostRoute = () => {
   const { id } = useParams<{ id: string }>()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { data, isLoading, isError } = useGetPostsPostId(Number(id!))
+  const { data, isLoading, isError } = useGetPost(id!)
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -75,7 +75,10 @@ export const UpdatePostRoute = () => {
 
     if (isTitleValid && isContentValid) {
       mutate(
-        { data: { id: Number(id!), title: title, body: content } },
+        {
+          postid: id!,
+          data: { title: title, body: content }
+        },
         {
           onSuccess: () => {
             snack({

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Container, Divider, FormControl, HStack, Heading, Input, useSnacks } from '@yamada-ui/react'
 import MarkdownEditor from '@uiw/react-markdown-editor'
 import { Link } from 'react-router-dom'
-import { usePostPosts } from '../../api/api'
+import { useCreatePost } from '@api/hooks'
 
 export const CreatePostRoute = () => {
   const [title, setTitle] = useState('')
@@ -14,7 +14,7 @@ export const CreatePostRoute = () => {
   const { snack } = useSnacks()
 
   const navigate = useNavigate()
-  const { mutate } = usePostPosts()
+  const { mutate } = useCreatePost()
 
   const validdateTitle = (value: string) => {
     if (value === '') {
