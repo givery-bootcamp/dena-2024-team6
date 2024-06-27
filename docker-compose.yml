@@ -8,6 +8,7 @@ services:
       - "9000:9000"
     volumes:
       - ./backend:/go/src/myapp
+      - ./docs:/go/src/docs
     command: "air"
     depends_on:
       db:
