@@ -130,8 +130,7 @@ func (p PostRepositoryImpl) List(ctx context.Context) ([]model.Post, error) {
 
 // Update implements repository.PostRepository.
 func (p PostRepositoryImpl) Update(ctx context.Context, id int, title, body string) error {
-	post := dao.PostTable{}
-	if err := p.db.GetContext(ctx, &post, `
+	if _, err := p.db.ExecContext(ctx, `
                 UPDATE
                         posts
                 SET
@@ -139,15 +138,8 @@ func (p PostRepositoryImpl) Update(ctx context.Context, id int, title, body stri
                         body=?
                 WHERE
                         id=?
-                        and
+                AND
                         deleted_at is null
-                RETURNING
-                        id,
-                        title,
-                        body,
-                        user_id,
-                        created_at,
-                        updated_at
         `, title, body, id); err != nil {
 		log.Println(err)
 		return err
