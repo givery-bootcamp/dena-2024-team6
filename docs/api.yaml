@@ -148,6 +148,36 @@ paths:
       summary: ユーザのログアウトを実行
       tags:
       - auth
+  /signup:
+    post:
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaSignupRequest'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaUserResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: ユーザのアカウント登録を実行
+      tags:
+      - auth
   /user:
     get:
       operationId: getCurrentUser
@@ -573,6 +603,13 @@ components:
           type: string
         user_id:
           type: integer
+        user_name:
+          type: string
+      type: object
+    SchemaSignupRequest:
+      properties:
+        password:
+          type: string
         user_name:
           type: string
       type: object

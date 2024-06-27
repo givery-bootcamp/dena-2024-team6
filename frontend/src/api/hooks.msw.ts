@@ -26,6 +26,8 @@ export const getCreatePostResponseMock = (): SchemaPostResponse[] => (Array.from
 
 export const getSignInResponseMock = (overrideResponse: Partial< SchemaUserResponse > = {}): SchemaUserResponse => ({user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
+export const getSignUpResponseMock = (overrideResponse: Partial< SchemaUserResponse > = {}): SchemaUserResponse => ({user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
+
 export const getGetCurrentUserResponseMock = (overrideResponse: Partial< SchemaUserResponse > = {}): SchemaUserResponse => ({user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
 
 export const getGetPostResponseMock = (overrideResponse: Partial< SchemaPostResponse > = {}): SchemaPostResponse => ({body: faker.helpers.arrayElement([faker.word.sample(), undefined]), post_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), title: faker.helpers.arrayElement([faker.word.sample(), undefined]), user_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]), ...overrideResponse})
@@ -104,6 +106,21 @@ export const getSignInMockHandler = (overrideResponse?: SchemaUserResponse | ((i
 export const getSignOutMockHandler = () => {
   return http.post('*/signout', async () => {await delay(1000);
     return new HttpResponse(null,
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getSignUpMockHandler = (overrideResponse?: SchemaUserResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SchemaUserResponse> | SchemaUserResponse)) => {
+  return http.post('*/signup', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getSignUpResponseMock()),
       {
         status: 200,
         headers: {
@@ -239,6 +256,7 @@ export const getWeb6APIMock = () => [
   getCreatePostMockHandler(),
   getSignInMockHandler(),
   getSignOutMockHandler(),
+  getSignUpMockHandler(),
   getGetCurrentUserMockHandler(),
   getGetPostMockHandler(),
   getListPostCommentsMockHandler(),
