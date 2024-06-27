@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
-import { usePostSignin, useGetUser } from '../../api/api'
+import { useSignIn, useGetCurrentUser } from '@api/hooks'
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -9,9 +9,9 @@ export const SigninRoute = () => {
   const [passwordError, setPasswordError] = useState('')
 
   const { snack, snacks } = useSnacks()
-  const { refetch } = useGetUser()
+  const { refetch } = useGetCurrentUser()
   const navigate = useNavigate()
-  const { mutate, isPending } = usePostSignin()
+  const { mutate, isPending } = useSignIn()
 
   const validateUsername = (value: string) => {
     if (value === '') {

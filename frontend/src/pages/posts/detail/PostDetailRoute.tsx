@@ -13,22 +13,23 @@ import {
   ModalHeader,
   useDisclosure
 } from '@yamada-ui/react'
-import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { Link, useParams } from 'react-router-dom'
-import { useDeletePost, useGetPostsPostId, useGetUser } from '../../../api/api'
+import { useDeletePost, useGetPost, useGetCurrentUser } from '@api/hooks'
 import { Markdown } from '@yamada-ui/markdown'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { data, isLoading, isError } = useGetPostsPostId(Number(id!))
-  const { data: user } = useGetUser()
+  const { data, isLoading, isError } = useGetPost(id!)
+  const { data: user } = useGetCurrentUser()
   const { mutate } = useDeletePost()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const handleDelete = () => {
-    mutate(Number(id!))
+    mutate({
+      postid: id!
+    })
   }
 
   return (
@@ -46,9 +47,7 @@ export const PostDetailRoute = () => {
       )}
       {data && (
         <HStack>
-          <AttributeDisplay labelName="作成日時：" value={dayjs(data?.created_at).format('YYYY年M月D日 HH:mm:ss')} />
-          <AttributeDisplay labelName="更新日時：" value={dayjs(data?.updated_at).format('YYYY年M月D日 HH:mm:ss')} />
-          <AttributeDisplay labelName="ユーザー名：" value={data?.user_name} />
+          <AttributeDisplay labelName="ユーザー名：" value={data?.user_name ?? ''} />
         </HStack>
       )}
       <Divider variant="solid" />
@@ -62,7 +61,7 @@ export const PostDetailRoute = () => {
             戻る
           </Button>
         </Link>
-        {data?.user_id === user?.id ? (
+        {data?.user_id === user?.user_id ? (
           <>
             <Link to={`/posts/${id}/edit`}>
               <Button onClick={() => console.log('edit')} colorScheme="primary">
