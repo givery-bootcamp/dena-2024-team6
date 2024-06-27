@@ -13,7 +13,8 @@ import (
 func NewStore(i *do.Injector) (*sqlx.DB, error) {
 	dsn := mysql.Config{
 		DBName:    config.DBName,
-		User:      "root",
+		User:      config.DBUser,
+		Passwd:    config.DBPassword,
 		Addr:      fmt.Sprintf("%s:%d", config.DBHostName, config.DBPort),
 		Net:       "tcp",
 		ParseTime: true,
