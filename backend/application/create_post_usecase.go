@@ -3,7 +3,6 @@ package application
 import (
 	"context"
 	"myapp/domain/apperror"
-	"myapp/domain/model"
 	"myapp/domain/repository"
 
 	"github.com/samber/do"
@@ -20,7 +19,7 @@ type CreatePostUsecaseInput struct {
 }
 
 type CreatePostUsecaseOutput struct {
-	Post model.Post
+	PostID int
 }
 
 func NewCreatePostUsecase(i *do.Injector) (CreatePostUsecase, error) {
@@ -36,12 +35,12 @@ type createPostUsecaseInteractor struct {
 
 // Execute implements CreatePostUsecase.
 func (c *createPostUsecaseInteractor) Execute(ctx context.Context, input CreatePostUsecaseInput) (CreatePostUsecaseOutput, error) {
-	post, err := c.postRepository.Create(ctx, input.UserID, input.Title, input.Body)
+	postID, err := c.postRepository.Create(ctx, input.UserID, input.Title, input.Body)
 	if err != nil {
-		return CreatePostUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, "failed to create post")
+		return CreatePostUsecaseOutput{}, apperror.New(apperror.CodeInternalServer, "新しい投稿の作成に失敗しました。詳細は運営までお問い合わせください。")
 	}
 
 	return CreatePostUsecaseOutput{
-		Post: post,
+		PostID: postID,
 	}, nil
 }

@@ -14,6 +14,11 @@ type PostResponse struct {
 	UserResponse
 }
 
+type CreatePostRequest struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
+
 type CommentListRequest struct {
 	PostID string `path:"postId" example:"1"`
 }
