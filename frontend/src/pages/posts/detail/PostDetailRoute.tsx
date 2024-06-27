@@ -52,7 +52,9 @@ export const PostDetailRoute = () => {
         </HStack>
       )}
       <Divider variant="solid" />
-      <Text>{data?.body}</Text>
+      <Text>
+        <Markdown>{data?.body}</Markdown>
+      </Text>
 
       <HStack>
         <Link to="/">
