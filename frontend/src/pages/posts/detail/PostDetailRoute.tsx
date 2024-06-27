@@ -18,6 +18,7 @@ import { AttributeDisplay } from './AttributeDisplay'
 import { Link, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPostsPostId, useGetUser } from '../../../api/api'
 import { Markdown } from '@yamada-ui/markdown'
+import { CommentRoute } from './PostCommentsRoute'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
@@ -57,11 +58,6 @@ export const PostDetailRoute = () => {
       </Text>
 
       <HStack>
-        <Link to="/">
-          <Button colorScheme="primary" variant={'outline'}>
-            戻る
-          </Button>
-        </Link>
         {data?.user_id === user?.id ? (
           <>
             <Link to={`/posts/${id}/edit`}>
@@ -97,6 +93,13 @@ export const PostDetailRoute = () => {
           </>
         ) : null}
       </HStack>
+      <CommentRoute id={Number(id!)} />
+      <Divider variant="solid" />
+      <Link to="/">
+          <Button colorScheme="primary" variant={'outline'}>
+            戻る
+          </Button>
+        </Link>
     </Container>
   )
 }
