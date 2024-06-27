@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
+
+
 import { usePostSignin, useGetUser } from '../../api/api'
+import { Box, Button, Center, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
+
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -75,7 +78,8 @@ export const SigninRoute = () => {
     }
   }
   return (
-    <Container>
+    <Container w="100%" h="100%" maxWidth="container.xl" bg="#98C9DE">
+      <Box w="full" p="md" bg="White" borderRadius="md">
       <Snacks snacks={snacks} gutter={[0, 'md']} />
       <FormControl label="ユーザー名" isRequired isInvalid={usernameError !== ''} errorMessage={usernameError}>
         <Input
@@ -98,6 +102,7 @@ export const SigninRoute = () => {
       <Button onClick={handleSubmit} isLoading={isPending} loadingIcon="dots" colorScheme="primary">
         サインイン
       </Button>
+      </Box>
     </Container>
   )
 }
