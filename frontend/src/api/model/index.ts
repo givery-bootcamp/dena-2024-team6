@@ -13,6 +13,7 @@ export * from './schemaErrorResponse';
 export * from './schemaLoginRequest';
 export * from './schemaMutationSchema';
 export * from './schemaPostResponse';
+export * from './schemaSignupRequest';
 export * from './schemaUpdateCommentRequest';
 export * from './schemaUpdatePostRequest';
 export * from './schemaUserResponse';
