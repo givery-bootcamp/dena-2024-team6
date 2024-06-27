@@ -351,6 +351,7 @@ func (p PostController) UpdateComment(c *gin.Context) {
 		c.JSON(400, schema.NewErrorResponse(
 			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
 		))
+		return
 	}
 
 	var req schema.UpdateCommentRequest
