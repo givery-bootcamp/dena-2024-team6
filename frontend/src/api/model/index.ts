@@ -7,6 +7,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export * from './loginRequest';
-export * from './post';
-export * from './user';
+export * from './loginRequest'
+export * from './post'
+export * from './user'

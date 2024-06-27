@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
-import { usePostSignin } from '../../api/api'
-
+import { usePostSignin, useGetUser } from '../../api/api'
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -10,7 +9,7 @@ export const SigninRoute = () => {
   const [passwordError, setPasswordError] = useState('')
 
   const { snack, snacks } = useSnacks()
-
+  const { refetch } = useGetUser()
   const navigate = useNavigate()
   const { mutate, isPending } = usePostSignin()
 
@@ -28,7 +27,6 @@ export const SigninRoute = () => {
       return true
     }
   }
-
   const validatePassword = (value: string) => {
     if (value === '') {
       setPasswordError('パスワードを入力してください。')
@@ -43,20 +41,17 @@ export const SigninRoute = () => {
       return true
     }
   }
-
   const handleUsernameChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setUsername(value)
     validateUsername(value)
   }
-
   const handlePasswordChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setPassword(value)
     validatePassword(value)
   }
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const isUsernameValid = validateUsername(username)
     const isPasswordValid = validatePassword(password)
     if (isUsernameValid && isPasswordValid) {
@@ -64,8 +59,8 @@ export const SigninRoute = () => {
         { data: { user_name: username, password: password } },
         {
           onSuccess: () => {
-            navigate(`/`)
-            // TODO: トーストでログイン成功を表示
+            refetch()
+            navigate('/')
           },
           onError: () => {
             snack({
@@ -79,7 +74,6 @@ export const SigninRoute = () => {
       )
     }
   }
-
   return (
     <Container>
       <Snacks snacks={snacks} gutter={[0, 'md']} />

@@ -11,11 +11,20 @@
  * 投稿のモデル
  */
 export interface Post {
-  body?: string;
-  created_at: string;
-  id: number;
-  title: string;
-  updated_at?: string;
-  user_id: number;
-  user_name: string;
+  body?: string
+  created_at: string
+  id: number
+  title: string
+  updated_at?: string
+  user_id: number
+  user_name: string
+}
+export interface CreatePost {
+  body?: string
+  title: string
+}
+export interface UpdatePost {
+  id: number
+  body?: string
+  title: string
 }
