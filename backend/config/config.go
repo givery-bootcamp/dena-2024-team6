@@ -62,8 +62,5 @@ func GetDomainName() string {
 }
 
 func GetIsSecured() bool {
-	if AppEnv == "prod" {
-		return true
-	}
-	return false
+	return AppEnv == "prod"
 }
