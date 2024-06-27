@@ -19,6 +19,7 @@ import (
 type PostController struct {
 	listPostUsecase      application.ListPostUsecase
 	getPostUsecase       application.GetPostDetailUsecase
+	createPostUsecase    application.CreatePostUsecase
 	listCommentsUsecase  application.ListCommentsUsecase
 	createCommentUsecase application.CreateCommentUsecase
 	updateCommentUsecase application.UpdateCommentUsecase
@@ -28,6 +29,7 @@ type PostController struct {
 func NewPostController(i *do.Injector) (*PostController, error) {
 	listPostUsecase := do.MustInvoke[application.ListPostUsecase](i)
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
+	createPostUsecase := do.MustInvoke[application.CreatePostUsecase](i)
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
 	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
 	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
@@ -35,6 +37,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	return &PostController{
 		listPostUsecase:      listPostUsecase,
 		getPostUsecase:       getPostUsecase,
+		createPostUsecase:    createPostUsecase,
 		listCommentsUsecase:  listCommentsUsecase,
 		createCommentUsecase: createCommentUsecase,
 		updateCommentUsecase: updateCommentUsecase,
@@ -102,6 +105,47 @@ func (pc PostController) GetPost(c *gin.Context) {
 			ID:       result.Post.UserID,
 			UserName: result.Post.UserName,
 		},
+	})
+}
+
+func (pc PostController) CreatePost(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	var req schema.CreatePostRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "リクエストの形式が誤っています")))
+		return
+	}
+	// TODO: そのうちバリデーションライブラリ導入したい
+	// RUNEを使っているのは、日本語の文字数をちゃんと正しく取るため
+	if utf8.RuneCountInString(req.Title) > 20 || len(req.Title) == 0 {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "タイトルの長さは1~20文字である必要があります")))
+		return
+	}
+	if utf8.RuneCountInString(req.Body) > 100 || len(req.Body) == 0 {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "本文の長さは1~100文字である必要があります")))
+		return
+	}
+
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "投稿を作成するにはログインする必要があります")))
+		return
+	}
+
+	result, err := pc.createPostUsecase.Execute(ctx, application.CreatePostUsecaseInput{
+		UserID: user.ID,
+		Title:  req.Title,
+		Body:   req.Body,
+	})
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+	}
+
+	c.JSON(201, schema.MutationSchema{
+		TargetID: result.PostID,
+		Message:  "新しい投稿を作成しました",
 	})
 }
 
@@ -278,6 +322,9 @@ func (p PostController) DeleteComment(c *gin.Context) {
 		return
 	}
 
-	//204返す
-	c.Status(204)
+	// 削除は204なので、204を返す
+	c.JSON(204, schema.MutationSchema{
+		TargetID: commentID,
+		Message:  "コメントを削除しました",
+	})
 }
