@@ -34,6 +34,10 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	})
 
 	app.Use(middleware.CorsMiddleware())
+
+	authRequired := app.Group("/")
+	authRequired.Use(authorizationMiddleware.Exec())
+
 	// HealthCheckOpe / GET
 	app.GET("/", func(ctx *gin.Context) {
 		ctx.String(200, "It works")
@@ -57,6 +61,20 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	listPostsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	listPostsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(listPostsOpe); err != nil {
+		return err
+	}
+
+	// createPostOpe /posts POST
+	authRequired.POST("/posts", postController.CreatePost)
+	createPostOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/posts")
+	createPostOpe.SetID("createPost")
+	createPostOpe.SetSummary("投稿を作成")
+	createPostOpe.SetTags("post")
+	createPostOpe.AddRespStructure(new([]schema.PostResponse), openapi.WithHTTPStatus(http.StatusCreated))
+	createPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	createPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	createPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(createPostOpe); err != nil {
 		return err
 	}
 
@@ -122,9 +140,6 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	if err := appDoc.AddOperation(signInOpe); err != nil {
 		return err
 	}
-
-	authRequired := app.Group("/")
-	authRequired.Use(authorizationMiddleware.Exec())
 
 	// createPostComments /posts/{postId}/comments POST
 	authRequired.PUT("/posts/:postId/comments/:commentId", postController.UpdateComment)

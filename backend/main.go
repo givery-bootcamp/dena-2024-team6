@@ -83,6 +83,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[repository.CommentRepository](i, store.NewCommentRepositoryImpl)
 
 	// Inject application usecase resources
+	do.Provide[application.CreatePostUsecase](i, application.NewCreatePostUsecase)
 	do.Provide[application.ListPostUsecase](i, application.NewListPostUsecase)
 	do.Provide[application.GetPostDetailUsecase](i, application.NewGetPostDetailUsecase)
 	do.Provide[application.SigninUsecase](i, application.NewSigninUsecase)

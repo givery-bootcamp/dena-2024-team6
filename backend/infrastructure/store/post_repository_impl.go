@@ -25,27 +25,54 @@ func NewPostRepository(i *do.Injector) (repository.PostRepository, error) {
 	}, nil
 }
 
+// Create implements repository.PostRepository.
+func (p PostRepositoryImpl) Create(ctx context.Context, userID int, title, body string) (model.Post, error) {
+	post := dao.PostTable{}
+	if err := p.db.GetContext(ctx, &post, `
+        INSERT INTO
+                posts (user_id, title, body)
+        VALUES
+        (
+                ?,
+                ?,
+                ?
+        )
+        RETURNING
+                id,
+                title,
+                body,
+                user_id,
+                created_at,
+                updated_at
+        `, userID, title, body); err != nil {
+		log.Println(err)
+		return model.Post{}, err
+	}
+
+	return dao.ConvertPostTableToDomainPost(post), nil
+}
+
 // GetDetail implements repository.PostRepository.
 func (p PostRepositoryImpl) GetDetail(ctx context.Context, id int) (model.PostDetail, error) {
 	post := dao.PostTable{}
 	if err := p.db.GetContext(ctx, &post, `
-		SELECT
-			posts.id,
-			posts.title,
-			posts.body,
-			posts.user_id,
-			posts.created_at,
-			posts.updated_at,
-			users.name as "user_name"
-		FROM
-			posts
-		INNER JOIN
-			users
-		ON
-			posts.user_id=users.id
-		WHERE
-			posts.id=?
-	`, id); err != nil {
+                SELECT
+                        posts.id,
+                        posts.title,
+                        posts.body,
+                        posts.user_id,
+                        posts.created_at,
+                        posts.updated_at,
+                        users.name as "user_name"
+                FROM
+                        posts
+                INNER JOIN
+                        users
+                ON
+                        posts.user_id=users.id
+                WHERE
+                        posts.id=?
+        `, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return model.PostDetail{}, nil
 		}
@@ -62,21 +89,21 @@ func (p PostRepositoryImpl) GetDetail(ctx context.Context, id int) (model.PostDe
 func (p PostRepositoryImpl) List(ctx context.Context) ([]model.Post, error) {
 	posts := []dao.PostTable{}
 	if err := p.db.SelectContext(ctx, &posts, `
-		SELECT
-			posts.id,
-			posts.title,
-			posts.body,
-			posts.user_id,
-			posts.created_at,
-			posts.updated_at,
-			users.name as "user_name"
-		FROM
-			posts
-		INNER JOIN
-			users
-		ON
-			posts.user_id=users.id
-	`); err != nil {
+                SELECT
+                        posts.id,
+                        posts.title,
+                        posts.body,
+                        posts.user_id,
+                        posts.created_at,
+                        posts.updated_at,
+                        users.name as "user_name"
+                FROM
+                        posts
+                INNER JOIN
+                        users
+                ON
+                        posts.user_id=users.id
+        `); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}

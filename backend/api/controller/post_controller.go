@@ -17,6 +17,7 @@ import (
 )
 
 type PostController struct {
+	createPostUsecase    application.CreatePostUsecase
 	listPostUsecase      application.ListPostUsecase
 	getPostUsecase       application.GetPostDetailUsecase
 	listCommentsUsecase  application.ListCommentsUsecase
@@ -26,6 +27,7 @@ type PostController struct {
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
+	createPostUsecase := do.MustInvoke[application.CreatePostUsecase](i)
 	listPostUsecase := do.MustInvoke[application.ListPostUsecase](i)
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
@@ -33,6 +35,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
 	deleteCommentUsecase := do.MustInvoke[application.DeleteCommentUsecase](i)
 	return &PostController{
+		createPostUsecase:    createPostUsecase,
 		listPostUsecase:      listPostUsecase,
 		getPostUsecase:       getPostUsecase,
 		listCommentsUsecase:  listCommentsUsecase,
@@ -40,6 +43,46 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 		updateCommentUsecase: updateCommentUsecase,
 		deleteCommentUsecase: deleteCommentUsecase,
 	}, nil
+}
+
+func (pc PostController) CreatePost(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	var req schema.CreatePostRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "リクエストの形式が誤っています")))
+		return
+	}
+
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
+		return
+	}
+
+	result, err := pc.createPostUsecase.Execute(ctx, application.CreatePostUsecaseInput{
+		UserID: user.ID,
+		Title:  req.Title,
+		Body:   req.Body,
+	})
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(201, schema.PostResponse{
+		ID:    result.Post.ID,
+		Title: req.Title,
+		UserResponse: schema.UserResponse{
+			ID:       user.ID,
+			UserName: user.Name,
+		},
+	})
 }
 
 func (pc PostController) ListPost(c *gin.Context) {

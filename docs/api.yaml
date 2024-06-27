@@ -50,17 +50,14 @@ paths:
       - post
     post:
       operationId: createPost
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SchemaCreatePostRequest'
       responses:
         "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaPostResponse'
+                items:
+                  $ref: '#/components/schemas/SchemaPostResponse'
+                type: array
           description: Created
         "400":
           content:
@@ -80,7 +77,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaErrorResponse'
           description: Internal Server Error
-      summary: 投稿を追加
+      summary: 投稿を作成
       tags:
       - post
   /signin:
@@ -427,13 +424,6 @@ components:
     SchemaCreateCommentRequest:
       properties:
         body:
-          type: string
-      type: object
-    SchemaCreatePostRequest:
-      properties:
-        body:
-          type: string
-        title:
           type: string
       type: object
     SchemaErrorResponse:

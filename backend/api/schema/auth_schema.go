@@ -10,3 +10,8 @@ type LoginRequest struct {
 	UserName string `json:"user_name"`
 	Password string `json:"password"`
 }
+
+type CreatePostRequest struct {
+	Title string `json:"title"`
+	Body  string `json:"body"`
+}
