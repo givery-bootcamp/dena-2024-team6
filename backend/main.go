@@ -39,18 +39,20 @@ func main() {
 	}
 
 	// スキーマ情報からOpenAPIファイルの自動生成
-	appDoc := do.MustInvoke[*openapi3.Reflector](injector)
-	generatedDoc, err := appDoc.Spec.MarshalYAML()
-	if err != nil {
-		log.Printf("failed to generate openapi doc; %+v\n", err)
-	} else {
-		f, err := os.Create("../docs/api.yaml")
+	if config.HostName == "localhost" {
+		appDoc := do.MustInvoke[*openapi3.Reflector](injector)
+		generatedDoc, err := appDoc.Spec.MarshalYAML()
 		if err != nil {
-			log.Fatalf("failed to load file; %+v\n", err)
-		}
-		defer f.Close()
-		if _, err = f.Write(generatedDoc); err != nil {
-			log.Fatalf("failed to generate doc; %+v\n", err)
+			log.Printf("failed to generate openapi doc; %+v\n", err)
+		} else {
+			f, err := os.Create("../docs/api.yaml")
+			if err != nil {
+				log.Fatalf("failed to load file; %+v\n", err)
+			}
+			defer f.Close()
+			if _, err = f.Write(generatedDoc); err != nil {
+				log.Fatalf("failed to generate doc; %+v\n", err)
+			}
 		}
 	}
 
