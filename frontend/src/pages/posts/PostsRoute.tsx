@@ -18,6 +18,7 @@ import dayjs from 'dayjs'
 import { useGetPosts } from '../../api/api'
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Markdown } from '@yamada-ui/markdown'
 
 export const PostsRoute = () => {
   // API取得
@@ -64,7 +65,7 @@ export const PostsRoute = () => {
               </CardHeader>
 
               <CardBody>
-                <Text>{post.body}</Text>
+                <Markdown>{post.body}</Markdown>
               </CardBody>
               <CardFooter>
                 <HStack>

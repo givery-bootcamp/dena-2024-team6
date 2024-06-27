@@ -19,7 +19,6 @@ import { Link, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPostsPostId, useGetUser } from '../../../api/api'
 import { Markdown } from '@yamada-ui/markdown'
 import { CommentRoute } from './PostCommentsRoute'
-import { CreatePostRoute } from '../CreatePostRoute'
 import { CreatePostCommentRoute } from './CreatePostCommentRoute'
 
 export const PostDetailRoute = () => {

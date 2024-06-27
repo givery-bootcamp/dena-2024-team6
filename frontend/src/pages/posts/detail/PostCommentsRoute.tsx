@@ -1,6 +1,5 @@
-import { Box, Card, CardBody, CardFooter, CardHeader, Divider, HStack, Heading, Text, VStack } from '@yamada-ui/react'
+import { Box, HStack, Text, VStack } from '@yamada-ui/react'
 import { AttributeDisplay } from './AttributeDisplay'
-import { useRef } from 'react'
 import dayjs from 'dayjs'
 
 export const CommentRoute = ({ id }: { id: number }) => {
