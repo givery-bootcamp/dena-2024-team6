@@ -1,11 +1,11 @@
 import { AppRoute } from './AppRoute'
-
+import { Header } from './Header'
 import './App.scss'
 
 function App() {
   return (
     <div className="app-root">
-      <header className="app-header">サンプルアプリケーション</header>
+      <Header />
       <main className="app-body container">
         <AppRoute />
       </main>
