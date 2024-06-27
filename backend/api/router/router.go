@@ -70,6 +70,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	createPostOpe.SetID("createPost")
 	createPostOpe.SetSummary("投稿を作成")
 	createPostOpe.SetTags("post")
+	createPostOpe.AddReqStructure(new(schema.CreatePostRequest))
 	createPostOpe.AddRespStructure(new([]schema.PostResponse), openapi.WithHTTPStatus(http.StatusCreated))
 	createPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	createPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
@@ -153,7 +154,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
-	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	createCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(createCommnetsOpe); err != nil {
 		return err
 	}
@@ -184,7 +185,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
-	listCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	putCommnetsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(putCommnetsOpe); err != nil {
 		return err
 	}
