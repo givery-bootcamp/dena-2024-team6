@@ -49,7 +49,9 @@ func main() {
 			log.Fatalf("failed to load file; %+v\n", err)
 		}
 		defer f.Close()
-		f.Write(generatedDoc)
+		if _, err = f.Write(generatedDoc); err != nil {
+			log.Fatalf("failed to generate doc; %+v\n", err)
+		}
 	}
 
 	// 裏側でサーバを起動
