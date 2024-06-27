@@ -17,6 +17,7 @@ import dayjs from 'dayjs'
 import { AttributeDisplay } from './AttributeDisplay'
 import { Link, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPostsPostId, useGetUser } from '../../../api/api'
+import { Markdown } from '@yamada-ui/markdown'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
