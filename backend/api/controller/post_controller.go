@@ -20,7 +20,7 @@ type PostController struct {
 	createPostUsecase    application.CreatePostUsecase
 	listPostUsecase      application.ListPostUsecase
 	getPostUsecase       application.GetPostDetailUsecase
-	createPostUsecase    application.CreatePostUsecase
+	deletePostUsecase    application.DeletePostUsecase
 	listCommentsUsecase  application.ListCommentsUsecase
 	createCommentUsecase application.CreateCommentUsecase
 	updateCommentUsecase application.UpdateCommentUsecase
@@ -31,7 +31,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	createPostUsecase := do.MustInvoke[application.CreatePostUsecase](i)
 	listPostUsecase := do.MustInvoke[application.ListPostUsecase](i)
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
-	createPostUsecase := do.MustInvoke[application.CreatePostUsecase](i)
+	deletePostUsecase := do.MustInvoke[application.DeletePostUsecase](i)
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
 	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
 	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
@@ -40,52 +40,12 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 		createPostUsecase:    createPostUsecase,
 		listPostUsecase:      listPostUsecase,
 		getPostUsecase:       getPostUsecase,
-		createPostUsecase:    createPostUsecase,
+		deletePostUsecase:    deletePostUsecase,
 		listCommentsUsecase:  listCommentsUsecase,
 		createCommentUsecase: createCommentUsecase,
 		updateCommentUsecase: updateCommentUsecase,
 		deleteCommentUsecase: deleteCommentUsecase,
 	}, nil
-}
-
-func (pc PostController) CreatePost(c *gin.Context) {
-	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
-	defer cancel()
-
-	var req schema.CreatePostRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "リクエストの形式が誤っています")))
-		return
-	}
-
-	user, ok := middleware.GetUserAuthContext(c)
-	if !ok {
-		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
-		return
-	}
-
-	result, err := pc.createPostUsecase.Execute(ctx, application.CreatePostUsecaseInput{
-		UserID: user.ID,
-		Title:  req.Title,
-		Body:   req.Body,
-	})
-	if apperror.Is(err, apperror.CodeForbidden) {
-		c.JSON(403, schema.NewErrorResponse(err))
-		return
-	}
-	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
-		c.JSON(500, schema.NewErrorResponse(err))
-		return
-	}
-
-	c.JSON(201, schema.PostResponse{
-		ID:    result.Post.ID,
-		Title: req.Title,
-		UserResponse: schema.UserResponse{
-			ID:       user.ID,
-			UserName: user.Name,
-		},
-	})
 }
 
 func (pc PostController) ListPost(c *gin.Context) {
@@ -160,6 +120,7 @@ func (pc PostController) CreatePost(c *gin.Context) {
 		c.JSON(400, schema.NewErrorResponse(apperror.New(apperror.CodeInvalidArgument, "リクエストの形式が誤っています")))
 		return
 	}
+
 	// TODO: そのうちバリデーションライブラリ導入したい
 	// RUNEを使っているのは、日本語の文字数をちゃんと正しく取るため
 	if utf8.RuneCountInString(req.Title) > 20 || len(req.Title) == 0 {
@@ -189,6 +150,44 @@ func (pc PostController) CreatePost(c *gin.Context) {
 	c.JSON(201, schema.MutationSchema{
 		TargetID: result.PostID,
 		Message:  "新しい投稿を作成しました",
+	})
+}
+
+// delete psot
+func (pc PostController) DeletePost(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
+		return
+	}
+
+	err = pc.deletePostUsecase.Execute(ctx, application.DeletePostUsecaseInput{
+		PostID: postID,
+		UserID: user.ID,
+	})
+
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	// 削除は204なので、204を返す
+	c.JSON(204, schema.MutationSchema{
+		TargetID: postID,
+		Message:  "投稿を削除しました",
 	})
 }
 
