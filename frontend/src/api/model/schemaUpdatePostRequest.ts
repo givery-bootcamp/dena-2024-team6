@@ -7,6 +7,6 @@
  */
 
 export interface SchemaUpdatePostRequest {
-  body?: string;
-  title?: string;
+  body?: string
+  title?: string
 }
