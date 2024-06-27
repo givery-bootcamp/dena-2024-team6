@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-var HostName = "127.0.0.1"
+var HostName = "localhost"
 var Port = 9000
 var CorsAllowOrigin = "http://localhost:3000"
 var DBHostName = "db"
