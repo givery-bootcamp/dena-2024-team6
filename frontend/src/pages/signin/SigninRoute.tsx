@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Container, FormControl, Input, Snacks, useSnacks } from '@yamada-ui/react'
+import { Button, Container, FormControl, Input, Snacks, useSnacks, Text } from '@yamada-ui/react'
 import { usePostSignin, useGetUser } from '../../api/api'
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
-
   const { snack, snacks } = useSnacks()
   const { refetch } = useGetUser()
   const navigate = useNavigate()
   const { mutate, isPending } = usePostSignin()
-
   const validateUsername = (value: string) => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
@@ -74,6 +72,7 @@ export const SigninRoute = () => {
       )
     }
   }
+
   return (
     <Container>
       <Snacks snacks={snacks} gutter={[0, 'md']} />
@@ -98,6 +97,17 @@ export const SigninRoute = () => {
       <Button onClick={handleSubmit} isLoading={isPending} loadingIcon="dots" colorScheme="primary">
         サインイン
       </Button>
+      <Text
+        as="a"
+        mt={4}
+        onClick={() => {
+          navigate('/signup')
+        }}
+        cursor="pointer"
+        textDecoration="underline"
+      >
+        または、アカウントを新規作成
+      </Text>
     </Container>
   )
 }
