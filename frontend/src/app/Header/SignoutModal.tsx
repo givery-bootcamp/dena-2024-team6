@@ -14,26 +14,25 @@ export const SignoutModal = ({ isOpen, onClose, signoutMutate, refetch }: props)
       <Center>
         <ModalHeader>警告</ModalHeader>
       </Center>
-      <Divider variant="solid" />
-      <ModalBody>削除したら元に戻せません。削除しますか？</ModalBody>
-      <Divider variant="solid" />
+      <Divider variant="solid" my={2} />
+      <ModalBody>サインアウトを行います。よろしいですか？</ModalBody>
+      <Divider variant="solid" my={2} />
       <ModalFooter>
         <Button variant="ghost" onClick={onClose}>
           とじる
         </Button>
-        <>
-          <Link to="/">
-            <Button
-              onClick={() => {
-                signoutMutate()
-                refetch()
-              }}
-              colorScheme="primary"
-            >
-              削除
-            </Button>
-          </Link>
-        </>
+        <Link to="/">
+          <Button
+            onClick={() => {
+              signoutMutate()
+              refetch()
+              onClose()
+            }}
+            colorScheme="primary"
+          >
+            サインアウト
+          </Button>
+        </Link>
       </ModalFooter>
     </Modal>
   )
