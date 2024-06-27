@@ -15,7 +15,6 @@ services:
         condition: service_healthy
     environment:
       TZ: Asia/Tokyo
-      HOSTNAME: localhost
   db:
     container_name: mysql
     build:

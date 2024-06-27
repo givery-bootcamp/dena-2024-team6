@@ -39,7 +39,7 @@ func main() {
 	}
 
 	// スキーマ情報からOpenAPIファイルの自動生成
-	if config.HostName == "localhost" {
+	if config.AppEnv == "dev" {
 		appDoc := do.MustInvoke[*openapi3.Reflector](injector)
 		generatedDoc, err := appDoc.Spec.MarshalYAML()
 		if err != nil {
