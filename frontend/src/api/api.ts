@@ -16,7 +16,7 @@ import type {
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query'
-import type { LoginRequest, Post, User } from './model'
+import type { LoginRequest, Post, CreatePost, User } from './model'
 import { customInstance } from '../shared/libs/axios'
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1]
@@ -248,4 +248,45 @@ export const useGetUser = <TData = Awaited<ReturnType<typeof getUser>>, TError =
   query.queryKey = queryOptions.queryKey
 
   return query
+}
+
+/**
+ * @summary 新しい投稿を作成
+ */
+export const postPosts = (post: CreatePost, options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<CreatePost>(
+    { url: `/posts`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: post },
+    options
+  )
+}
+
+export const getPostPostsMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postPosts>>, TError, { data: CreatePost }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof postPosts>>, TError, { data: CreatePost }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof postPosts>>, { data: CreatePost }> = (props) => {
+    const { data } = props ?? {}
+
+    return postPosts(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostPostsMutationResult = NonNullable<Awaited<ReturnType<typeof postPosts>>>
+export type PostPostsMutationBody = CreatePost
+export type PostPostsMutationError = unknown
+
+/**
+ * @summary 新しい投稿を作成
+ */
+export const usePostPosts = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postPosts>>, TError, { data: CreatePost }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof postPosts>>, TError, { data: CreatePost }, TContext> => {
+  const mutationOptions = getPostPostsMutationOptions(options)
+
+  return useMutation(mutationOptions)
 }
