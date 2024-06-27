@@ -1,10 +1,11 @@
 import { Box, HStack, Text, VStack } from '@yamada-ui/react'
 import { AttributeDisplay } from './AttributeDisplay'
 import dayjs from 'dayjs'
+// import { useGetComments } from '../../../api/api'
 
 export const CommentRoute = ({ id }: { id: number }) => {
   // mock
-  const commentList = [
+  const mockcommentList = [
     {
       id: 1,
       post_id: 1,
@@ -51,11 +52,13 @@ export const CommentRoute = ({ id }: { id: number }) => {
       updated_at: '2021-01-01T00:00:00'
     }
   ]
+  // const { data: commentList } = useGetComments(id)
+  const comments =mockcommentList
 
   return (
     <>
       <VStack h="md" p="md" w="full" overflow="auto">
-        {commentList.map((comment) => (
+        {comments.map((comment) => (
           <>
             <Box w="full" p="md" border="2px solid" borderColor="gray.50" borderRadius="md">
               <Text>{comment.body}</Text>
