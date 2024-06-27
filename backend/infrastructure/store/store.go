@@ -11,11 +11,6 @@ import (
 )
 
 func NewStore(i *do.Injector) (*sqlx.DB, error) {
-	jst, err := time.LoadLocation("Asia/Tokyo")
-	if err != nil {
-		return nil, err
-	}
-
 	dsn := mysql.Config{
 		DBName:    config.DBName,
 		User:      "root",
@@ -23,7 +18,7 @@ func NewStore(i *do.Injector) (*sqlx.DB, error) {
 		Net:       "tcp",
 		ParseTime: true,
 		Collation: "utf8mb4_unicode_ci",
-		Loc:       jst,
+		Loc:       time.Local,
 	}
 
 	return sqlx.Open("mysql", dsn.FormatDSN())
