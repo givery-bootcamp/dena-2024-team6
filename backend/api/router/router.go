@@ -78,6 +78,22 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	//deletePostOpe /posts/{id} DELETE
+	authRequired.DELETE("/posts/:postid", postController.DeletePost)
+	deletePostOpe, _ := appDoc.NewOperationContext(http.MethodDelete, "posts/{postid}")
+	deletePostOpe.AddReqStructure(new(schema.DeletePostRequest))
+	deletePostOpe.SetID("deletePost")
+	deletePostOpe.SetSummary("投稿を削除")
+	deletePostOpe.SetTags("post")
+	deletePostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusNoContent))
+	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusNotFound))
+	deletePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(deletePostOpe); err != nil {
+		return err
+	}
+
 	// getPostOpe /posts/{id} GET
 	app.GET("/posts/:postid", postController.GetPost)
 	getPostOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/{id}")
@@ -157,7 +173,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
-	authRequired.DELETE("/posts/:postId/comments/:commentId", postController.DeleteComment)
+	authRequired.DELETE("/posts/:postid/comments/:commentId", postController.DeleteComment)
 	deleteCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodDelete, "posts/{postId}/comments/{commentId}")
 	deleteCommnetsOpe.SetID("deletePostComments")
 	deleteCommnetsOpe.AddReqStructure(new(schema.DeleteCommentRequest))

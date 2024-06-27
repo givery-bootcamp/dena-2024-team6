@@ -20,6 +20,7 @@ type PostController struct {
 	createPostUsecase    application.CreatePostUsecase
 	listPostUsecase      application.ListPostUsecase
 	getPostUsecase       application.GetPostDetailUsecase
+	deletePostUsecase    application.DeletePostUsecase
 	listCommentsUsecase  application.ListCommentsUsecase
 	createCommentUsecase application.CreateCommentUsecase
 	updateCommentUsecase application.UpdateCommentUsecase
@@ -30,6 +31,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	createPostUsecase := do.MustInvoke[application.CreatePostUsecase](i)
 	listPostUsecase := do.MustInvoke[application.ListPostUsecase](i)
 	getPostUsecase := do.MustInvoke[application.GetPostDetailUsecase](i)
+	deletePostUsecase := do.MustInvoke[application.DeletePostUsecase](i)
 	listCommentsUsecase := do.MustInvoke[application.ListCommentsUsecase](i)
 	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
 	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
@@ -38,6 +40,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 		createPostUsecase:    createPostUsecase,
 		listPostUsecase:      listPostUsecase,
 		getPostUsecase:       getPostUsecase,
+		deletePostUsecase:    deletePostUsecase,
 		listCommentsUsecase:  listCommentsUsecase,
 		createCommentUsecase: createCommentUsecase,
 		updateCommentUsecase: updateCommentUsecase,
@@ -147,6 +150,44 @@ func (pc PostController) CreatePost(c *gin.Context) {
 	c.JSON(201, schema.MutationSchema{
 		TargetID: result.PostID,
 		Message:  "新しい投稿を作成しました",
+	})
+}
+
+// delete psot
+func (pc PostController) DeletePost(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+	user, ok := middleware.GetUserAuthContext(c)
+	if !ok {
+		c.JSON(401, schema.NewErrorResponse(apperror.New(apperror.CodeUnauthorized, "unauthorized")))
+		return
+	}
+
+	err = pc.deletePostUsecase.Execute(ctx, application.DeletePostUsecaseInput{
+		PostID: postID,
+		UserID: user.ID,
+	})
+
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	// 削除は204なので、204を返す
+	c.JSON(204, schema.MutationSchema{
+		TargetID: postID,
+		Message:  "投稿を削除しました",
 	})
 }
 

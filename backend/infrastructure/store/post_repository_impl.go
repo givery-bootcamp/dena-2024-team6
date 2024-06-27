@@ -74,6 +74,8 @@ func (p PostRepositoryImpl) GetDetail(ctx context.Context, id int) (model.PostDe
                         posts.user_id=users.id
                 WHERE
                         posts.id=?
+                AND
+                        posts.deleted_at is null
         `, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return model.PostDetail{}, nil
@@ -105,6 +107,8 @@ func (p PostRepositoryImpl) List(ctx context.Context) ([]model.Post, error) {
                         users
                 ON
                         posts.user_id=users.id
+                WHERE
+                        posts.deleted_at is null
         `); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -135,6 +139,8 @@ func (p PostRepositoryImpl) Update(ctx context.Context, id int, title, body stri
                         body=?
                 WHERE
                         id=?
+                        and
+                        deleted_at is null
                 RETURNING
                         id,
                         title,
@@ -153,14 +159,15 @@ func (p PostRepositoryImpl) Update(ctx context.Context, id int, title, body stri
 // Delete implements repository.PostRepository.
 func (p PostRepositoryImpl) Delete(ctx context.Context, id int) error {
 	if _, err := p.db.ExecContext(ctx, `
-                DELETE FROM
-                        posts
+                UPDATE posts
+                SET deleted_at=NOW()
                 WHERE
                         id=?
+                AND
+                        deleted_at is null
         `, id); err != nil {
 		log.Println(err)
 		return err
 	}
-
 	return nil
 }

@@ -19,6 +19,10 @@ type CreatePostRequest struct {
 	Body  string `json:"body"`
 }
 
+type DeletePostRequest struct {
+	PostID string `path:"postid" example:"1"`
+}
+
 type CommentListRequest struct {
 	PostID string `path:"postId" example:"1"`
 }
