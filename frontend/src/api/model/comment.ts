@@ -13,7 +13,7 @@ export interface CommentList {
 }
 
 export interface CreatComment {
-  post_id: number
+  post_id: string
   body: string
 }
 

@@ -19,6 +19,8 @@ import { Link, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPostsPostId, useGetUser } from '../../../api/api'
 import { Markdown } from '@yamada-ui/markdown'
 import { CommentRoute } from './PostCommentsRoute'
+import { CreatePostRoute } from '../CreatePostRoute'
+import { CreatePostCommentRoute } from './CreatePostCommentRoute'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
@@ -94,12 +96,12 @@ export const PostDetailRoute = () => {
         ) : null}
       </HStack>
       <CommentRoute id={Number(id!)} />
-      <Divider variant="solid" />
       <Link to="/">
-          <Button colorScheme="primary" variant={'outline'}>
-            戻る
-          </Button>
-        </Link>
+        <Button colorScheme="primary" variant={'outline'}>
+          戻る
+        </Button>
+      </Link>
+      <CreatePostCommentRoute id={Number(id!)} />
     </Container>
   )
 }

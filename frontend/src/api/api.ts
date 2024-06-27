@@ -18,6 +18,7 @@ import type {
 } from '@tanstack/react-query'
 import type { LoginRequest, Post, CreatePost, User, UpdatePost } from './model'
 import { customInstance } from '../shared/libs/axios'
+import { CreatComment } from './model/comment'
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1]
 
@@ -364,6 +365,47 @@ export const useDeletePost = <TError = unknown, TContext = unknown>(options?: {
   request?: SecondParameter<typeof customInstance>
 }): UseMutationResult<Awaited<ReturnType<typeof deletePost>>, TError, number, TContext> => {
   const mutationOptions = getDeletePostMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+
+/**
+ * @summary コメントの作成
+ */
+export const postComments = (comment: CreatComment, options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<void>(
+    { url: `/comments`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: comment },
+    options
+  )
+}
+
+export const getPostCommentsMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError, { data: CreatComment }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError, { data: CreatComment }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof postComments>>, { data: CreatComment }> = (props) => {
+    const { data } = props ?? {}
+
+    return postComments(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type PostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof postComments>>>
+export type PostCommentsMutationBody = CreatComment
+export type PostCommentsMutationError = unknown
+
+/**
+ * @summary コメントの作成
+ */
+export const usePostComments = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof postComments>>, TError, { data: CreatComment }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof postComments>>, TError, { data: CreatComment }, TContext> => {
+  const mutationOptions = getPostCommentsMutationOptions(options)
 
   return useMutation(mutationOptions)
 }
