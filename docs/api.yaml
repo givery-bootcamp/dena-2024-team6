@@ -279,7 +279,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaCommentResponse'
+                $ref: '#/components/schemas/SchemaMutationSchema'
           description: Created
         "400":
           content:
@@ -323,7 +323,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaCommentResponse'
+                $ref: '#/components/schemas/SchemaMutationSchema'
           description: Created
         "400":
           content:
@@ -377,7 +377,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaCommentResponse'
+                $ref: '#/components/schemas/SchemaMutationSchema'
           description: Created
         "400":
           content:
@@ -398,6 +398,98 @@ paths:
                 $ref: '#/components/schemas/SchemaErrorResponse'
           description: Forbidden
       summary: 対象の投稿のコメントを変更
+      tags:
+      - post
+  posts/{postid}:
+    delete:
+      operationId: deletePost
+      parameters:
+      - in: path
+        name: postid
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaMutationSchema'
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 投稿を削除
+      tags:
+      - post
+    put:
+      operationId: updatePost
+      parameters:
+      - in: path
+        name: postid
+        required: true
+        schema:
+          example: "1"
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaUpdatePostRequest'
+      responses:
+        "204":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaMutationSchema'
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 投稿を更新
       tags:
       - post
 components:
@@ -440,6 +532,13 @@ components:
         user_name:
           type: string
       type: object
+    SchemaMutationSchema:
+      properties:
+        message:
+          type: string
+        target_id:
+          type: integer
+      type: object
     SchemaPostResponse:
       properties:
         body:
@@ -456,6 +555,13 @@ components:
     SchemaUpdateCommentRequest:
       properties:
         body:
+          type: string
+      type: object
+    SchemaUpdatePostRequest:
+      properties:
+        body:
+          type: string
+        title:
           type: string
       type: object
     SchemaUserResponse:
