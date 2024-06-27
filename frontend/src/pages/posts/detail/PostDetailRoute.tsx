@@ -76,9 +76,9 @@ export const PostDetailRoute = () => {
               <Center>
                 <ModalHeader>警告</ModalHeader>
               </Center>
-              <Divider variant="solid" />
+              <Divider variant="solid" my={2} />
               <ModalBody>削除したら元に戻せません。削除しますか？</ModalBody>
-              <Divider variant="solid" />
+              <Divider variant="solid" my={2} />
               <ModalFooter>
                 <Button variant="ghost" onClick={onClose}>
                   とじる
