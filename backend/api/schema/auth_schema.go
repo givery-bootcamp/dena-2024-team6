@@ -4,6 +4,7 @@ package schema
 type UserResponse struct {
 	ID       int    `json:"user_id"`
 	UserName string `json:"user_name"`
+	IconURL  string `json:"icon_url"`
 }
 
 type LoginRequest struct {

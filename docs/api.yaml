@@ -518,6 +518,8 @@ components:
         created_at:
           format: date-time
           type: string
+        icon_url:
+          type: string
         id:
           type: integer
         post_id:
@@ -570,6 +572,8 @@ components:
         created_at:
           format: date-time
           type: string
+        icon_url:
+          type: string
         post_id:
           type: integer
         title:
@@ -605,6 +609,8 @@ components:
       type: object
     SchemaUserResponse:
       properties:
+        icon_url:
+          type: string
         user_id:
           type: integer
         user_name:
