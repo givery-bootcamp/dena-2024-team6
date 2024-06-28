@@ -173,9 +173,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	if err := appDoc.AddOperation(likePostOpe); err != nil {
 		return err
 	}
-	// getlikeRecord /posts/{postId}/getLikes POST
-	app.GET("/posts/:postid/getLikes", postController.GetLikeRecords)
-	getLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/getLikes")
+	// getlikeRecord /posts/{postId}/like GET
+	app.GET("/posts/:postid/like", postController.GetLikeRecords)
+	getLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/{postId}/like")
 	getLikeRecordsOpe.SetID("likePost")
 	getLikeRecordsOpe.AddReqStructure(new(schema.GetLikesRequest))
 	getLikeRecordsOpe.SetSummary("対象の投稿のlike数を取得する")
