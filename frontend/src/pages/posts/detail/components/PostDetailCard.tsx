@@ -27,6 +27,8 @@ type PostDetailCardProps = {
   createdAt?: Date
   isAuthor?: boolean
   isError?: boolean
+  onEdit: () => void
+  onDelete: () => void
 }
 
 export const PostDetailCard = memo(function ({
@@ -36,7 +38,9 @@ export const PostDetailCard = memo(function ({
   userIconURL,
   createdAt,
   isAuthor = false,
-  isError = false
+  isError = false,
+  onEdit,
+  onDelete
 }: PostDetailCardProps) {
   return (
     <Box w="full" bgColor="#ffffff" borderRadius="lg" p="md">
@@ -54,8 +58,8 @@ export const PostDetailCard = memo(function ({
                 </HStack>
                 {isAuthor ? (
                   <HStack>
-                    <IconButton size="xs" as={Edit2} variant="ghost" />
-                    <IconButton size="xs" as={Trash2} colorScheme="danger" variant="ghost" />
+                    <IconButton size="xs" as={Edit2} variant="ghost" onClick={onEdit} />
+                    <IconButton size="xs" as={Trash2} colorScheme="danger" variant="ghost" onClick={onDelete} />
                   </HStack>
                 ) : null}
               </Flex>

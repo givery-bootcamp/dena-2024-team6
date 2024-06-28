@@ -1,13 +1,14 @@
 import { useDisclosure, Flex, Box, Textarea, HStack } from '@yamada-ui/react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPost, useGetCurrentUser } from '@api/hooks'
 import { PostDetailCard } from './components/PostDetailCard'
 import { CommentCard } from './components/CommentCard'
 
 export const PostDetailRoute = () => {
+  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { data, isLoading, isError } = useGetPost(id!)
+  const { data, isError } = useGetPost(id!)
   const { data: user } = useGetCurrentUser()
   const { mutate } = useDeletePost()
 
@@ -29,6 +30,10 @@ export const PostDetailRoute = () => {
           createdAt={data?.created_at ? new Date(data.created_at) : undefined}
           isAuthor={data?.user_id == user?.user_id}
           isError={isError}
+          onEdit={() => {
+            navigate(`/posts/${id}/edit`)
+          }}
+          onDelete={() => {}}
         />
       </Box>
       <Flex
@@ -43,8 +48,8 @@ export const PostDetailRoute = () => {
           {dummy.map((d) => (
             <CommentCard
               key={d}
-              userName="さくらみこ"
-              body="JavaScriptは難しいにぇ..."
+              userName="funobu"
+              body="hoge"
               createdAt={data?.created_at ? new Date(data.created_at) : undefined}
             />
           ))}
