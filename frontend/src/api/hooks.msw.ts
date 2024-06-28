@@ -407,6 +407,7 @@ export const getWeb6APIMock = () => [
   getCreatePostMockHandler(),
   getSignInMockHandler(),
   getSignOutMockHandler(),
+  getSignUpMockHandler(),
   getGetCurrentUserMockHandler(),
   getGetPostMockHandler(),
   getListPostCommentsMockHandler(),

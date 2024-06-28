@@ -23,6 +23,7 @@ import type {
   SchemaLoginRequest,
   SchemaMutationSchema,
   SchemaPostResponse,
+  SchemaSignupRequest,
   SchemaUpdateCommentRequest,
   SchemaUpdatePostRequest,
   SchemaUserResponse
@@ -266,6 +267,64 @@ export const useSignOut = <TError = SchemaErrorResponse, TContext = unknown>(opt
   return useMutation(mutationOptions)
 }
 
+/**
+ * @summary ユーザのアカウント登録を実行
+ */
+export const signUp = (
+    schemaSignupRequest: SchemaSignupRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaUserResponse>(
+      {url: `/signup`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: schemaSignupRequest
+    },
+      options);
+    }
+  
+
+
+export const getSignUpMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError,{data: SchemaSignupRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError,{data: SchemaSignupRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signUp>>, {data: SchemaSignupRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  signUp(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SignUpMutationResult = NonNullable<Awaited<ReturnType<typeof signUp>>>
+    export type SignUpMutationBody = SchemaSignupRequest
+    export type SignUpMutationError = SchemaErrorResponse
+
+    /**
+ * @summary ユーザのアカウント登録を実行
+ */
+export const useSignUp = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError,{data: SchemaSignupRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof signUp>>,
+        TError,
+        {data: SchemaSignupRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getSignUpMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary 現在ログインしているユーザを取得
  */

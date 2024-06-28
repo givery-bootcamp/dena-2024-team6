@@ -63,6 +63,13 @@ func (ac AuthController) SignIn(c *gin.Context) {
 	})
 }
 
+func (ac AuthController) SignUp(c *gin.Context) {
+	c.JSON(200, map[string]string{
+		"status": "success",
+	})
+}
+
+
 func (ac AuthController) SignOut(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", config.GetDomainName(), config.GetIsSecured(), true)
 	c.Status(200)
