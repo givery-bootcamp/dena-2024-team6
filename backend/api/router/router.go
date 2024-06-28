@@ -187,9 +187,9 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	if err := appDoc.AddOperation(getLikeRecordsOpe); err != nil {
 		return err
 	}
-	// updatelikeRecord /posts/updateLikes POST
-	app.POST("/posts/updateLikes", postController.UpdateLikeRecords)
-	updateLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/updateLikes")
+	// updatelikeRecord /posts/like/update POST
+	app.POST("/posts/like/update", postController.UpdateLikeRecords)
+	updateLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/like/update")
 	updateLikeRecordsOpe.SetID("likePost")
 	updateLikeRecordsOpe.SetSummary("定期的に実行される。1h経過したらlike数を更新する")
 	updateLikeRecordsOpe.SetTags("post")
