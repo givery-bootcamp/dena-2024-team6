@@ -1,8 +1,8 @@
-import { Box, Button, Center, Loading, Spacer, Text } from '@yamada-ui/react'
+import { Box, Button, Center, Loading, Spacer, Stack, Text } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useSignOut, useGetCurrentUser } from '@api/hooks'
-import { CircleUserRound, LogOut, LogIn } from 'lucide-react'
+import { CircleUserRound, LogOut, LogIn, ArrowLeft } from 'lucide-react'
 
 export const Header = () => {
   const navigate = useNavigate()
@@ -33,8 +33,17 @@ export const Header = () => {
     return null
   }
 
+  const handleGoBack = () => {
+    navigate(-1)
+  }
+
   return (
     <header className="app-header">
+      <Button h="40px" w="20px" borderRadius="full" onClick={handleGoBack} bg="none">
+        <Stack>
+          <ArrowLeft color="#646464" size="30" />
+        </Stack>
+      </Button>
       {isFetching ? (
         <Center>
           <Loading variant="circles" size="6xl" color="#98C9DE" />
