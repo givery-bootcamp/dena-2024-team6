@@ -10,10 +10,15 @@ import {
   Center,
   Divider,
   Label,
-  Text
+  Text,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure
 } from '@yamada-ui/react'
-import { useSignUp, useGetCurrentUser } from '@api/hooks'
-
+import { useNavigate } from 'react-router-dom'
+import { useSignUp } from '@api/hooks'
 export const SignupRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -21,8 +26,11 @@ export const SignupRoute = () => {
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [confirmPasswordError, setConfirmPasswordError] = useState('')
+
   const { snack, snacks } = useSnacks()
   const { mutate } = useSignUp()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const navigate = useNavigate()
 
   const validateUsername = (value: string) => {
     if (value === '') {
@@ -85,18 +93,12 @@ export const SignupRoute = () => {
     const isUsernameValid = validateUsername(username)
     const isPasswordValid = validatePassword(password)
     const isConfirmPasswordValid = confirmPassword === password
-
     if (isUsernameValid && isPasswordValid && isConfirmPasswordValid) {
       mutate(
         { data: { user_name: username, password: password } },
         {
           onSuccess: () => {
-            snack({
-              title: '成功',
-              description: 'アカウントが作成されました。',
-              variant: 'solid',
-              status: 'success'
-            })
+            onOpen()
           },
           onError: () => {
             snack({
@@ -111,6 +113,11 @@ export const SignupRoute = () => {
     } else if (!isConfirmPasswordValid) {
       setConfirmPasswordError('パスワードが一致しません')
     }
+  }
+
+  const handleModalClose = () => {
+    onClose()
+    navigate('/signin')
   }
 
   return (
@@ -191,6 +198,15 @@ export const SignupRoute = () => {
           <Box h="10px" />
         </Box>
       </Center>
+      <Modal isOpen={isOpen} onClose={handleModalClose}>
+        <ModalHeader>登録完了</ModalHeader>
+        <ModalBody>アカウント登録が完了しました。</ModalBody>
+        <ModalFooter>
+          <Button variant="ghost" onClick={handleModalClose}>
+            閉じる
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Container>
   )
 }
