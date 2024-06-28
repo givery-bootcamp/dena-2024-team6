@@ -7,7 +7,7 @@ import (
 
 type LikeRepository interface {
 	Create(ctx context.Context, postID int) (int, error)
-	Update(ctx context.Context, postID int) error
+	Update(ctx context.Context, postID int, value int) error
 	Close(ctx context.Context) error
 	Get(ctx context.Context, postID int) (int, error)
 }
