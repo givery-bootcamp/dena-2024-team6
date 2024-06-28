@@ -56,7 +56,7 @@ func init() {
 // GetDomainName はAPIのドメインネームを返す
 func GetDomainName() string {
 	if AppEnv == "prod" {
-		return HostName
+		return "team-6_bk.member0005.track-bootcamp.run"
 	}
 	return "localhost"
 }
