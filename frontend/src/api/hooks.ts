@@ -5,7 +5,10 @@
  * FY24卒Web開発研修6班のAPI仕様書です
  * OpenAPI spec version: 1.0.0
  */
-import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQuery
+} from '@tanstack/react-query'
 import type {
   MutationFunction,
   QueryFunction,
@@ -22,45 +25,55 @@ import type {
   SchemaErrorResponse,
   SchemaLoginRequest,
   SchemaMutationSchema,
+  SchemaPostDetailResponse,
   SchemaPostResponse,
   SchemaUpdateCommentRequest,
   SchemaUpdatePostRequest,
   SchemaUserResponse
 } from './model'
-import { customInstance } from '../shared/libs/axios'
+import { customInstance } from '../shared/libs/axios';
 
-type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1]
+
+type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
+
 
 /**
  * @summary APIのセルフチェック
  */
-export const healthCheck = (options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
-  return customInstance<void>({ url: `/`, method: 'GET', signal }, options)
-}
+export const healthCheck = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<void>(
+      {url: `/`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getHealthCheckQueryKey = () => {
-  return [`/`] as const
-}
+    return [`/`] as const;
+    }
 
-export const getHealthCheckQueryOptions = <
-  TData = Awaited<ReturnType<typeof healthCheck>>,
-  TError = unknown
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>
-  request?: SecondParameter<typeof customInstance>
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
+    
+export const getHealthCheckQueryOptions = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
 
-  const queryKey = queryOptions?.queryKey ?? getHealthCheckQueryKey()
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof healthCheck>>> = ({ signal }) =>
-    healthCheck(requestOptions, signal)
+  const queryKey =  queryOptions?.queryKey ?? getHealthCheckQueryKey();
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof healthCheck>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof healthCheck>>> = ({ signal }) => healthCheck(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type HealthCheckQueryResult = NonNullable<Awaited<ReturnType<typeof healthCheck>>>
@@ -69,49 +82,60 @@ export type HealthCheckQueryError = unknown
 /**
  * @summary APIのセルフチェック
  */
-export const useHealthCheck = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>
-  request?: SecondParameter<typeof customInstance>
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+export const useHealthCheck = <TData = Awaited<ReturnType<typeof healthCheck>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof healthCheck>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
   const queryOptions = getHealthCheckQueryOptions(options)
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey }
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  query.queryKey = queryOptions.queryKey
+  query.queryKey = queryOptions.queryKey ;
 
-  return query
+  return query;
 }
+
+
+
 
 /**
  * @summary 投稿の一覧を取得
  */
-export const listPosts = (options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
-  return customInstance<SchemaPostResponse[]>({ url: `/posts`, method: 'GET', signal }, options)
-}
+export const listPosts = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<SchemaPostResponse[]>(
+      {url: `/posts`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getListPostsQueryKey = () => {
-  return [`/posts`] as const
-}
+    return [`/posts`] as const;
+    }
 
-export const getListPostsQueryOptions = <
-  TData = Awaited<ReturnType<typeof listPosts>>,
-  TError = SchemaErrorResponse
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listPosts>>, TError, TData>>
-  request?: SecondParameter<typeof customInstance>
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
+    
+export const getListPostsQueryOptions = <TData = Awaited<ReturnType<typeof listPosts>>, TError = SchemaErrorResponse>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPosts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
 
-  const queryKey = queryOptions?.queryKey ?? getListPostsQueryKey()
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof listPosts>>> = ({ signal }) =>
-    listPosts(requestOptions, signal)
+  const queryKey =  queryOptions?.queryKey ?? getListPostsQueryKey();
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof listPosts>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPosts>>> = ({ signal }) => listPosts(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPosts>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type ListPostsQueryResult = NonNullable<Awaited<ReturnType<typeof listPosts>>>
@@ -120,182 +144,232 @@ export type ListPostsQueryError = SchemaErrorResponse
 /**
  * @summary 投稿の一覧を取得
  */
-export const useListPosts = <TData = Awaited<ReturnType<typeof listPosts>>, TError = SchemaErrorResponse>(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listPosts>>, TError, TData>>
-  request?: SecondParameter<typeof customInstance>
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+export const useListPosts = <TData = Awaited<ReturnType<typeof listPosts>>, TError = SchemaErrorResponse>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPosts>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
   const queryOptions = getListPostsQueryOptions(options)
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey }
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  query.queryKey = queryOptions.queryKey
+  query.queryKey = queryOptions.queryKey ;
 
-  return query
+  return query;
 }
+
+
+
 
 /**
  * @summary 投稿を作成
  */
 export const createPost = (
-  schemaCreatePostRequest: SchemaCreatePostRequest,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<SchemaPostResponse[]>(
-    { url: `/posts`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: schemaCreatePostRequest },
-    options
-  )
-}
+    schemaCreatePostRequest: SchemaCreatePostRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaPostResponse[]>(
+      {url: `/posts`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: schemaCreatePostRequest
+    },
+      options);
+    }
+  
 
-export const getCreatePostMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createPost>>,
-    TError,
-    { data: SchemaCreatePostRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<Awaited<ReturnType<typeof createPost>>, TError, { data: SchemaCreatePostRequest }, TContext> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPost>>, { data: SchemaCreatePostRequest }> = (
-    props
-  ) => {
-    const { data } = props ?? {}
+export const getCreatePostMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPost>>, TError,{data: SchemaCreatePostRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPost>>, TError,{data: SchemaCreatePostRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return createPost(data, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type CreatePostMutationResult = NonNullable<Awaited<ReturnType<typeof createPost>>>
-export type CreatePostMutationBody = SchemaCreatePostRequest
-export type CreatePostMutationError = SchemaErrorResponse
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPost>>, {data: SchemaCreatePostRequest}> = (props) => {
+          const {data} = props ?? {};
 
-/**
+          return  createPost(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePostMutationResult = NonNullable<Awaited<ReturnType<typeof createPost>>>
+    export type CreatePostMutationBody = SchemaCreatePostRequest
+    export type CreatePostMutationError = SchemaErrorResponse
+
+    /**
  * @summary 投稿を作成
  */
-export const useCreatePost = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createPost>>,
-    TError,
-    { data: SchemaCreatePostRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<Awaited<ReturnType<typeof createPost>>, TError, { data: SchemaCreatePostRequest }, TContext> => {
-  const mutationOptions = getCreatePostMutationOptions(options)
+export const useCreatePost = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPost>>, TError,{data: SchemaCreatePostRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof createPost>>,
+        TError,
+        {data: SchemaCreatePostRequest},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getCreatePostMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary ユーザのログインを実行
  */
-export const signIn = (schemaLoginRequest: SchemaLoginRequest, options?: SecondParameter<typeof customInstance>) => {
-  return customInstance<SchemaUserResponse>(
-    { url: `/signin`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: schemaLoginRequest },
-    options
-  )
-}
+export const signIn = (
+    schemaLoginRequest: SchemaLoginRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaUserResponse>(
+      {url: `/signin`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: schemaLoginRequest
+    },
+      options);
+    }
+  
 
-export const getSignInMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof signIn>>, TError, { data: SchemaLoginRequest }, TContext>
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<Awaited<ReturnType<typeof signIn>>, TError, { data: SchemaLoginRequest }, TContext> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof signIn>>, { data: SchemaLoginRequest }> = (props) => {
-    const { data } = props ?? {}
+export const getSignInMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signIn>>, TError,{data: SchemaLoginRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof signIn>>, TError,{data: SchemaLoginRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return signIn(data, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type SignInMutationResult = NonNullable<Awaited<ReturnType<typeof signIn>>>
-export type SignInMutationBody = SchemaLoginRequest
-export type SignInMutationError = SchemaErrorResponse
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signIn>>, {data: SchemaLoginRequest}> = (props) => {
+          const {data} = props ?? {};
 
-/**
+          return  signIn(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SignInMutationResult = NonNullable<Awaited<ReturnType<typeof signIn>>>
+    export type SignInMutationBody = SchemaLoginRequest
+    export type SignInMutationError = SchemaErrorResponse
+
+    /**
  * @summary ユーザのログインを実行
  */
-export const useSignIn = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof signIn>>, TError, { data: SchemaLoginRequest }, TContext>
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<Awaited<ReturnType<typeof signIn>>, TError, { data: SchemaLoginRequest }, TContext> => {
-  const mutationOptions = getSignInMutationOptions(options)
+export const useSignIn = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signIn>>, TError,{data: SchemaLoginRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof signIn>>,
+        TError,
+        {data: SchemaLoginRequest},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getSignInMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary ユーザのログアウトを実行
  */
-export const signOut = (options?: SecondParameter<typeof customInstance>) => {
-  return customInstance<unknown>({ url: `/signout`, method: 'POST' }, options)
-}
+export const signOut = (
+    
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<unknown>(
+      {url: `/signout`, method: 'POST'
+    },
+      options);
+    }
+  
 
-export const getSignOutMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof signOut>>, TError, void, TContext>
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<Awaited<ReturnType<typeof signOut>>, TError, void, TContext> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof signOut>>, void> = () => {
-    return signOut(requestOptions)
-  }
+export const getSignOutMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signOut>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof signOut>>, TError,void, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-  return { mutationFn, ...mutationOptions }
-}
+      
 
-export type SignOutMutationResult = NonNullable<Awaited<ReturnType<typeof signOut>>>
 
-export type SignOutMutationError = SchemaErrorResponse
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signOut>>, void> = () => {
+          
 
-/**
+          return  signOut(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SignOutMutationResult = NonNullable<Awaited<ReturnType<typeof signOut>>>
+    
+    export type SignOutMutationError = SchemaErrorResponse
+
+    /**
  * @summary ユーザのログアウトを実行
  */
-export const useSignOut = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof signOut>>, TError, void, TContext>
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<Awaited<ReturnType<typeof signOut>>, TError, void, TContext> => {
-  const mutationOptions = getSignOutMutationOptions(options)
+export const useSignOut = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signOut>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof signOut>>,
+        TError,
+        void,
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getSignOutMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary 現在ログインしているユーザを取得
  */
-export const getCurrentUser = (options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
-  return customInstance<SchemaUserResponse>({ url: `/user`, method: 'GET', signal }, options)
-}
+export const getCurrentUser = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<SchemaUserResponse>(
+      {url: `/user`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
 export const getGetCurrentUserQueryKey = () => {
-  return [`/user`] as const
-}
+    return [`/user`] as const;
+    }
 
-export const getGetCurrentUserQueryOptions = <
-  TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = SchemaErrorResponse
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>
-  request?: SecondParameter<typeof customInstance>
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
+    
+export const getGetCurrentUserQueryOptions = <TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = SchemaErrorResponse>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
 
-  const queryKey = queryOptions?.queryKey ?? getGetCurrentUserQueryKey()
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getCurrentUser>>> = ({ signal }) =>
-    getCurrentUser(requestOptions, signal)
+  const queryKey =  queryOptions?.queryKey ?? getGetCurrentUserQueryKey();
 
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getCurrentUser>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getCurrentUser>>> = ({ signal }) => getCurrentUser(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetCurrentUserQueryResult = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>
@@ -304,52 +378,60 @@ export type GetCurrentUserQueryError = SchemaErrorResponse
 /**
  * @summary 現在ログインしているユーザを取得
  */
-export const useGetCurrentUser = <
-  TData = Awaited<ReturnType<typeof getCurrentUser>>,
-  TError = SchemaErrorResponse
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>
-  request?: SecondParameter<typeof customInstance>
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+export const useGetCurrentUser = <TData = Awaited<ReturnType<typeof getCurrentUser>>, TError = SchemaErrorResponse>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getCurrentUser>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
   const queryOptions = getGetCurrentUserQueryOptions(options)
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey }
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-  query.queryKey = queryOptions.queryKey
+  query.queryKey = queryOptions.queryKey ;
 
-  return query
+  return query;
 }
+
+
+
 
 /**
  * @summary 投稿をIDから取得
  */
-export const getPost = (id: string, options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
-  return customInstance<SchemaPostResponse>({ url: `/posts/${id}`, method: 'GET', signal }, options)
-}
-
-export const getGetPostQueryKey = (id: string) => {
-  return [`/posts/${id}`] as const
-}
-
-export const getGetPostQueryOptions = <TData = Awaited<ReturnType<typeof getPost>>, TError = SchemaErrorResponse>(
-  id: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>
-    request?: SecondParameter<typeof customInstance>
-  }
+export const getPost = (
+    id: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
+      
+      
+      return customInstance<SchemaPostDetailResponse>(
+      {url: `/posts/${id}`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
-  const queryKey = queryOptions?.queryKey ?? getGetPostQueryKey(id)
+export const getGetPostQueryKey = (id: string,) => {
+    return [`/posts/${id}`] as const;
+    }
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPost>>> = ({ signal }) =>
-    getPost(id, requestOptions, signal)
+    
+export const getGetPostQueryOptions = <TData = Awaited<ReturnType<typeof getPost>>, TError = SchemaErrorResponse>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
 
-  return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getPost>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetPostQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getPost>>> = ({ signal }) => getPost(id, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetPostQueryResult = NonNullable<Awaited<ReturnType<typeof getPost>>>
@@ -359,58 +441,59 @@ export type GetPostQueryError = SchemaErrorResponse
  * @summary 投稿をIDから取得
  */
 export const useGetPost = <TData = Awaited<ReturnType<typeof getPost>>, TError = SchemaErrorResponse>(
-  id: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>
-    request?: SecondParameter<typeof customInstance>
-  }
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getGetPostQueryOptions(id, options)
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getPost>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey }
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
-  query.queryKey = queryOptions.queryKey
+  const queryOptions = getGetPostQueryOptions(id,options)
 
-  return query
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
 }
+
+
+
 
 /**
  * @summary 対象の投稿のコメント一覧を取得
  */
 export const listPostComments = (
-  postId: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
+    postId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-  return customInstance<SchemaCommentResponse[]>({ url: `/posts/${postId}/comments`, method: 'GET', signal }, options)
-}
+      
+      
+      return customInstance<SchemaCommentResponse[]>(
+      {url: `/posts/${postId}/comments`, method: 'GET', signal
+    },
+      options);
+    }
+  
 
-export const getListPostCommentsQueryKey = (postId: string) => {
-  return [`/posts/${postId}/comments`] as const
-}
+export const getListPostCommentsQueryKey = (postId: string,) => {
+    return [`/posts/${postId}/comments`] as const;
+    }
 
-export const getListPostCommentsQueryOptions = <
-  TData = Awaited<ReturnType<typeof listPostComments>>,
-  TError = SchemaErrorResponse
->(
-  postId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listPostComments>>, TError, TData>>
-    request?: SecondParameter<typeof customInstance>
-  }
+    
+export const getListPostCommentsQueryOptions = <TData = Awaited<ReturnType<typeof listPostComments>>, TError = SchemaErrorResponse>(postId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPostComments>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getListPostCommentsQueryKey(postId)
+const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof listPostComments>>> = ({ signal }) =>
-    listPostComments(postId, requestOptions, signal)
+  const queryKey =  queryOptions?.queryKey ?? getListPostCommentsQueryKey(postId);
 
-  return { queryKey, queryFn, enabled: !!postId, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof listPostComments>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey }
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listPostComments>>> = ({ signal }) => listPostComments(postId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(postId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listPostComments>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type ListPostCommentsQueryResult = NonNullable<Awaited<ReturnType<typeof listPostComments>>>
@@ -420,343 +503,310 @@ export type ListPostCommentsQueryError = SchemaErrorResponse
  * @summary 対象の投稿のコメント一覧を取得
  */
 export const useListPostComments = <TData = Awaited<ReturnType<typeof listPostComments>>, TError = SchemaErrorResponse>(
-  postId: string,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listPostComments>>, TError, TData>>
-    request?: SecondParameter<typeof customInstance>
-  }
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
-  const queryOptions = getListPostCommentsQueryOptions(postId, options)
+ postId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listPostComments>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey }
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
-  query.queryKey = queryOptions.queryKey
+  const queryOptions = getListPostCommentsQueryOptions(postId,options)
 
-  return query
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
 }
+
+
+
 
 /**
  * @summary 対象の投稿のコメントを追加
  */
 export const createPostComments = (
-  postId: string,
-  schemaCreateCommentRequest: SchemaCreateCommentRequest,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<SchemaMutationSchema>(
-    {
-      url: `/posts/${postId}/comments`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    postId: string,
+    schemaCreateCommentRequest: SchemaCreateCommentRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaMutationSchema>(
+      {url: `/posts/${postId}/comments`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
       data: schemaCreateCommentRequest
     },
-    options
-  )
-}
+      options);
+    }
+  
 
-export const getCreatePostCommentsMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createPostComments>>,
-    TError,
-    { postId: string; data: SchemaCreateCommentRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createPostComments>>,
-  TError,
-  { postId: string; data: SchemaCreateCommentRequest },
-  TContext
-> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createPostComments>>,
-    { postId: string; data: SchemaCreateCommentRequest }
-  > = (props) => {
-    const { postId, data } = props ?? {}
+export const getCreatePostCommentsMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPostComments>>, TError,{postId: string;data: SchemaCreateCommentRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createPostComments>>, TError,{postId: string;data: SchemaCreateCommentRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return createPostComments(postId, data, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type CreatePostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof createPostComments>>>
-export type CreatePostCommentsMutationBody = SchemaCreateCommentRequest
-export type CreatePostCommentsMutationError = SchemaErrorResponse
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createPostComments>>, {postId: string;data: SchemaCreateCommentRequest}> = (props) => {
+          const {postId,data} = props ?? {};
 
-/**
+          return  createPostComments(postId,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreatePostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof createPostComments>>>
+    export type CreatePostCommentsMutationBody = SchemaCreateCommentRequest
+    export type CreatePostCommentsMutationError = SchemaErrorResponse
+
+    /**
  * @summary 対象の投稿のコメントを追加
  */
-export const useCreatePostComments = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createPostComments>>,
-    TError,
-    { postId: string; data: SchemaCreateCommentRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof createPostComments>>,
-  TError,
-  { postId: string; data: SchemaCreateCommentRequest },
-  TContext
-> => {
-  const mutationOptions = getCreatePostCommentsMutationOptions(options)
+export const useCreatePostComments = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createPostComments>>, TError,{postId: string;data: SchemaCreateCommentRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof createPostComments>>,
+        TError,
+        {postId: string;data: SchemaCreateCommentRequest},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getCreatePostCommentsMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary 対象の投稿のコメントを削除
  */
 export const deletePostComments = (
-  postId: string,
-  commentId: string,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<SchemaMutationSchema>(
-    { url: `/posts/${postId}/comments/${commentId}`, method: 'DELETE' },
-    options
-  )
-}
+    postId: string,
+    commentId: string,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaMutationSchema>(
+      {url: `/posts/${postId}/comments/${commentId}`, method: 'DELETE'
+    },
+      options);
+    }
+  
 
-export const getDeletePostCommentsMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deletePostComments>>,
-    TError,
-    { postId: string; commentId: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deletePostComments>>,
-  TError,
-  { postId: string; commentId: string },
-  TContext
-> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deletePostComments>>,
-    { postId: string; commentId: string }
-  > = (props) => {
-    const { postId, commentId } = props ?? {}
+export const getDeletePostCommentsMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePostComments>>, TError,{postId: string;commentId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deletePostComments>>, TError,{postId: string;commentId: string}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return deletePostComments(postId, commentId, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type DeletePostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof deletePostComments>>>
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePostComments>>, {postId: string;commentId: string}> = (props) => {
+          const {postId,commentId} = props ?? {};
 
-export type DeletePostCommentsMutationError = SchemaErrorResponse
+          return  deletePostComments(postId,commentId,requestOptions)
+        }
 
-/**
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeletePostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof deletePostComments>>>
+    
+    export type DeletePostCommentsMutationError = SchemaErrorResponse
+
+    /**
  * @summary 対象の投稿のコメントを削除
  */
-export const useDeletePostComments = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deletePostComments>>,
-    TError,
-    { postId: string; commentId: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof deletePostComments>>,
-  TError,
-  { postId: string; commentId: string },
-  TContext
-> => {
-  const mutationOptions = getDeletePostCommentsMutationOptions(options)
+export const useDeletePostComments = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePostComments>>, TError,{postId: string;commentId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deletePostComments>>,
+        TError,
+        {postId: string;commentId: string},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getDeletePostCommentsMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary 対象の投稿のコメントを変更
  */
 export const putPostComments = (
-  postId: string,
-  commentId: string,
-  schemaUpdateCommentRequest: SchemaUpdateCommentRequest,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<SchemaMutationSchema>(
-    {
-      url: `/posts/${postId}/comments/${commentId}`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    postId: string,
+    commentId: string,
+    schemaUpdateCommentRequest: SchemaUpdateCommentRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaMutationSchema>(
+      {url: `/posts/${postId}/comments/${commentId}`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
       data: schemaUpdateCommentRequest
     },
-    options
-  )
-}
+      options);
+    }
+  
 
-export const getPutPostCommentsMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putPostComments>>,
-    TError,
-    { postId: string; commentId: string; data: SchemaUpdateCommentRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof putPostComments>>,
-  TError,
-  { postId: string; commentId: string; data: SchemaUpdateCommentRequest },
-  TContext
-> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof putPostComments>>,
-    { postId: string; commentId: string; data: SchemaUpdateCommentRequest }
-  > = (props) => {
-    const { postId, commentId, data } = props ?? {}
+export const getPutPostCommentsMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPostComments>>, TError,{postId: string;commentId: string;data: SchemaUpdateCommentRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof putPostComments>>, TError,{postId: string;commentId: string;data: SchemaUpdateCommentRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return putPostComments(postId, commentId, data, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type PutPostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof putPostComments>>>
-export type PutPostCommentsMutationBody = SchemaUpdateCommentRequest
-export type PutPostCommentsMutationError = SchemaErrorResponse
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putPostComments>>, {postId: string;commentId: string;data: SchemaUpdateCommentRequest}> = (props) => {
+          const {postId,commentId,data} = props ?? {};
 
-/**
+          return  putPostComments(postId,commentId,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PutPostCommentsMutationResult = NonNullable<Awaited<ReturnType<typeof putPostComments>>>
+    export type PutPostCommentsMutationBody = SchemaUpdateCommentRequest
+    export type PutPostCommentsMutationError = SchemaErrorResponse
+
+    /**
  * @summary 対象の投稿のコメントを変更
  */
-export const usePutPostComments = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof putPostComments>>,
-    TError,
-    { postId: string; commentId: string; data: SchemaUpdateCommentRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof putPostComments>>,
-  TError,
-  { postId: string; commentId: string; data: SchemaUpdateCommentRequest },
-  TContext
-> => {
-  const mutationOptions = getPutPostCommentsMutationOptions(options)
+export const usePutPostComments = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putPostComments>>, TError,{postId: string;commentId: string;data: SchemaUpdateCommentRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof putPostComments>>,
+        TError,
+        {postId: string;commentId: string;data: SchemaUpdateCommentRequest},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getPutPostCommentsMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary 投稿を削除
  */
-export const deletePost = (postid: string, options?: SecondParameter<typeof customInstance>) => {
-  return customInstance<SchemaMutationSchema>({ url: `/posts/${postid}`, method: 'DELETE' }, options)
-}
+export const deletePost = (
+    postid: string,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaMutationSchema>(
+      {url: `/posts/${postid}`, method: 'DELETE'
+    },
+      options);
+    }
+  
 
-export const getDeletePostMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError, { postid: string }, TContext>
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError, { postid: string }, TContext> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePost>>, { postid: string }> = (props) => {
-    const { postid } = props ?? {}
+export const getDeletePostMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError,{postid: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError,{postid: string}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return deletePost(postid, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type DeletePostMutationResult = NonNullable<Awaited<ReturnType<typeof deletePost>>>
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deletePost>>, {postid: string}> = (props) => {
+          const {postid} = props ?? {};
 
-export type DeletePostMutationError = SchemaErrorResponse
+          return  deletePost(postid,requestOptions)
+        }
 
-/**
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeletePostMutationResult = NonNullable<Awaited<ReturnType<typeof deletePost>>>
+    
+    export type DeletePostMutationError = SchemaErrorResponse
+
+    /**
  * @summary 投稿を削除
  */
-export const useDeletePost = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError, { postid: string }, TContext>
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<Awaited<ReturnType<typeof deletePost>>, TError, { postid: string }, TContext> => {
-  const mutationOptions = getDeletePostMutationOptions(options)
+export const useDeletePost = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deletePost>>, TError,{postid: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof deletePost>>,
+        TError,
+        {postid: string},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getDeletePostMutationOptions(options);
 
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * @summary 投稿を更新
  */
 export const updatePost = (
-  postid: string,
-  schemaUpdatePostRequest: SchemaUpdatePostRequest,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<SchemaMutationSchema>(
-    {
-      url: `/posts/${postid}`,
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+    postid: string,
+    schemaUpdatePostRequest: SchemaUpdatePostRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaMutationSchema>(
+      {url: `/posts/${postid}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
       data: schemaUpdatePostRequest
     },
-    options
-  )
-}
+      options);
+    }
+  
 
-export const getUpdatePostMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updatePost>>,
-    TError,
-    { postid: string; data: SchemaUpdatePostRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof updatePost>>,
-  TError,
-  { postid: string; data: SchemaUpdatePostRequest },
-  TContext
-> => {
-  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updatePost>>,
-    { postid: string; data: SchemaUpdatePostRequest }
-  > = (props) => {
-    const { postid, data } = props ?? {}
+export const getUpdatePostMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePost>>, TError,{postid: string;data: SchemaUpdatePostRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePost>>, TError,{postid: string;data: SchemaUpdatePostRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
-    return updatePost(postid, data, requestOptions)
-  }
+      
 
-  return { mutationFn, ...mutationOptions }
-}
 
-export type UpdatePostMutationResult = NonNullable<Awaited<ReturnType<typeof updatePost>>>
-export type UpdatePostMutationBody = SchemaUpdatePostRequest
-export type UpdatePostMutationError = SchemaErrorResponse
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePost>>, {postid: string;data: SchemaUpdatePostRequest}> = (props) => {
+          const {postid,data} = props ?? {};
 
-/**
+          return  updatePost(postid,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdatePostMutationResult = NonNullable<Awaited<ReturnType<typeof updatePost>>>
+    export type UpdatePostMutationBody = SchemaUpdatePostRequest
+    export type UpdatePostMutationError = SchemaErrorResponse
+
+    /**
  * @summary 投稿を更新
  */
-export const useUpdatePost = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updatePost>>,
-    TError,
-    { postid: string; data: SchemaUpdatePostRequest },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationResult<
-  Awaited<ReturnType<typeof updatePost>>,
-  TError,
-  { postid: string; data: SchemaUpdatePostRequest },
-  TContext
-> => {
-  const mutationOptions = getUpdatePostMutationOptions(options)
+export const useUpdatePost = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePost>>, TError,{postid: string;data: SchemaUpdatePostRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof updatePost>>,
+        TError,
+        {postid: string;data: SchemaUpdatePostRequest},
+        TContext
+      > => {
 
-  return useMutation(mutationOptions)
-}
+      const mutationOptions = getUpdatePostMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    

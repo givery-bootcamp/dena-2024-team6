@@ -68,12 +68,9 @@ func (pc PostController) ListPost(c *gin.Context) {
 	resp := make([]schema.PostResponse, len(result.Posts))
 	for i, p := range result.Posts {
 		resp[i] = schema.PostResponse{
-			ID:    p.ID,
-			Title: p.Title,
-			UserResponse: schema.UserResponse{
-				ID:       p.UserID,
-				UserName: p.UserName,
-			},
+			ID:     p.ID,
+			Title:  p.Title,
+			UserID: p.UserID,
 		}
 	}
 
@@ -103,10 +100,12 @@ func (pc PostController) GetPost(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, schema.PostResponse{
-		ID:    result.Post.ID,
-		Title: result.Post.Title,
-		Body:  result.Post.Body,
+	c.JSON(200, schema.PostDetailResponse{
+		ID:        result.Post.ID,
+		Title:     result.Post.Title,
+		Body:      result.Post.Body,
+		CreatedAt: result.Post.CreatedAt,
+		UpdatedAt: result.Post.UpdatedAt,
 		UserResponse: schema.UserResponse{
 			ID:       result.Post.UserID,
 			UserName: result.Post.UserName,

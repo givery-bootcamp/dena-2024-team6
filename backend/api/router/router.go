@@ -118,7 +118,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	getPostOpe.AddReqStructure(new(schema.PostRequest))
 	getPostOpe.SetSummary("投稿をIDから取得")
 	getPostOpe.SetTags("post")
-	getPostOpe.AddRespStructure(new(schema.PostResponse), openapi.WithHTTPStatus(http.StatusOK))
+	getPostOpe.AddRespStructure(new(schema.PostDetailResponse), openapi.WithHTTPStatus(http.StatusOK))
 	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	getPostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusNotFound))
