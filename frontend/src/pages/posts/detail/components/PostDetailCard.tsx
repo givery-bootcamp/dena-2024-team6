@@ -46,7 +46,7 @@ export const PostDetailCard = memo(function ({
     <Box w="full" bgColor="#ffffff" borderRadius="lg" p="md">
       {!isError ? (
         <Flex gap="md">
-          {userName ? <Avatar size="sm" name={userName} src={userIconURL} /> : <SkeletonCircle w="32px" h="28px" />}
+          {userName ? <Avatar color="White" bg="#583474" size="sm" name={userName} src={userIconURL} /> : <SkeletonCircle w="32px" h="28px" />}
           <VStack>
             {userName ? (
               <Flex justifyContent="space-between">
