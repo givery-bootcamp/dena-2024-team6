@@ -1,4 +1,3 @@
-// context/UserContext.tsx
 import { User } from '@shared/models/user'
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 

@@ -8,7 +8,6 @@ export const Header = () => {
   const navigate = useNavigate()
   const { currentUser, setCurrentUser } = useUser()
   const { data: user, isError } = useGetCurrentUser()
-
   const { mutate: signoutMutate } = useSignOut({
     mutation: {
       onSuccess: () => {
@@ -17,16 +16,17 @@ export const Header = () => {
       }
     }
   })
-
   useEffect(() => {
-    setCurrentUser(user!)
-  }, [user])
+    if (user) {
+      setCurrentUser(user)
+    }
+  }, [user, setCurrentUser])
 
   useEffect(() => {
     if (isError) {
       setCurrentUser(null)
     }
-  }, [isError])
+  }, [isError, setCurrentUser])
 
   function initialUser({ user_name }: { user_name: string | undefined }) {
     if (user_name) {
@@ -34,11 +34,9 @@ export const Header = () => {
     }
     return null
   }
-
   const handleGoBack = () => {
     navigate(-1)
   }
-
   return (
     <header className="app-header">
       <Button h="40px" w="40px" borderRadius="full" onClick={handleGoBack} bg="none">
@@ -71,12 +69,7 @@ export const Header = () => {
             {currentUser.user_name}
           </Text>
           <Spacer />
-          <Button
-            bg="none"
-            onClick={() => {
-              signoutMutate()
-            }}
-          >
+          <Button bg="none" onClick={() => signoutMutate()}>
             <LogOut size="24" color="#646464" />
           </Button>
         </>
