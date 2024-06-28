@@ -7,11 +7,11 @@
  */
 
 export interface SchemaPostDetailResponse {
-  body?: string;
-  created_at?: string;
-  post_id?: number;
-  title?: string;
-  updated_at?: string;
-  user_id?: number;
-  user_name?: string;
+  body?: string
+  created_at?: string
+  post_id?: number
+  title?: string
+  updated_at?: string
+  user_id?: number
+  user_name?: string
 }
