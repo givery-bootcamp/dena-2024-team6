@@ -16,7 +16,7 @@ export const CreatePostRoute = () => {
   const navigate = useNavigate()
   const { mutate } = useCreatePost()
 
-  const validdateTitle = (value: string) => {
+  const validateTitle = (value: string) => {
     if (value === '') {
       setTitleError('タイトルを入力してください。')
       return false
@@ -41,7 +41,7 @@ export const CreatePostRoute = () => {
   const handleTitleChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setTitle(value)
-    validdateTitle(value)
+    validateTitle(value)
   }
 
   const handleContentChange = (value: string) => {
@@ -51,7 +51,7 @@ export const CreatePostRoute = () => {
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault()
-    const isTitleValid = validdateTitle(title)
+    const isTitleValid = validateTitle(title)
     const isContentValid = validateContent(content)
 
     if (isTitleValid && isContentValid) {
