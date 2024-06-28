@@ -29,11 +29,11 @@ func (p LikeRepositoryImpl) Create(ctx context.Context, postID int) (int, error)
 		`
                 INSERT INTO likes
                 (
-                        likes.post_id,
+                    likes.post_id
                 )
                 VALUES
                 (       
-                        ?
+                    ?
                 )
         `, postID)
 	if err != nil {
@@ -52,13 +52,13 @@ func (p LikeRepositoryImpl) Create(ctx context.Context, postID int) (int, error)
 func (p LikeRepositoryImpl) Update(ctx context.Context, postID int, value int) error {
 	if _, err := p.db.ExecContext(ctx, `
                 UPDATE
-                        likes
+                    likes
                 SET
-                        likes=?,
+                    likes=?
                 WHERE
-                        postId=?
+                    post_id=?
                 AND
-                        end_at is null
+                    end_at is null
         `, value, postID); err != nil {
 		log.Println(err)
 		return err
@@ -70,11 +70,13 @@ func (p LikeRepositoryImpl) Update(ctx context.Context, postID int, value int) e
 // Close implements repository.LikeRepository.
 func (p LikeRepositoryImpl) Close(ctx context.Context) error {
 	if _, err := p.db.ExecContext(ctx, `
-                UPDATE likes
-                SET end_at=NOW()
-                WHERE
-					end_at is null
-        `); err != nil {
+		UPDATE
+			likes
+		SET
+			end_at=NOW()
+		WHERE
+			end_at is null
+	`); err != nil {
 		log.Println(err)
 		return err
 	}
@@ -86,13 +88,13 @@ func (p LikeRepositoryImpl) Get(ctx context.Context, postID int) (int, error) {
 	var likes int
 	if err := p.db.GetContext(ctx, &likes, `
 		SELECT
-				likes.likes
+			likes.likes
 		FROM
-				likes
+			likes
 		WHERE
-				posts.post_id=?
+			likes.post_id=?
 		AND
-				posts.end_at is null
+			likes.end_at is null
 	`, postID); err != nil {
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {

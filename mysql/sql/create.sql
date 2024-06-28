@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS likes(
   post_id    INT          NOT NULL,
   likes      INT          NOT NULL DEFAULT 0,
   start_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  end_at     DATETIME     DEFAULT NULL,
+  end_at     DATETIME     DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS comments(

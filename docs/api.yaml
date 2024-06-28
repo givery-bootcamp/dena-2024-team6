@@ -417,6 +417,82 @@ paths:
       summary: 対象の投稿のコメントを変更
       tags:
       - post
+  posts/{postId}/getLikes:
+    post:
+      operationId: likePost
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaLikeRecordResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 対象の投稿のlike数を取得する
+      tags:
+      - post
+  posts/{postId}/like:
+    post:
+      operationId: likePost
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaMutationSchema'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 対象の投稿をlikeする
+      tags:
+      - post
   posts/{postid}:
     delete:
       operationId: deletePost
@@ -509,6 +585,37 @@ paths:
       summary: 投稿を更新
       tags:
       - post
+  posts/updateLikes:
+    post:
+      operationId: likePost
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaLikeRecordResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 定期的に実行される。1h経過したらlike数を更新する
+      tags:
+      - post
 components:
   schemas:
     SchemaCommentResponse:
@@ -548,6 +655,11 @@ components:
           type: integer
         message:
           type: string
+      type: object
+    SchemaLikeRecordResponse:
+      properties:
+        likes:
+          type: integer
       type: object
     SchemaLoginRequest:
       properties:

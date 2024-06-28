@@ -160,14 +160,13 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	}
 
 	// likePost /posts/{postId}/like POST
-	authRequired.POST("/posts/:postid/like", postController.LikePost)
+	app.POST("/posts/:postid/like", postController.LikePost)
 	likePostOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/like")
 	likePostOpe.SetID("likePost")
 	likePostOpe.AddReqStructure(new(schema.LikePostRequest))
 	likePostOpe.SetSummary("対象の投稿をlikeする")
 	likePostOpe.SetTags("post")
 	likePostOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusCreated))
-	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
 	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
 	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
@@ -178,6 +177,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	app.GET("/posts/:postid/getLikes", postController.GetLikeRecords)
 	getLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/getLikes")
 	getLikeRecordsOpe.SetID("likePost")
+	getLikeRecordsOpe.AddReqStructure(new(schema.GetLikesRequest))
 	getLikeRecordsOpe.SetSummary("対象の投稿のlike数を取得する")
 	getLikeRecordsOpe.SetTags("post")
 	getLikeRecordsOpe.AddRespStructure(new(schema.LikeRecordResponse), openapi.WithHTTPStatus(http.StatusOK))

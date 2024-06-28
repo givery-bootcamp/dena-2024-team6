@@ -42,16 +42,24 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	createCommentUsecase := do.MustInvoke[application.CreateCommentUsecase](i)
 	updateCommentUsecase := do.MustInvoke[application.UpdateCommentUsecase](i)
 	deleteCommentUsecase := do.MustInvoke[application.DeleteCommentUsecase](i)
+	likePostUsecase := do.MustInvoke[application.LikePostUsecase](i)
+	createLikeRecordUsecase := do.MustInvoke[application.CreateLikeRecordUsecase](i)
+	getLikeRecordUsecase := do.MustInvoke[application.GetLikeRecordUsecase](i)
+	closeLikeRecordUsecase := do.MustInvoke[application.CloseLikeRecordUsecase](i)
 	return &PostController{
-		createPostUsecase:    createPostUsecase,
-		listPostUsecase:      listPostUsecase,
-		getPostUsecase:       getPostUsecase,
-		updatePostUsecase:    updatePostUsecase,
-		deletePostUsecase:    deletePostUsecase,
-		listCommentsUsecase:  listCommentsUsecase,
-		createCommentUsecase: createCommentUsecase,
-		updateCommentUsecase: updateCommentUsecase,
-		deleteCommentUsecase: deleteCommentUsecase,
+		createPostUsecase:       createPostUsecase,
+		listPostUsecase:         listPostUsecase,
+		getPostUsecase:          getPostUsecase,
+		updatePostUsecase:       updatePostUsecase,
+		deletePostUsecase:       deletePostUsecase,
+		listCommentsUsecase:     listCommentsUsecase,
+		createCommentUsecase:    createCommentUsecase,
+		updateCommentUsecase:    updateCommentUsecase,
+		deleteCommentUsecase:    deleteCommentUsecase,
+		likePostUsecase:         likePostUsecase,
+		createLikeRecordUsecase: createLikeRecordUsecase,
+		getLikeRecordUsecase:    getLikeRecordUsecase,
+		closeLikeRecordUsecase:  closeLikeRecordUsecase,
 	}, nil
 }
 
