@@ -6,7 +6,6 @@ import (
 	"myapp/domain/model"
 	"myapp/domain/repository"
 	"myapp/domain/service"
-	"regexp"
 	"strconv"
 
 	"github.com/samber/do"
@@ -79,11 +78,6 @@ func (s *signupUsecaseInteractor) Execute(ctx context.Context, input SignupUseca
 		User:  user,
 		Token: token,
 	}, nil
-}
-
-func isAlphanumeric(s string) bool {
-	regexp := regexp.MustCompile(`^[a-zA-Z0-9]+$`)
-	return regexp.MatchString(s)
 }
 
 func isASCII(s string) bool {
