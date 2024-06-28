@@ -1,22 +1,8 @@
-import {
-  Container,
-  Text,
-  HStack,
-  Heading,
-  Divider,
-  Center,
-  Loading,
-  Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure
-} from '@yamada-ui/react'
-import { AttributeDisplay } from './AttributeDisplay'
+import { useDisclosure, Flex, Box, Textarea, HStack } from '@yamada-ui/react'
 import { Link, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPost, useGetCurrentUser } from '@api/hooks'
-import { Markdown } from '@yamada-ui/markdown'
+import { PostDetailCard } from './components/PostDetailCard'
+import { CommentCard } from './components/CommentCard'
 
 export const PostDetailRoute = () => {
   const { id } = useParams<{ id: string }>()
@@ -32,70 +18,43 @@ export const PostDetailRoute = () => {
     })
   }
 
-  return (
-    <Container>
-      <Heading size="lg">{data?.title}</Heading>
-      {isLoading && (
-        <Center>
-          <Loading variant="circles" size="6xl" color="cyan.500" />
-        </Center>
-      )}
-      {isError && (
-        <Center>
-          <Heading>エラーが発生しました</Heading>
-        </Center>
-      )}
-      {data && (
-        <HStack>
-          <AttributeDisplay labelName="ユーザー名：" value={data?.user_name ?? ''} />
-        </HStack>
-      )}
-      <Divider variant="solid" />
-      <Text>
-        <Markdown>{data?.body}</Markdown>
-      </Text>
+  const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
-      <HStack>
-        <Link to="/">
-          <Button colorScheme="primary" variant={'outline'}>
-            戻る
-          </Button>
-        </Link>
-        {data?.user_id === user?.user_id ? (
-          <>
-            <Link to={`/posts/${id}/edit`}>
-              <Button onClick={() => console.log('edit')} colorScheme="primary">
-                編集
-              </Button>
-            </Link>
-            <Button onClick={onOpen} colorScheme="primary">
-              削除
-            </Button>
-            <>
-              <Modal isOpen={isOpen} onClose={onClose}>
-                <Center>
-                  <ModalHeader>警告</ModalHeader>
-                </Center>
-                <Divider variant="solid" />
-                <ModalBody>削除したら元に戻せません。削除しますか？</ModalBody>
-                <Divider variant="solid" />
-                <ModalFooter>
-                  <Button variant="ghost" onClick={onClose}>
-                    とじる
-                  </Button>
-                  <>
-                    <Link to="/">
-                      <Button onClick={handleDelete} colorScheme="primary">
-                        削除
-                      </Button>
-                    </Link>
-                  </>
-                </ModalFooter>
-              </Modal>
-            </>
-          </>
-        ) : null}
-      </HStack>
-    </Container>
+  return (
+    <Flex flexDir="column" gap="lg">
+      <Box px="md" py="md">
+        <PostDetailCard
+          title={data?.title}
+          body={data?.body}
+          userName={'futa.matsuo'}
+          createdAt={data?.created_at ? new Date(data.created_at) : undefined}
+          isError={isError}
+        />
+      </Box>
+      <Flex
+        w="full"
+        flexDir="column"
+        gap="md"
+        bgGradient="linear(to-b, transparent, blackAlpha.800)"
+        position="absolute"
+        bottom="0px"
+      >
+        <Flex flexDir="column" gap="md" px="md" py="sm" h="45vh" overflow="scroll">
+          {dummy.map((d) => (
+            <CommentCard
+              key={d}
+              userName="さくらみこ"
+              body="JavaScriptは難しいにぇ..."
+              createdAt={data?.created_at ? new Date(data.created_at) : undefined}
+            />
+          ))}
+        </Flex>
+        <HStack px="md" py="lg">
+          <Box w="60vw" bgColor="whiteAlpha.900" borderRadius="md">
+            <Textarea placeholder="コメントを入力..." />
+          </Box>
+        </HStack>
+      </Flex>
+    </Flex>
   )
 }
