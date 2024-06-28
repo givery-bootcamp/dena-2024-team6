@@ -65,3 +65,15 @@ type CommentResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type LikePostRequest struct {
+	PostID string `path:"postId" example:"1"`
+}
+
+type GetLikesRequest struct {
+	PostID string `path:"postId" example:"1"`
+}
+
+type LikeRecordResponse struct {
+	Likes int `json:"likes"`
+}
