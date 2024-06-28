@@ -18,7 +18,7 @@ import {
   useDisclosure
 } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
-import { useSignUp } from '@api/hooks'
+import { useSignUp, useGetCurrentUser } from '@api/hooks'
 export const SignupRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -30,6 +30,7 @@ export const SignupRoute = () => {
   const { snack, snacks } = useSnacks()
   const { mutate } = useSignUp()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { refetch } = useGetCurrentUser()
   const navigate = useNavigate()
 
   const validateUsername = (value: string) => {
@@ -97,6 +98,7 @@ export const SignupRoute = () => {
         { data: { user_name: username, password: password } },
         {
           onSuccess: () => {
+            refetch()
             onOpen()
           },
           onError: () => {
@@ -116,7 +118,7 @@ export const SignupRoute = () => {
 
   const handleModalClose = () => {
     onClose()
-    navigate('/signin')
+    navigate('/')
   }
 
   return (
