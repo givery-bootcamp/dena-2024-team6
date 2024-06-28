@@ -190,7 +190,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaPostResponse'
+                $ref: '#/components/schemas/SchemaPostDetailResponse'
           description: OK
         "400":
           content:
@@ -563,18 +563,33 @@ components:
         target_id:
           type: integer
       type: object
-    SchemaPostResponse:
+    SchemaPostDetailResponse:
       properties:
         body:
           type: string
+        created_at:
+          format: date-time
+          type: string
+        post_id:
+          type: integer
+        title:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          type: integer
+        user_name:
+          type: string
+      type: object
+    SchemaPostResponse:
+      properties:
         post_id:
           type: integer
         title:
           type: string
         user_id:
           type: integer
-        user_name:
-          type: string
       type: object
     SchemaUpdateCommentRequest:
       properties:
