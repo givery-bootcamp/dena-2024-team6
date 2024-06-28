@@ -96,12 +96,10 @@ func (p LikeRepositoryImpl) Get(ctx context.Context, postID int) (int, error) {
 		AND
 			likes.end_at is null
 	`, postID); err != nil {
-		if err != nil {
-			if !errors.Is(err, sql.ErrNoRows) {
-				log.Println(err)
-			}
-			return 0, err
+		if !errors.Is(err, sql.ErrNoRows) {
+			log.Println(err)
 		}
+		return 0, err
 	}
 	return likes, nil
 }
