@@ -35,5 +35,6 @@ const (
 	CodeUnauthorized    ErrorCode = 401
 	CodeForbidden       ErrorCode = 403
 	CodeNotFound        ErrorCode = 404
+	CodeConflict        ErrorCode = 409
 	CodeInternalServer  ErrorCode = 500
 )
