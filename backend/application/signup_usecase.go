@@ -47,10 +47,6 @@ func (s *signupUsecaseInteractor) Execute(ctx context.Context, input SignupUseca
 		return SignupUsecaseOutput{}, apperror.New(apperror.CodeInvalidArgument, "ユーザ名は1文字以上13文字以下である必要があります")
 	}
 
-	if !isAlphanumeric(input.UserName) {
-		return SignupUsecaseOutput{}, apperror.New(apperror.CodeInvalidArgument, "ユーザ名は半角英数字である必要があります")
-	}
-
 	// The password must be 12-100 characters long, and code points other than ASCII characters are allowed.
 	if len(input.Password) < 12 || len(input.Password) > 100 {
 		return SignupUsecaseOutput{}, apperror.New(apperror.CodeInvalidArgument, "パスワードは12文字以上100文字以下である必要があります")
