@@ -15,7 +15,7 @@ export const CommentCard = memo(function ({ userName, userIconURL, body, created
       {userName ? <Avatar size="sm" name={userName} src={userIconURL} /> : <SkeletonCircle w="32px" h="28px" />}
       <Flex gap="sm" flexDir="column">
         <HStack gap="lg">
-          <Text color="#ffffff">Funobu</Text>
+          <Text color="#ffffff">{userName}</Text>
           <Text fontSize="sm" color="neutral.50">
             {dayjs(createdAt).format('YYYY年M月D日 hh:mm s秒')}
           </Text>
