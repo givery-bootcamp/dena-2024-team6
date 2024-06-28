@@ -417,8 +417,8 @@ paths:
       summary: 対象の投稿のコメントを変更
       tags:
       - post
-  posts/{postId}/getLikes:
-    post:
+  posts/{postId}/like:
+    get:
       operationId: likePost
       parameters:
       - in: path
@@ -455,7 +455,6 @@ paths:
       summary: 対象の投稿のlike数を取得する
       tags:
       - post
-  posts/{postId}/like:
     post:
       operationId: likePost
       parameters:
@@ -585,7 +584,7 @@ paths:
       summary: 投稿を更新
       tags:
       - post
-  posts/updateLikes:
+  posts/like/update:
     post:
       operationId: likePost
       responses:
