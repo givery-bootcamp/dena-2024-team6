@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"log"
 	"myapp/api/middleware"
 	"myapp/api/schema"
 	"myapp/application"
@@ -58,7 +59,7 @@ func (ac AuthController) SignIn(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", result.Token, 3600*24, "/", "localhost", false, true)
+	c.SetCookie("token", result.Token, 3600*24, "/", config.GetDomainName(), config.GetIsSecured(), true)
 
 	c.JSON(200, schema.UserResponse{
 		ID:       result.User.ID,
@@ -80,6 +81,10 @@ func (ac AuthController) SignUp(c *gin.Context) {
 		UserName: params.UserName,
 		Password: params.Password,
 	})
+	if apperror.Is(err, apperror.CodeInvalidArgument) {
+		c.JSON(400, schema.NewErrorResponse(err))
+		return
+	}
 	if apperror.Is(err, apperror.CodeConflict) {
 		c.JSON(409, schema.NewErrorResponse(err))
 		return
@@ -89,6 +94,7 @@ func (ac AuthController) SignUp(c *gin.Context) {
 		return
 	}
 	if err != nil {
+		log.Println(err)
 		c.JSON(500, schema.NewErrorResponse(err))
 		return
 	}
@@ -102,7 +108,7 @@ func (ac AuthController) SignUp(c *gin.Context) {
 }
 
 func (ac AuthController) SignOut(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", config.HostName, false, true)
+	c.SetCookie("token", "", -1, "/", config.GetDomainName(), config.GetIsSecured(), true)
 	c.Status(200)
 }
 

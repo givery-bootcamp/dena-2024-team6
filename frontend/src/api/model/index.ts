@@ -6,14 +6,14 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export * from './schemaCommentResponse';
-export * from './schemaCreateCommentRequest';
-export * from './schemaCreatePostRequest';
-export * from './schemaErrorResponse';
-export * from './schemaLoginRequest';
-export * from './schemaMutationSchema';
-export * from './schemaPostResponse';
-export * from './schemaSignupRequest';
-export * from './schemaUpdateCommentRequest';
-export * from './schemaUpdatePostRequest';
-export * from './schemaUserResponse';
+export * from './schemaCommentResponse'
+export * from './schemaCreateCommentRequest'
+export * from './schemaCreatePostRequest'
+export * from './schemaErrorResponse'
+export * from './schemaLoginRequest'
+export * from './schemaMutationSchema'
+export * from './schemaPostResponse'
+export * from './schemaSignupRequest'
+export * from './schemaUpdateCommentRequest'
+export * from './schemaUpdatePostRequest'
+export * from './schemaUserResponse'

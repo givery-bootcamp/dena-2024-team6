@@ -11,19 +11,16 @@ import (
 )
 
 func NewStore(i *do.Injector) (*sqlx.DB, error) {
-	jst, err := time.LoadLocation("Asia/Tokyo")
-	if err != nil {
-		return nil, err
-	}
-
 	dsn := mysql.Config{
-		DBName:    config.DBName,
-		User:      "root",
-		Addr:      fmt.Sprintf("%s:%d", config.DBHostName, config.DBPort),
-		Net:       "tcp",
-		ParseTime: true,
-		Collation: "utf8mb4_unicode_ci",
-		Loc:       jst,
+		DBName:               config.DBName,
+		User:                 config.DBUser,
+		Passwd:               config.DBPassword,
+		Addr:                 fmt.Sprintf("%s:%d", config.DBHostName, config.DBPort),
+		Net:                  "tcp",
+		ParseTime:            true,
+		Collation:            "utf8mb4_unicode_ci",
+		Loc:                  time.Local,
+		AllowNativePasswords: true,
 	}
 
 	return sqlx.Open("mysql", dsn.FormatDSN())

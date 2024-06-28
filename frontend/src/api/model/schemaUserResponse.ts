@@ -7,6 +7,6 @@
  */
 
 export interface SchemaUserResponse {
-  user_id?: number;
-  user_name?: string;
+  user_id?: number
+  user_name?: string
 }

@@ -7,6 +7,7 @@ import (
 	"myapp/domain/repository"
 	"myapp/domain/service"
 	"strconv"
+	"unicode/utf8"
 
 	"github.com/samber/do"
 )
@@ -42,7 +43,7 @@ type signupUsecaseInteractor struct {
 // Execute implements SignupUsecase.
 func (s *signupUsecaseInteractor) Execute(ctx context.Context, input SignupUsecaseInput) (SignupUsecaseOutput, error) {
 	// The user name must be 1-13 characters long, and only alphanumeric and numeric characters are allowed.
-	if len(input.UserName) < 1 || len(input.UserName) > 13 {
+	if utf8.RuneCountInString(input.UserName) < 1 || utf8.RuneCountInString(input.UserName) > 13 {
 		return SignupUsecaseOutput{}, apperror.New(apperror.CodeInvalidArgument, "ユーザ名は1文字以上13文字以下である必要があります")
 	}
 
