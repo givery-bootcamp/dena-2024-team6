@@ -26,6 +26,14 @@ CREATE TABLE IF NOT EXISTS posts(
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
+CREATE TABLE IF NOT EXISTS likes(
+  id         INT          AUTO_INCREMENT PRIMARY KEY,
+  post_id    INT          NOT NULL,
+  likes      INT          NOT NULL DEFAULT 0,
+  start_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  end_at     DATETIME     NULL,
+);
+
 CREATE TABLE IF NOT EXISTS comments(
   id         INT          AUTO_INCREMENT PRIMARY KEY,
   user_id    INT          NOT NULL,
