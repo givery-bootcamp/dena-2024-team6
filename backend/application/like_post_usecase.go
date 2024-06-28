@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"database/sql"
 	"myapp/domain/apperror"
 	"myapp/domain/repository"
 
@@ -31,6 +32,12 @@ type LikePostUsecaseInteractor struct {
 // Execute implements LikePostUsecase.
 func (c *LikePostUsecaseInteractor) Execute(ctx context.Context, input LikePostUsecaseInput) error {
 	likes, err := c.likeRepository.Get(ctx, input.PostID)
+	if err == sql.ErrNoRows {
+		_, err = c.likeRepository.Create(ctx, input.PostID)
+		if err != nil {
+			return apperror.New(apperror.CodeInternalServer, "failed to create likes record")
+		}
+	}
 	if err != nil {
 		return apperror.New(apperror.CodeInternalServer, "failed to fetch likes record")
 	}
