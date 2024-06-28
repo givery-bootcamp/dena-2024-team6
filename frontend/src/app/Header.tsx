@@ -2,6 +2,7 @@ import { Box, Button, Loading, Text } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useSignOut, useGetCurrentUser } from '@api/hooks'
+import{CircleUserRound} from 'lucide-react'
 
 export const Header = () => {
   const navigate = useNavigate()
@@ -27,7 +28,8 @@ export const Header = () => {
 
   return (
     <header className="app-header">
-      サンプルアプリケーション
+      <CircleUserRound size="30"/>
+      
       <Box display="flex" alignItems="center">
         {isFetching ? (
           <Loading variant="circles" size="6xl" color="cyan.500" />
