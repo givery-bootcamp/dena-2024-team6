@@ -85,14 +85,14 @@ export const CreatePostModal = ({ isOpen, onClose, fetchPosts }: props) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalHeader>新しい投稿を作成する</ModalHeader>
+      <ModalHeader>投稿の新規作成</ModalHeader>
       <ModalBody>
         <Divider variant="solid" />
         <form onSubmit={handleSubmit}>
           <FormControl label="タイトル" isRequired isInvalid={!!titleError} errorMessage={titleError} mb={4}>
             <Input type="text" placeholder="タイトルを入力してください。" value={title} onChange={handleTitleChange} />
           </FormControl>
-          <FormControl label="内容" isRequired isInvalid={!!contentError} errorMessage={contentError} mb={4}>
+          <FormControl label="本文" isRequired isInvalid={!!contentError} errorMessage={contentError} mb={4}>
             <MarkdownEditor value={content} height="200px" onChange={handleContentChange} />
           </FormControl>
         </form>
@@ -101,8 +101,16 @@ export const CreatePostModal = ({ isOpen, onClose, fetchPosts }: props) => {
         <Button variant="outline" onClick={onClose}>
           キャンセル
         </Button>
-        <Button type="submit" colorScheme="primary" onClick={handleSubmit}>
-          投稿する
+        <Button
+          onClick={handleSubmit}
+          color="White"
+          bgGradient="linear(to-r, #00D1FF,#8ABBF5, #DEC9EB)"
+          loadingIcon="dots"
+          fontWeight="bold"
+          fontSize="16px"
+          fontFamily="Inter"
+        >
+          投稿を作成する
         </Button>
       </ModalFooter>
     </Modal>
