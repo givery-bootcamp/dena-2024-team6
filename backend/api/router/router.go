@@ -159,6 +159,48 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	// likePost /posts/{postId}/like POST
+	authRequired.POST("/posts/:postid/like", postController.LikePost)
+	likePostOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/like")
+	likePostOpe.SetID("likePost")
+	likePostOpe.AddReqStructure(new(schema.LikePostRequest))
+	likePostOpe.SetSummary("対象の投稿をlikeする")
+	likePostOpe.SetTags("post")
+	likePostOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusCreated))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusUnauthorized))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(likePostOpe); err != nil {
+		return err
+	}
+	// getlikeRecord /posts/{postId}/getLikes POST
+	app.GET("/posts/:postid/getLikes", postController.GetLikeRecords)
+	getLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/getLikes")
+	getLikeRecordsOpe.SetID("likePost")
+	getLikeRecordsOpe.SetSummary("対象の投稿のlike数を取得する")
+	getLikeRecordsOpe.SetTags("post")
+	getLikeRecordsOpe.AddRespStructure(new(schema.LikeRecordResponse), openapi.WithHTTPStatus(http.StatusOK))
+	getLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	getLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	getLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(getLikeRecordsOpe); err != nil {
+		return err
+	}
+	// updatelikeRecord /posts/updateLikes POST
+	app.POST("/posts/updateLikes", postController.UpdateLikeRecords)
+	updateLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/updateLikes")
+	updateLikeRecordsOpe.SetID("likePost")
+	updateLikeRecordsOpe.SetSummary("定期的に実行される。1h経過したらlike数を更新する")
+	updateLikeRecordsOpe.SetTags("post")
+	updateLikeRecordsOpe.AddRespStructure(new(schema.LikeRecordResponse), openapi.WithHTTPStatus(http.StatusOK))
+	updateLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	updateLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	updateLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(updateLikeRecordsOpe); err != nil {
+		return err
+	}
+
 	// signInOpe /signin POST
 	app.POST("/signin", authController.SignIn)
 	signInOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signin")
