@@ -1,15 +1,11 @@
 import { AppRoute } from './AppRoute'
-import { Header } from './Header'
-import './App.scss'
+import { Box } from '@yamada-ui/react'
 
 function App() {
   return (
-    <div className="app-root">
-      <Header />
-      <main className="app-body container">
-        <AppRoute />
-      </main>
-    </div>
+    <Box w="100vw" minH="100vh" bgColor="#98C9DE">
+      <AppRoute />
+    </Box>
   )
 }
 
