@@ -19,6 +19,7 @@ import {
 } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useSignUp, useGetCurrentUser } from '@api/hooks'
+
 export const SignupRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -37,6 +38,10 @@ export const SignupRoute = () => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
       return false
+    }
+    if (value.length > 13) {
+      setUsernameError('ユーザー名は13文字以下が必須です。')
+      return false
     } else {
       setUsernameError('')
       return true
@@ -49,10 +54,16 @@ export const SignupRoute = () => {
       return false
     }
     if (value.length < 12) {
-      setPasswordError('パスワードは12文字以上でなければなりません。')
+      setPasswordError('パスワードは12文字以上が必須です。')
       return false
     }
+    if (value.length > 100) {
+      setPasswordError('パスワードは100文字以下が必須です。')
+      return false
+    }
+
     const regex = /^[\x20-\x7E]+$/
+
     if (!regex.test(value)) {
       setPasswordError('パスワードはASCII範囲の英数記号のみ許可されます。')
       return false
