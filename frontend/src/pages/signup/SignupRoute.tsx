@@ -36,11 +36,6 @@ export const SignupRoute = () => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
       return false
-    }
-    const regex = /^[a-zA-Z0-9]+$/
-    if (!regex.test(value)) {
-      setUsernameError('ユーザー名は英数のみ許可されます。記号は使用できません。')
-      return false
     } else {
       setUsernameError('')
       return true
@@ -50,6 +45,10 @@ export const SignupRoute = () => {
   const validatePassword = (value: string) => {
     if (value === '') {
       setPasswordError('パスワードを入力してください。')
+      return false
+    }
+    if (value.length < 12) {
+      setPasswordError('パスワードは12文字以上でなければなりません。')
       return false
     }
     const regex = /^[\x20-\x7E]+$/
