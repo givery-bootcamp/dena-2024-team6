@@ -23,8 +23,23 @@ func TestCreateComment(t *testing.T) {
 		}
 		if id == 0 {
 			t.Error("ID is 0")
-		} else {
-			fmt.Printf("ID: %d\n", id)
+		}
+
+		result, err := commentRepo.GetByID(ctx, id)
+		if err != nil {
+			t.Errorf("Repository returns error: %v", err.Error())
+		}
+		if result.IsEmpty() {
+			t.Error("Nil")
+		}
+		if result.PostID != postID {
+			t.Errorf("Wrong value: %+v", result)
+		}
+		if result.UserID != userID {
+			t.Errorf("Wrong value: %+v", result)
+		}
+		if result.Body != body {
+			t.Errorf("Wrong value: %+v", result)
 		}
 	})
 }
