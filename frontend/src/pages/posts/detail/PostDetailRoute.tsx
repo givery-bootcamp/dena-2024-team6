@@ -10,7 +10,6 @@ export const PostDetailRoute = () => {
   const { data, isLoading, isError } = useGetPost(id!)
   const { data: user } = useGetCurrentUser()
   const { mutate } = useDeletePost()
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const handleDelete = () => {
     mutate({
@@ -21,13 +20,14 @@ export const PostDetailRoute = () => {
   const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
   return (
-    <Flex flexDir="column" gap="lg">
+    <Flex w="full" flexDir="column" gap="lg">
       <Box px="md" py="md">
         <PostDetailCard
           title={data?.title}
           body={data?.body}
-          userName={'futa.matsuo'}
+          userName={data?.user_name}
           createdAt={data?.created_at ? new Date(data.created_at) : undefined}
+          isAuthor={data?.user_id == user?.user_id}
           isError={isError}
         />
       </Box>

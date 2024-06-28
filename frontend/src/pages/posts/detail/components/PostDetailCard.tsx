@@ -12,10 +12,12 @@ import {
   Skeleton,
   SkeletonText,
   Center,
-  Image
+  Image,
+  IconButton
 } from '@yamada-ui/react'
 import { memo } from 'react'
 import dayjs from 'dayjs'
+import { Edit2, Trash2 } from 'lucide-react'
 
 type PostDetailCardProps = {
   title?: string
@@ -23,6 +25,7 @@ type PostDetailCardProps = {
   userName?: string
   userIconURL?: string
   createdAt?: Date
+  isAuthor?: boolean
   isError?: boolean
 }
 
@@ -32,6 +35,7 @@ export const PostDetailCard = memo(function ({
   userName,
   userIconURL,
   createdAt,
+  isAuthor = false,
   isError = false
 }: PostDetailCardProps) {
   return (
@@ -41,12 +45,20 @@ export const PostDetailCard = memo(function ({
           {userName ? <Avatar size="sm" name={userName} src={userIconURL} /> : <SkeletonCircle w="32px" h="28px" />}
           <VStack>
             {userName ? (
-              <HStack>
-                <Text color="black">Funobu</Text>
-                <Text fontSize="sm" color="neutral.300">
-                  {dayjs(createdAt).format('YYYY年M月D日')}
-                </Text>
-              </HStack>
+              <Flex justifyContent="space-between">
+                <HStack>
+                  <Text color="black">{userName}</Text>
+                  <Text fontSize="sm" color="neutral.300">
+                    {dayjs(createdAt).format('YYYY年M月D日')}
+                  </Text>
+                </HStack>
+                {isAuthor ? (
+                  <HStack>
+                    <IconButton size="xs" as={Edit2} variant="ghost" />
+                    <IconButton size="xs" as={Trash2} colorScheme="danger" variant="ghost" />
+                  </HStack>
+                ) : null}
+              </Flex>
             ) : (
               <Skeleton w="40%" />
             )}

@@ -26,7 +26,7 @@ export const Header = () => {
   }, [user, isError])
 
   return (
-    <header className="app-header">
+    <Box bgColor="white">
       サンプルアプリケーション
       <Box display="flex" alignItems="center">
         {isFetching ? (
@@ -47,6 +47,6 @@ export const Header = () => {
           </>
         )}
       </Box>
-    </header>
+    </Box>
   )
 }
