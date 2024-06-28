@@ -4,6 +4,7 @@ import { useDeletePost, useGetPost, useGetCurrentUser, useListPostComments } fro
 import { PostDetailCard } from './components/PostDetailCard'
 import { CommentCard } from './components/CommentCard'
 import { Heart, MessageCircle, MessageSquareText } from 'lucide-react'
+import { CreatePostCommentCard } from './components/createCommentCard'
 
 export const PostDetailRoute = () => {
   const navigate = useNavigate()
@@ -66,23 +67,7 @@ export const PostDetailRoute = () => {
             />
           ))}
         </Flex>
-        <Flex px="md" py="lg" justifyContent="space-between">
-          <Box
-            w="60vw"
-            p="sm"
-            bgColor="whiteAlpha.800"
-            borderRadius="md"
-            _hover={{
-              bgColor: 'neutral.100'
-            }}
-          >
-            <HStack>
-              <Icon size="lg" as={MessageSquareText} />
-              <Text>ここにコメントを入力...</Text>
-            </HStack>
-          </Box>
-          <IconButton colorScheme="whiteAlpha" variant="ghost" as={Heart} />
-        </Flex>
+        <CreatePostCommentCard id={Number(id)} />
       </Flex>
       <Dialog
         header={data?.title + 'の削除'}
