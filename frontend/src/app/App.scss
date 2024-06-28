@@ -1,4 +1,6 @@
 @import "../node_modules/bootstrap/scss/bootstrap";
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 .app-root {
   height: 100vh;
@@ -21,5 +23,7 @@
 .app-body {
   display: flex;
   flex-grow: 1;
-  background: $white;
+  background: #98C9DE;
+  font-family: 'Kaushan Script', Kaushan Script;
+  font-family: 'Inter', Inter;
 }

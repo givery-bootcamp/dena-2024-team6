@@ -55,7 +55,7 @@ func (ac AuthController) SignIn(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", result.Token, 3600*24, "/", "localhost", false, true)
+	c.SetCookie("token", result.Token, 3600*24, "/", config.GetDomainName(), config.GetIsSecured(), true)
 
 	c.JSON(200, schema.UserResponse{
 		ID:       result.User.ID,
@@ -71,7 +71,7 @@ func (ac AuthController) SignUp(c *gin.Context) {
 
 
 func (ac AuthController) SignOut(c *gin.Context) {
-	c.SetCookie("token", "", -1, "/", config.HostName, false, true)
+	c.SetCookie("token", "", -1, "/", config.GetDomainName(), config.GetIsSecured(), true)
 	c.Status(200)
 }
 
