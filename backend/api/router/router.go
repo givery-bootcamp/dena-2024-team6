@@ -144,7 +144,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	}
 
 	// createPostComments /posts/{postId}/comments POST
-	app.POST("/posts/:postid/comments", postController.CreateComment)
+	authRequired.POST("/posts/:postid/comments", postController.CreateComment)
 	createCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/comments")
 	createCommnetsOpe.SetID("createPostComments")
 	createCommnetsOpe.AddReqStructure(new(schema.CreateCommentRequest))
