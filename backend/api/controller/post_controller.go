@@ -17,15 +17,19 @@ import (
 )
 
 type PostController struct {
-	createPostUsecase    application.CreatePostUsecase
-	listPostUsecase      application.ListPostUsecase
-	getPostUsecase       application.GetPostDetailUsecase
-	updatePostUsecase    application.UpdatePostUsecase
-	deletePostUsecase    application.DeletePostUsecase
-	listCommentsUsecase  application.ListCommentsUsecase
-	createCommentUsecase application.CreateCommentUsecase
-	updateCommentUsecase application.UpdateCommentUsecase
-	deleteCommentUsecase application.DeleteCommentUsecase
+	createPostUsecase       application.CreatePostUsecase
+	listPostUsecase         application.ListPostUsecase
+	getPostUsecase          application.GetPostDetailUsecase
+	updatePostUsecase       application.UpdatePostUsecase
+	deletePostUsecase       application.DeletePostUsecase
+	listCommentsUsecase     application.ListCommentsUsecase
+	createCommentUsecase    application.CreateCommentUsecase
+	updateCommentUsecase    application.UpdateCommentUsecase
+	deleteCommentUsecase    application.DeleteCommentUsecase
+	likePostUsecase         application.LikePostUsecase
+	createLikeRecordUsecase application.CreateLikeRecordUsecase
+	getLikeRecordUsecase    application.GetLikeRecordUsecase
+	closeLikeRecordUsecase  application.CloseLikeRecordUsecase
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
@@ -428,5 +432,84 @@ func (p PostController) DeleteComment(c *gin.Context) {
 	c.JSON(204, schema.MutationSchema{
 		TargetID: commentID,
 		Message:  "コメントを削除しました",
+	})
+}
+
+// ユーザーがlikeした時に呼ばれる
+func (p PostController) LikePost(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
+	err = p.likePostUsecase.Execute(ctx, application.LikePostUsecaseInput{
+		PostID: postID,
+		Value:  1,
+	})
+	if apperror.Is(err, apperror.CodeForbidden) {
+		c.JSON(403, schema.NewErrorResponse(err))
+		return
+	}
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	c.Status(200)
+}
+
+// cronから叩かれる、古いLikeRecordを削除して、新しいLikeRecordを作成する
+func (p PostController) UpdateLikeRecords(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	err := p.closeLikeRecordUsecase.Execute(ctx)
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	err = p.createLikeRecordUsecase.Execute(ctx)
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	c.Status(200)
+}
+
+// ユーザーがpost（一覧）を見た時、like数を表示するために呼ばれる
+func (p PostController) GetLikeRecords(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	postID, err := strconv.Atoi(c.Param("postid"))
+	if err != nil {
+		c.JSON(400, schema.NewErrorResponse(
+			apperror.New(apperror.CodeInvalidArgument, "invalid argument"),
+		))
+	}
+
+	likes, err := p.getLikeRecordUsecase.Execute(ctx, application.GetLikeRecordUsecaseInput{
+		PostID: postID,
+	})
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	err = p.createLikeRecordUsecase.Execute(ctx)
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	c.JSON(200, schema.LikeRecordResponse{
+		Likes: likes,
 	})
 }
