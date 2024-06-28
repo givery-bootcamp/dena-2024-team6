@@ -7,5 +7,5 @@
  */
 
 export interface SchemaCreateCommentRequest {
-  body?: string
+  body?: string;
 }

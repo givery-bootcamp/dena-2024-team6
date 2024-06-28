@@ -8,9 +8,17 @@ type PostRequest struct {
 
 // PpstResponse は投稿のAPIレスポンスモデル「
 type PostResponse struct {
-	ID    int    `json:"post_id"`
-	Title string `json:"title"`
-	Body  string `json:"body"`
+	ID     int    `json:"post_id"`
+	Title  string `json:"title"`
+	UserID int    `json:"user_id"`
+}
+
+type PostDetailResponse struct {
+	ID        int       `json:"post_id"`
+	Title     string    `json:"title"`
+	Body      string    `json:"body"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 	UserResponse
 }
 

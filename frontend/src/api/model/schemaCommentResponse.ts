@@ -7,11 +7,11 @@
  */
 
 export interface SchemaCommentResponse {
-  body?: string
-  created_at?: string
-  id?: number
-  post_id?: number
-  updated_at?: string
-  user_id?: number
-  user_name?: string
+  body?: string;
+  created_at?: string;
+  id?: number;
+  post_id?: number;
+  updated_at?: string;
+  user_id?: number;
+  user_name?: string;
 }
