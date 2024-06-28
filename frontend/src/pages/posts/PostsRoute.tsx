@@ -2,21 +2,22 @@ import {
   Loading,
   Card,
   CardBody,
-  CardHeader,
   Container,
   Text,
   HStack,
   Heading,
-  CardFooter,
   VStack,
   Center,
   Button,
   Flex,
-  Spacer
+  Spacer,
+  Box,
+  Divider
 } from '@yamada-ui/react'
 import { useListPosts } from '@api/hooks'
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
+import { Beer, FileText } from 'lucide-react'
 
 export const PostsRoute = () => {
   // API取得
@@ -27,18 +28,27 @@ export const PostsRoute = () => {
 
   return (
     <Container>
+      <Box h="30px" />
       <Heading size="lg">
-        <Flex gap="md">
-          <Text> 投稿一覧</Text>
-          <Spacer />
-          <Link to="/posts/new">
-            <Button colorScheme="primary">新規作成</Button>
-          </Link>
-        </Flex>
+        <Center>
+          <Text fontWeight="extrabold" fontSize="18px" fontFamily="Inter">
+            LET'S RELEASE YOUR PASSION
+          </Text>
+        </Center>
+        <Box h="10px" />
+        <Center>
+          <Text fontWeight="extrabold" fontSize="14px" fontFamily="Inter" color="#E64545">
+            {data?.length}&nbsp;
+          </Text>
+          <Text fontSize="14px" fontFamily="Inter">
+            tables are exist.
+          </Text>
+        </Center>
+        <Box h="10px" />
       </Heading>
       {isLoading && (
         <Center>
-          <Loading variant="circles" size="6xl" color="cyan.500" />
+          <Loading variant="circles" size="6xl" color="White" />
         </Center>
       )}
       {isError && (
@@ -46,11 +56,12 @@ export const PostsRoute = () => {
           <Heading>エラーが発生しました</Heading>
         </Center>
       )}
-      <VStack w="full">
+      <Divider variant="solid" />
+      <VStack h="500px" p="md" w="full" overflow="auto">
         {data?.map((post) => (
           <Card
             key={post.post_id}
-            variant="outline"
+            bg="White"
             w="full"
             _hover={{
               cursor: 'pointer',
@@ -58,22 +69,48 @@ export const PostsRoute = () => {
             }}
           >
             <Link to={`/posts/${post.post_id}`}>
-              <CardHeader>
-                <Heading size="md">{post.title}</Heading>
-              </CardHeader>
-
               <CardBody>
-                <Text>{post.body}</Text>
-              </CardBody>
-              <CardFooter>
                 <HStack>
-                  <Text>{post.user_name}</Text>
+                  <Beer />
+                  <Text fontWeight="bold" fontSize="16px" fontFamily="Inter" color="#E64545">
+                    0
+                  </Text>
+                  <Spacer />
+                  <Text fontWeight="bold" fontSize="14px" fontFamily="Inter">
+                    {post.title}
+                  </Text>
                 </HStack>
-              </CardFooter>
+              </CardBody>
             </Link>
           </Card>
         ))}
       </VStack>
+      <Divider variant="solid" />
+      <Flex justifyContent="flex-end">
+        <Link to="/posts/new">
+          <Button
+            bg="White"
+            borderWidth="4px"
+            borderColor="#F092FF"
+            borderRadius="full"
+            variant="outline"
+            h="80px"
+            w="80px"
+          >
+            <Center>
+              <VStack gap="0">
+                <Box h="10px" />
+                <Center>
+                  <FileText color="#EA67D5" size="30" />
+                </Center>
+                <Text fontFamily="Inter" fontWeight="bold" fontSize="12px" color="#583474">
+                  ポスト
+                </Text>
+              </VStack>
+            </Center>
+          </Button>
+        </Link>
+      </Flex>
     </Container>
   )
 }
