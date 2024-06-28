@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"log"
 	"myapp/api/middleware"
 	"myapp/api/schema"
 	"myapp/application"
@@ -80,6 +81,10 @@ func (ac AuthController) SignUp(c *gin.Context) {
 		UserName: params.UserName,
 		Password: params.Password,
 	})
+	if apperror.Is(err, apperror.CodeInvalidArgument) {
+		c.JSON(400, schema.NewErrorResponse(err))
+		return
+	}
 	if apperror.Is(err, apperror.CodeConflict) {
 		c.JSON(409, schema.NewErrorResponse(err))
 		return
@@ -89,6 +94,7 @@ func (ac AuthController) SignUp(c *gin.Context) {
 		return
 	}
 	if err != nil {
+		log.Println(err)
 		c.JSON(500, schema.NewErrorResponse(err))
 		return
 	}
