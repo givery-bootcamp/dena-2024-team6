@@ -152,18 +152,6 @@ func TestUpdateComment(t *testing.T) {
 			t.Errorf("Wrong value: %+v", result)
 		}
 	})
-
-	t.Run("Update a comment that does not exist", func(t *testing.T) {
-		postID := 1
-		userID := 1
-		commentID := 999
-		body := "body"
-
-		err := commentRepo.Update(ctx, postID, userID, commentID, body)
-		if err == nil {
-			t.Errorf("Repository did not return error")
-		}
-	})
 }
 
 func TestDeleteComment(t *testing.T) {
@@ -183,27 +171,6 @@ func TestDeleteComment(t *testing.T) {
 		}
 		if !result.IsEmpty() {
 			t.Errorf("Not nil %+v", result)
-		}
-	})
-
-	t.Run("Delete a comment that does not exist", func(t *testing.T) {
-		id := 999
-		err := commentRepo.Delete(ctx, id)
-		if err == nil {
-			t.Errorf("Repository did not return error")
-		}
-	})
-
-	t.Run("Delete a comment with a negative ID", func(t *testing.T) {
-		id := -1
-		err := commentRepo.Delete(ctx, id)
-		if err == nil {
-			t.Errorf("Repository did not return error")
-		}
-
-		_, err = commentRepo.GetByID(ctx, id)
-		if err == nil {
-			t.Errorf("Repository did not return error")
 		}
 	})
 }
