@@ -12,6 +12,8 @@ import {
   Label,
   Text
 } from '@yamada-ui/react'
+import { useSignUp, useGetCurrentUser } from '@api/hooks'
+
 export const SignupRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -20,6 +22,8 @@ export const SignupRoute = () => {
   const [passwordError, setPasswordError] = useState('')
   const [confirmPasswordError, setConfirmPasswordError] = useState('')
   const { snack, snacks } = useSnacks()
+  const { mutate } = useSignUp()
+
   const validateUsername = (value: string) => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
@@ -34,6 +38,7 @@ export const SignupRoute = () => {
       return true
     }
   }
+
   const validatePassword = (value: string) => {
     if (value === '') {
       setPasswordError('パスワードを入力してください。')
@@ -48,12 +53,14 @@ export const SignupRoute = () => {
       return true
     }
   }
-  const handleUsernameChange = (event: { target: { value: any } }) => {
+
+  const handleUsernameChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setUsername(value)
     validateUsername(value)
   }
-  const handlePasswordChange = (event: { target: { value: any } }) => {
+
+  const handlePasswordChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setPassword(value)
     validatePassword(value)
@@ -63,7 +70,8 @@ export const SignupRoute = () => {
       setConfirmPasswordError('')
     }
   }
-  const handleConfirmPasswordChange = (event: { target: { value: any } }) => {
+
+  const handleConfirmPasswordChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setConfirmPassword(value)
     if (password !== value) {
@@ -72,23 +80,39 @@ export const SignupRoute = () => {
       setConfirmPasswordError('')
     }
   }
+
   const handleSubmit = () => {
     const isUsernameValid = validateUsername(username)
     const isPasswordValid = validatePassword(password)
     const isConfirmPasswordValid = confirmPassword === password
+
     if (isUsernameValid && isPasswordValid && isConfirmPasswordValid) {
-      // アカウント作成処理をここに追加します
-      // 例: register({ username, password })
-      snack({
-        title: '成功',
-        description: 'アカウントが作成されました。',
-        variant: 'solid',
-        status: 'success'
-      })
+      mutate(
+        { data: { user_name: username, password: password } },
+        {
+          onSuccess: () => {
+            snack({
+              title: '成功',
+              description: 'アカウントが作成されました。',
+              variant: 'solid',
+              status: 'success'
+            })
+          },
+          onError: () => {
+            snack({
+              title: 'エラー',
+              description: 'アカウントが作成出来ませんでした。',
+              variant: 'solid',
+              status: 'error'
+            })
+          }
+        }
+      )
     } else if (!isConfirmPasswordValid) {
       setConfirmPasswordError('パスワードが一致しません')
     }
   }
+
   return (
     <Container>
       <Center h="80vh">
