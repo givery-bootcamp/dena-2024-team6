@@ -91,6 +91,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[application.UpdatePostUsecase](i, application.NewUpdatePostUsecase)
 	do.Provide[application.DeletePostUsecase](i, application.NewDeletePostUsecase)
 	do.Provide[application.SigninUsecase](i, application.NewSigninUsecase)
+	do.Provide[application.SignupUsecase](i, application.NewSignupUsecase)
 	do.Provide[application.GetUserUsecase](i, application.NewGetUserUsecase)
 	do.Provide[application.ListCommentsUsecase](i, application.NewListCommentsUsecase)
 	do.Provide[application.CreateCommentUsecase](i, application.NewCreateCommentUsecase)
