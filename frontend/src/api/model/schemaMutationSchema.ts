@@ -7,6 +7,6 @@
  */
 
 export interface SchemaMutationSchema {
-  message?: string
-  target_id?: number
+  message?: string;
+  target_id?: number;
 }
