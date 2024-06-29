@@ -22,4 +22,5 @@ func init() {
 	do.Provide[repository.HelloWorldRepository](testInjector, store.NewHelloWorldRepository)
 	do.Provide[repository.PostRepository](testInjector, store.NewPostRepository)
 	do.Provide[repository.UserRepository](testInjector, store.NewUserRepositoryImpl)
+	do.Provide[repository.CommentRepository](testInjector, store.NewCommentRepositoryImpl)
 }
