@@ -85,6 +85,5 @@ export const Header = () => {
         </>
       )}
     </header>
-
   )
 }
