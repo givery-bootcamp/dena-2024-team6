@@ -35,6 +35,12 @@ export const getSignInResponseMock = (overrideResponse: Partial<SchemaUserRespon
   ...overrideResponse
 })
 
+export const getSignUpResponseMock = (overrideResponse: Partial<SchemaUserResponse> = {}): SchemaUserResponse => ({
+  user_id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
+  user_name: faker.helpers.arrayElement([faker.word.sample(), undefined]),
+  ...overrideResponse
+})
+
 export const getGetCurrentUserResponseMock = (
   overrideResponse: Partial<SchemaUserResponse> = {}
 ): SchemaUserResponse => ({
@@ -231,6 +237,31 @@ export const getGetCurrentUserMockHandler = (
   })
 }
 
+export const getSignUpMockHandler = (
+  overrideResponse?:
+    | SchemaUserResponse
+    | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SchemaUserResponse> | SchemaUserResponse)
+) => {
+  return http.post('*/signup', async (info) => {
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getSignUpResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  })
+}
+
 export const getGetPostMockHandler = (
   overrideResponse?:
     | SchemaPostDetailResponse
@@ -415,6 +446,7 @@ export const getWeb6APIMock = () => [
   getCreatePostMockHandler(),
   getSignInMockHandler(),
   getSignOutMockHandler(),
+  getSignUpMockHandler(),
   getGetCurrentUserMockHandler(),
   getGetPostMockHandler(),
   getListPostCommentsMockHandler(),
