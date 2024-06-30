@@ -216,6 +216,20 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	// signUpOpe /signup POST
+	app.POST("/signup", authController.SignUp)
+	signUpOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signup")
+	signUpOpe.SetID("signUp")
+	signUpOpe.SetSummary("ユーザのアカウント登録を実行")
+	signUpOpe.SetTags("auth")
+	signUpOpe.AddReqStructure(new(schema.SignupRequest))
+	signUpOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
+	signUpOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	signUpOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(signUpOpe); err != nil {
+		return err
+	}
+
 	// createPostComments /posts/{postId}/comments POST
 	authRequired.PUT("/posts/:postid/comments/:commentId", postController.UpdateComment)
 	putCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/comments/{commentId}")

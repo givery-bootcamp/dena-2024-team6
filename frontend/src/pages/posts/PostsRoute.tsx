@@ -12,16 +12,20 @@ import {
   Flex,
   Spacer,
   Box,
-  Divider
+  Divider,
+  useDisclosure
 } from '@yamada-ui/react'
 import { useListPosts } from '@api/hooks'
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Beer, FileText } from 'lucide-react'
+import { CreatePostModal } from './CreatePostRoute'
 
 export const PostsRoute = () => {
   // API取得
   const { data, isLoading, isError, refetch } = useListPosts()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   useEffect(() => {
     refetch()
   }, [])
@@ -87,30 +91,30 @@ export const PostsRoute = () => {
       </VStack>
       <Divider variant="solid" />
       <Flex justifyContent="flex-end">
-        <Link to="/posts/new">
-          <Button
-            bg="White"
-            borderWidth="4px"
-            borderColor="#F092FF"
-            borderRadius="full"
-            variant="outline"
-            h="80px"
-            w="80px"
-          >
-            <Center>
-              <VStack gap="0">
-                <Box h="10px" />
-                <Center>
-                  <FileText color="#EA67D5" size="30" />
-                </Center>
-                <Text fontFamily="Inter" fontWeight="bold" fontSize="12px" color="#583474">
-                  ポスト
-                </Text>
-              </VStack>
-            </Center>
-          </Button>
-        </Link>
+        <Button
+          bg="White"
+          borderWidth="4px"
+          borderColor="#F092FF"
+          borderRadius="full"
+          variant="outline"
+          h="80px"
+          w="80px"
+          onClick={onOpen}
+        >
+          <Center>
+            <VStack gap="0">
+              <Box h="10px" />
+              <Center>
+                <FileText color="#EA67D5" size="30" />
+              </Center>
+              <Text fontFamily="Inter" fontWeight="bold" fontSize="12px" color="#583474">
+                ポスト
+              </Text>
+            </VStack>
+          </Center>
+        </Button>
       </Flex>
+      <CreatePostModal isOpen={isOpen} onClose={onClose} fetchPosts={refetch} />
     </Container>
   )
 }

@@ -7,6 +7,6 @@
  */
 
 export interface SchemaErrorResponse {
-  code?: number;
-  message?: string;
+  code?: number
+  message?: string
 }
