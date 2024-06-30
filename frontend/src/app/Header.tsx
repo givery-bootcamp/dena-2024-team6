@@ -1,30 +1,32 @@
-import { Box, Button, Center, Loading, Spacer, Stack, Text } from '@yamada-ui/react'
+import { Box, Button, Spacer, Stack, Text } from '@yamada-ui/react'
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useSignOut, useGetCurrentUser } from '@api/hooks'
 import { CircleUserRound, LogOut, LogIn, ArrowLeft } from 'lucide-react'
-
+import { useUser } from '@shared/provider/UserProvider'
 export const Header = () => {
   const navigate = useNavigate()
-  const { data: user, isError, refetch, isFetching } = useGetCurrentUser()
-  const [currentUser, setCurrentUser] = useState(user)
-
+  const { currentUser, setCurrentUser } = useUser()
+  const { data: user, isError } = useGetCurrentUser()
   const { mutate: signoutMutate } = useSignOut({
     mutation: {
       onSuccess: () => {
-        setCurrentUser(undefined)
+        setCurrentUser(null)
         navigate('/signin')
       }
     }
   })
+  useEffect(() => {
+    if (user) {
+      setCurrentUser(user)
+    }
+  }, [user, setCurrentUser])
 
   useEffect(() => {
     if (isError) {
-      setCurrentUser(undefined)
-    } else {
-      setCurrentUser(user)
+      setCurrentUser(null)
     }
-  }, [user, isError])
+  }, [isError, setCurrentUser])
 
   function initialUser({ user_name }: { user_name: string | undefined }) {
     if (user_name) {
@@ -32,23 +34,17 @@ export const Header = () => {
     }
     return null
   }
-
   const handleGoBack = () => {
     navigate(-1)
   }
-
   return (
     <header className="app-header">
-      <Button h="40px" w="20px" borderRadius="full" onClick={handleGoBack} bg="none">
+      <Button h="40px" w="40px" borderRadius="full" onClick={handleGoBack} bg="none">
         <Stack>
           <ArrowLeft color="#646464" size="30" />
         </Stack>
       </Button>
-      {isFetching ? (
-        <Center>
-          <Loading variant="circles" size="6xl" color="#98C9DE" />
-        </Center>
-      ) : isError || !currentUser ? (
+      {isError || !currentUser ? (
         <>
           <CircleUserRound size="40" />
           <Box w="10px" />
@@ -65,7 +61,7 @@ export const Header = () => {
         </>
       ) : (
         <>
-          <Button h="40px" w="20px" borderRadius="full" bg="#583474" color="White">
+          <Button h="40px" w="40px" borderRadius="full" bg="#583474" color="White">
             {initialUser({ user_name: currentUser.user_name })}
           </Button>
           <Box w="10px" />
@@ -73,14 +69,8 @@ export const Header = () => {
             {currentUser.user_name}
           </Text>
           <Spacer />
-          <Button
-            bg="none"
-            onClick={() => {
-              signoutMutate()
-              refetch()
-            }}
-          >
-            <LogOut size="20" color="#646464" />
+          <Button bg="none" onClick={() => signoutMutate()}>
+            <LogOut size="24" color="#646464" />
           </Button>
         </>
       )}

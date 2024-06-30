@@ -13,15 +13,15 @@ import {
   Text,
   useSnacks
 } from '@yamada-ui/react'
-import { useSignIn, useGetCurrentUser } from '@api/hooks'
-
+import { useSignIn } from '@api/hooks'
+import { useUser } from '@shared/provider/UserProvider'
 export const SigninRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const { snack, snacks } = useSnacks()
-  const { refetch } = useGetCurrentUser()
+  const { setCurrentUser } = useUser()
   const navigate = useNavigate()
   const { mutate, isPending } = useSignIn()
 
@@ -39,6 +39,7 @@ export const SigninRoute = () => {
       return true
     }
   }
+
   const validatePassword = (value: string) => {
     if (value === '') {
       setPasswordError('パスワードを入力してください。')
@@ -53,16 +54,19 @@ export const SigninRoute = () => {
       return true
     }
   }
-  const handleUsernameChange = (event: { target: { value: string } }) => {
+
+  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setUsername(value)
     validateUsername(value)
   }
-  const handlePasswordChange = (event: { target: { value: string } }) => {
+
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setPassword(value)
     validatePassword(value)
   }
+
   const handleSubmit = () => {
     const isUsernameValid = validateUsername(username)
     const isPasswordValid = validatePassword(password)
@@ -70,8 +74,8 @@ export const SigninRoute = () => {
       mutate(
         { data: { user_name: username, password: password } },
         {
-          onSuccess: () => {
-            refetch()
+          onSuccess: (data) => {
+            setCurrentUser(data)
             navigate('/')
           },
           onError: () => {
@@ -89,10 +93,8 @@ export const SigninRoute = () => {
 
   return (
     <Container>
-      {/* 画面中央に置きたい */}
       <Center h="80vh">
         <Box w="full" p="md" bg="White" borderRadius="md">
-          {/* 間隔を空ける */}
           <Box h="10px" />
           <Center>
             <Text as="h1" fontWeight="bold" fontSize="32px" fontFamily="Kaushan Script">
