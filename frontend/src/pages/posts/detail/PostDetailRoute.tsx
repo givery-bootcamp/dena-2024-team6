@@ -9,7 +9,11 @@ export const PostDetailRoute = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id } = useParams<{ id: string }>()
   const { data, isError } = useGetPost(id!)
-  const { data: commentList, refetch: refetchComments } = useListPostComments(id!)
+  const { data: commentList } = useListPostComments(id!, {
+    query: {
+      refetchInterval: 500
+    }
+  })
   const { data: user } = useGetCurrentUser()
   const { mutate } = useDeletePost()
 
@@ -62,7 +66,7 @@ export const PostDetailRoute = () => {
             />
           ))}
         </Flex>
-        <CreatePostCommentCard id={Number(id)} onSuccess={refetchComments} />
+        <CreatePostCommentCard id={Number(id)} onSuccess={() => {}} />
       </Flex>
       <Dialog
         header={data?.title + 'の削除'}

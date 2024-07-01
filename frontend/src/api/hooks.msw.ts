@@ -9,6 +9,7 @@ import { faker } from '@faker-js/faker'
 import { HttpResponse, delay, http } from 'msw'
 import type {
   SchemaCommentResponse,
+  SchemaLikeRecordResponse,
   SchemaMutationSchema,
   SchemaPostDetailResponse,
   SchemaPostResponse,
@@ -94,6 +95,13 @@ export const getPutPostCommentsResponseMock = (
 ): SchemaMutationSchema => ({
   message: faker.helpers.arrayElement([faker.word.sample(), undefined]),
   target_id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
+  ...overrideResponse
+})
+
+export const getLikePostResponseMock = (
+  overrideResponse: Partial<SchemaLikeRecordResponse> = {}
+): SchemaLikeRecordResponse => ({
+  likes: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
   ...overrideResponse
 })
 
@@ -212,31 +220,6 @@ export const getSignOutMockHandler = () => {
   })
 }
 
-export const getGetCurrentUserMockHandler = (
-  overrideResponse?:
-    | SchemaUserResponse
-    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SchemaUserResponse> | SchemaUserResponse)
-) => {
-  return http.get('*/user', async (info) => {
-    await delay(1000)
-    return new HttpResponse(
-      JSON.stringify(
-        overrideResponse !== undefined
-          ? typeof overrideResponse === 'function'
-            ? await overrideResponse(info)
-            : overrideResponse
-          : getGetCurrentUserResponseMock()
-      ),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-  })
-}
-
 export const getSignUpMockHandler = (
   overrideResponse?:
     | SchemaUserResponse
@@ -251,6 +234,31 @@ export const getSignUpMockHandler = (
             ? await overrideResponse(info)
             : overrideResponse
           : getSignUpResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  })
+}
+
+export const getGetCurrentUserMockHandler = (
+  overrideResponse?:
+    | SchemaUserResponse
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SchemaUserResponse> | SchemaUserResponse)
+) => {
+  return http.get('*/user', async (info) => {
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getGetCurrentUserResponseMock()
       ),
       {
         status: 200,
@@ -391,6 +399,33 @@ export const getPutPostCommentsMockHandler = (
   })
 }
 
+export const getLikePostMockHandler = (
+  overrideResponse?:
+    | SchemaLikeRecordResponse
+    | ((
+        info: Parameters<Parameters<typeof http.post>[1]>[0]
+      ) => Promise<SchemaLikeRecordResponse> | SchemaLikeRecordResponse)
+) => {
+  return http.post('*/posts/like/update', async (info) => {
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getLikePostResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  })
+}
+
 export const getDeletePostMockHandler = (
   overrideResponse?:
     | SchemaMutationSchema
@@ -453,6 +488,7 @@ export const getWeb6APIMock = () => [
   getCreatePostCommentsMockHandler(),
   getDeletePostCommentsMockHandler(),
   getPutPostCommentsMockHandler(),
+  getLikePostMockHandler(),
   getDeletePostMockHandler(),
   getUpdatePostMockHandler()
 ]
