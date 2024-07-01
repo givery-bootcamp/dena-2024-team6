@@ -13,6 +13,7 @@ import type {
   SchemaMutationSchema,
   SchemaPostDetailResponse,
   SchemaPostResponse,
+  SchemaSpeedResponse,
   SchemaUserResponse
 } from './model'
 
@@ -120,6 +121,12 @@ export const getUpdatePostResponseMock = (
   target_id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
   ...overrideResponse
 })
+
+export const getListSpeedsResponseMock = (): SchemaSpeedResponse[] =>
+  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+    id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
+    speed: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined])
+  }))
 
 export const getHealthCheckMockHandler = () => {
   return http.get('*/', async () => {
@@ -475,6 +482,31 @@ export const getUpdatePostMockHandler = (
     )
   })
 }
+
+export const getListSpeedsMockHandler = (
+  overrideResponse?:
+    | SchemaSpeedResponse[]
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SchemaSpeedResponse[]> | SchemaSpeedResponse[])
+) => {
+  return http.get('*/posts/speed', async (info) => {
+    await delay(1000)
+    return new HttpResponse(
+      JSON.stringify(
+        overrideResponse !== undefined
+          ? typeof overrideResponse === 'function'
+            ? await overrideResponse(info)
+            : overrideResponse
+          : getListSpeedsResponseMock()
+      ),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+  })
+}
 export const getWeb6APIMock = () => [
   getHealthCheckMockHandler(),
   getListPostsMockHandler(),
@@ -490,5 +522,6 @@ export const getWeb6APIMock = () => [
   getPutPostCommentsMockHandler(),
   getLikePostMockHandler(),
   getDeletePostMockHandler(),
-  getUpdatePostMockHandler()
+  getUpdatePostMockHandler(),
+  getListSpeedsMockHandler()
 ]

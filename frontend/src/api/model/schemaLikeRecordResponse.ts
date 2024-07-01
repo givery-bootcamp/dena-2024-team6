@@ -6,7 +6,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SchemaSignupRequest {
-  password?: string
-  user_name?: string
+export interface SchemaLikeRecordResponse {
+  likes?: number
 }

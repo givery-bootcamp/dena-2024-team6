@@ -20,11 +20,13 @@ import type {
   SchemaCreateCommentRequest,
   SchemaCreatePostRequest,
   SchemaErrorResponse,
+  SchemaLikeRecordResponse,
   SchemaLoginRequest,
   SchemaMutationSchema,
   SchemaPostDetailResponse,
   SchemaPostResponse,
   SchemaSignupRequest,
+  SchemaSpeedResponse,
   SchemaUpdateCommentRequest,
   SchemaUpdatePostRequest,
   SchemaUserResponse
@@ -271,61 +273,44 @@ export const useSignOut = <TError = SchemaErrorResponse, TContext = unknown>(opt
 /**
  * @summary ユーザのアカウント登録を実行
  */
-export const signUp = (
-    schemaSignupRequest: SchemaSignupRequest,
- options?: SecondParameter<typeof customInstance>,) => {
-      
-      
-      return customInstance<SchemaUserResponse>(
-      {url: `/signup`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: schemaSignupRequest
-    },
-      options);
-    }
-  
+export const signUp = (schemaSignupRequest: SchemaSignupRequest, options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<SchemaUserResponse>(
+    { url: `/signup`, method: 'POST', headers: { 'Content-Type': 'application/json' }, data: schemaSignupRequest },
+    options
+  )
+}
 
+export const getSignUpMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError, { data: SchemaSignupRequest }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError, { data: SchemaSignupRequest }, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
 
-export const getSignUpMutationOptions = <TError = SchemaErrorResponse,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError,{data: SchemaSignupRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError,{data: SchemaSignupRequest}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof signUp>>, { data: SchemaSignupRequest }> = (props) => {
+    const { data } = props ?? {}
 
-      
+    return signUp(data, requestOptions)
+  }
 
+  return { mutationFn, ...mutationOptions }
+}
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signUp>>, {data: SchemaSignupRequest}> = (props) => {
-          const {data} = props ?? {};
+export type SignUpMutationResult = NonNullable<Awaited<ReturnType<typeof signUp>>>
+export type SignUpMutationBody = SchemaSignupRequest
+export type SignUpMutationError = SchemaErrorResponse
 
-          return  signUp(data,requestOptions)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SignUpMutationResult = NonNullable<Awaited<ReturnType<typeof signUp>>>
-    export type SignUpMutationBody = SchemaSignupRequest
-    export type SignUpMutationError = SchemaErrorResponse
-
-    /**
+/**
  * @summary ユーザのアカウント登録を実行
  */
-export const useSignUp = <TError = SchemaErrorResponse,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError,{data: SchemaSignupRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof signUp>>,
-        TError,
-        {data: SchemaSignupRequest},
-        TContext
-      > => {
+export const useSignUp = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof signUp>>, TError, { data: SchemaSignupRequest }, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof signUp>>, TError, { data: SchemaSignupRequest }, TContext> => {
+  const mutationOptions = getSignUpMutationOptions(options)
 
-      const mutationOptions = getSignUpMutationOptions(options);
+  return useMutation(mutationOptions)
+}
 
-      return useMutation(mutationOptions);
-    }
-    
 /**
  * @summary 現在ログインしているユーザを取得
  */
@@ -711,6 +696,42 @@ export const usePutPostComments = <TError = SchemaErrorResponse, TContext = unkn
 }
 
 /**
+ * @summary 定期的に実行される。1h経過したらlike数を更新する
+ */
+export const likePost = (options?: SecondParameter<typeof customInstance>) => {
+  return customInstance<SchemaLikeRecordResponse>({ url: `/posts/like/update`, method: 'POST' }, options)
+}
+
+export const getLikePostMutationOptions = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError, void, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError, void, TContext> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {}
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof likePost>>, void> = () => {
+    return likePost(requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type LikePostMutationResult = NonNullable<Awaited<ReturnType<typeof likePost>>>
+
+export type LikePostMutationError = SchemaErrorResponse
+
+/**
+ * @summary 定期的に実行される。1h経過したらlike数を更新する
+ */
+export const useLikePost = <TError = SchemaErrorResponse, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError, void, TContext>
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationResult<Awaited<ReturnType<typeof likePost>>, TError, void, TContext> => {
+  const mutationOptions = getLikePostMutationOptions(options)
+
+  return useMutation(mutationOptions)
+}
+
+/**
  * @summary 投稿を削除
  */
 export const deletePost = (postid: string, options?: SecondParameter<typeof customInstance>) => {
@@ -819,4 +840,55 @@ export const useUpdatePost = <TError = SchemaErrorResponse, TContext = unknown>(
   const mutationOptions = getUpdatePostMutationOptions(options)
 
   return useMutation(mutationOptions)
+}
+
+/**
+ * @summary 各投稿の盛り上がり度を取得
+ */
+export const listSpeeds = (options?: SecondParameter<typeof customInstance>, signal?: AbortSignal) => {
+  return customInstance<SchemaSpeedResponse[]>({ url: `/posts/speed`, method: 'GET', signal }, options)
+}
+
+export const getListSpeedsQueryKey = () => {
+  return [`/posts/speed`] as const
+}
+
+export const getListSpeedsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listSpeeds>>,
+  TError = SchemaErrorResponse
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listSpeeds>>, TError, TData>>
+  request?: SecondParameter<typeof customInstance>
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getListSpeedsQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listSpeeds>>> = ({ signal }) =>
+    listSpeeds(requestOptions, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listSpeeds>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey }
+}
+
+export type ListSpeedsQueryResult = NonNullable<Awaited<ReturnType<typeof listSpeeds>>>
+export type ListSpeedsQueryError = SchemaErrorResponse
+
+/**
+ * @summary 各投稿の盛り上がり度を取得
+ */
+export const useListSpeeds = <TData = Awaited<ReturnType<typeof listSpeeds>>, TError = SchemaErrorResponse>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof listSpeeds>>, TError, TData>>
+  request?: SecondParameter<typeof customInstance>
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getListSpeedsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
 }
