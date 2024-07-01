@@ -1,17 +1,21 @@
-import { useDisclosure, Flex, Box, Textarea, HStack, Text, Icon, IconButton, Dialog } from '@yamada-ui/react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useDisclosure, Flex, Box, Dialog } from '@yamada-ui/react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useDeletePost, useGetPost, useGetCurrentUser, useListPostComments } from '@api/hooks'
 import { PostDetailCard } from './components/PostDetailCard'
 import { CommentCard } from './components/CommentCard'
-import { Heart, MessageCircle, MessageSquareText } from 'lucide-react'
-
+import { CreatePostCommentCard } from './components/createCommentCard'
+import { useEffect, useRef } from 'react'
 export const PostDetailRoute = () => {
+  const endOfCommentRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id } = useParams<{ id: string }>()
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { data, isError } = useGetPost(id!)
-  const { data: commentList } = useListPostComments(id!)
+  const { data: commentList } = useListPostComments(id!, {
+    query: {
+      refetchInterval: 500
+    }
+  })
   const { data: user } = useGetCurrentUser()
   const { mutate } = useDeletePost()
 
@@ -28,7 +32,9 @@ export const PostDetailRoute = () => {
     )
   }
 
-  const dummy = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+  useEffect(() => {
+    endOfCommentRef?.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [commentList])
 
   return (
     <Flex w="full" flexDir="column" gap="lg">
@@ -56,7 +62,21 @@ export const PostDetailRoute = () => {
         position="absolute"
         bottom="0px"
       >
-        <Flex flexDir="column" gap="md" px="md" py="sm" h="45vh" overflow="scroll">
+        <Flex
+          flexDir="column"
+          gap="md"
+          px="md"
+          py="sm"
+          h="45vh"
+          overflowY="scroll"
+          _scrollbar={{
+            w: '8px',
+            height: '32px'
+          }}
+          _scrollbarThumb={{
+            bgColor: 'black'
+          }}
+        >
           {commentList?.map((c) => (
             <CommentCard
               key={c.id}
@@ -65,24 +85,9 @@ export const PostDetailRoute = () => {
               createdAt={c.created_at ? new Date(c.created_at) : undefined}
             />
           ))}
+          <Box h="1px" ref={endOfCommentRef} />
         </Flex>
-        <Flex px="md" py="lg" justifyContent="space-between">
-          <Box
-            w="60vw"
-            p="sm"
-            bgColor="whiteAlpha.800"
-            borderRadius="md"
-            _hover={{
-              bgColor: 'neutral.100'
-            }}
-          >
-            <HStack>
-              <Icon size="lg" as={MessageSquareText} />
-              <Text>ここにコメントを入力...</Text>
-            </HStack>
-          </Box>
-          <IconButton colorScheme="whiteAlpha" variant="ghost" as={Heart} />
-        </Flex>
+        <CreatePostCommentCard id={Number(id)} onSuccess={() => {}} />
       </Flex>
       <Dialog
         header={data?.title + 'の削除'}

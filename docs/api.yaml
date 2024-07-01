@@ -148,6 +148,36 @@ paths:
       summary: ユーザのログアウトを実行
       tags:
       - auth
+  /signup:
+    post:
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaSignupRequest'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaUserResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: ユーザのアカウント登録を実行
+      tags:
+      - auth
   /user:
     get:
       operationId: getCurrentUser
@@ -417,6 +447,81 @@ paths:
       summary: 対象の投稿のコメントを変更
       tags:
       - post
+  posts/{postId}/like:
+    get:
+      operationId: likePost
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaLikeRecordResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 対象の投稿のlike数を取得する
+      tags:
+      - post
+    post:
+      operationId: likePost
+      parameters:
+      - in: path
+        name: postId
+        required: true
+        schema:
+          example: "1"
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaMutationSchema'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 対象の投稿をlikeする
+      tags:
+      - post
   posts/{postid}:
     delete:
       operationId: deletePost
@@ -509,6 +614,37 @@ paths:
       summary: 投稿を更新
       tags:
       - post
+  posts/like/update:
+    post:
+      operationId: likePost
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaLikeRecordResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Bad Request
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Forbidden
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 定期的に実行される。1h経過したらlike数を更新する
+      tags:
+      - post
   posts/speed:
     get:
       operationId: listSpeeds
@@ -570,6 +706,11 @@ components:
         message:
           type: string
       type: object
+    SchemaLikeRecordResponse:
+      properties:
+        likes:
+          type: integer
+      type: object
     SchemaLoginRequest:
       properties:
         password:
@@ -611,6 +752,13 @@ components:
           type: string
         user_id:
           type: integer
+      type: object
+    SchemaSignupRequest:
+      properties:
+        password:
+          type: string
+        user_name:
+          type: string
       type: object
     SchemaSpeedResponse:
       properties:

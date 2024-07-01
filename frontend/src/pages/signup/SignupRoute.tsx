@@ -1,38 +1,46 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
-  Box,
-  Button,
-  Center,
   Container,
-  Divider,
   FormControl,
   Input,
-  Label,
+  Button,
   Snacks,
+  useSnacks,
+  Box,
+  Center,
+  Divider,
+  Label,
   Text,
-  useSnacks
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure
 } from '@yamada-ui/react'
-import { useSignIn } from '@api/hooks'
-import { useUser } from '@shared/provider/UserProvider'
-export const SigninRoute = () => {
+import { useNavigate } from 'react-router-dom'
+import { useSignUp, useGetCurrentUser } from '@api/hooks'
+
+export const SignupRoute = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [confirmPasswordError, setConfirmPasswordError] = useState('')
+
   const { snack, snacks } = useSnacks()
-  const { setCurrentUser } = useUser()
+  const { mutate } = useSignUp()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { refetch } = useGetCurrentUser()
   const navigate = useNavigate()
-  const { mutate, isPending } = useSignIn()
 
   const validateUsername = (value: string) => {
     if (value === '') {
       setUsernameError('ユーザー名を入力してください。')
       return false
     }
-    const regex = /^[a-zA-Z0-9]+$/
-    if (!regex.test(value)) {
-      setUsernameError('ユーザー名は英数のみ許可されます。記号は使用できません。')
+    if (value.length > 13) {
+      setUsernameError('ユーザー名は13文字以下が必須です。')
       return false
     } else {
       setUsernameError('')
@@ -45,7 +53,17 @@ export const SigninRoute = () => {
       setPasswordError('パスワードを入力してください。')
       return false
     }
+    if (value.length < 12) {
+      setPasswordError('パスワードは12文字以上が必須です。')
+      return false
+    }
+    if (value.length > 100) {
+      setPasswordError('パスワードは100文字以下が必須です。')
+      return false
+    }
+
     const regex = /^[\x20-\x7E]+$/
+
     if (!regex.test(value)) {
       setPasswordError('パスワードはASCII範囲の英数記号のみ許可されます。')
       return false
@@ -55,40 +73,63 @@ export const SigninRoute = () => {
     }
   }
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setUsername(value)
     validateUsername(value)
   }
 
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordChange = (event: { target: { value: string } }) => {
     const value = event.target.value
     setPassword(value)
     validatePassword(value)
+    if (confirmPassword !== '' && value !== confirmPassword) {
+      setConfirmPasswordError('パスワードが一致しません')
+    } else {
+      setConfirmPasswordError('')
+    }
+  }
+
+  const handleConfirmPasswordChange = (event: { target: { value: string } }) => {
+    const value = event.target.value
+    setConfirmPassword(value)
+    if (password !== value) {
+      setConfirmPasswordError('パスワードが一致しません')
+    } else {
+      setConfirmPasswordError('')
+    }
   }
 
   const handleSubmit = () => {
     const isUsernameValid = validateUsername(username)
     const isPasswordValid = validatePassword(password)
-    if (isUsernameValid && isPasswordValid) {
+    const isConfirmPasswordValid = confirmPassword === password
+    if (isUsernameValid && isPasswordValid && isConfirmPasswordValid) {
       mutate(
         { data: { user_name: username, password: password } },
         {
-          onSuccess: (data) => {
-            setCurrentUser(data)
-            navigate('/')
+          onSuccess: () => {
+            refetch()
+            onOpen()
           },
           onError: () => {
             snack({
               title: 'エラー',
-              description: 'ユーザーが登録されていません',
+              description: 'アカウントが作成出来ませんでした。',
               variant: 'solid',
               status: 'error'
             })
           }
         }
       )
+    } else if (!isConfirmPasswordValid) {
+      setConfirmPasswordError('パスワードが一致しません')
     }
+  }
+
+  const handleModalClose = () => {
+    onClose()
+    navigate('/')
   }
 
   return (
@@ -104,28 +145,44 @@ export const SigninRoute = () => {
           <Box h="10px" />
           <Snacks snacks={snacks} gutter={[0, 'md']} />
           <FormControl isRequired isInvalid={usernameError !== ''} errorMessage={usernameError}>
-            <Label fontWeight="bold" fontSize="16px" fontFamily="Inter">
+            <Label fontWeight="bold" fontSize="14px" fontFamily="Inter">
               ユーザネーム
             </Label>
             <Input
               type="text"
               placeholder="ユーザー名を入力してください。"
+              fontSize="14px"
               isRequired
               value={username}
               onChange={handleUsernameChange}
             />
           </FormControl>
-          <Box h="10px" />
+          <Box h="14px" />
           <FormControl isRequired isInvalid={passwordError !== ''} errorMessage={passwordError}>
-            <Label fontWeight="bold" fontSize="16px" fontFamily="Inter">
+            <Label fontWeight="bold" fontSize="14px" fontFamily="Inter">
               パスワード
             </Label>
             <Input
               type="password"
               placeholder="パスワードを入力してください。"
+              fontSize="14px"
               isRequired
               value={password}
               onChange={handlePasswordChange}
+            />
+          </FormControl>
+          <Box h="14px" />
+          <FormControl isRequired isInvalid={confirmPasswordError !== ''} errorMessage={confirmPasswordError}>
+            <Label fontWeight="bold" fontSize="14px" fontFamily="Inter">
+              パスワード(確認)
+            </Label>
+            <Input
+              type="password"
+              placeholder="もう一度入力してください。"
+              fontSize="14px"
+              isRequired
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
             />
           </FormControl>
           <Box h="30px" />
@@ -134,26 +191,34 @@ export const SigninRoute = () => {
               onClick={handleSubmit}
               color="White"
               bgGradient="linear(to-r, #00D1FF,#8ABBF5, #DEC9EB)"
-              isLoading={isPending}
               loadingIcon="dots"
               fontWeight="bold"
-              fontSize="16px"
+              fontSize="14px"
               fontFamily="Inter"
             >
-              ログイン
+              アカウント登録
             </Button>
           </Center>
           <Box h="30px" />
           <Divider variant="solid" />
           <Box h="20px" />
           <Center>
-            <Text as="a" href="/signup" fontSize="14px" textDecoration="underline" fontFamily="Inter" color="#656565">
-              またはアカウントを新規作成
+            <Text as="a" href="/signin" fontSize="14px" textDecoration="underline" fontFamily="Inter" color="#656565">
+              既にアカウントがある場合はログイン
             </Text>
           </Center>
           <Box h="10px" />
         </Box>
       </Center>
+      <Modal isOpen={isOpen} onClose={handleModalClose}>
+        <ModalHeader>登録完了</ModalHeader>
+        <ModalBody>アカウント登録が完了しました。</ModalBody>
+        <ModalFooter>
+          <Button variant="ghost" onClick={handleModalClose}>
+            閉じる
+          </Button>
+        </ModalFooter>
+      </Modal>
     </Container>
   )
 }

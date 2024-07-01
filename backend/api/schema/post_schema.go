@@ -70,3 +70,15 @@ type SpeedResponse struct {
 	ID    int `json:"id"`
 	Speed int `json:"speed"`
 }
+
+type LikePostRequest struct {
+	PostID string `path:"postId" example:"1"`
+}
+
+type GetLikesRequest struct {
+	PostID string `path:"postId" example:"1"`
+}
+
+type LikeRecordResponse struct {
+	Likes int `json:"likes"`
+}

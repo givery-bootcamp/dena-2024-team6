@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SchemaUserResponse {
-  user_id?: number
-  user_name?: string
+export interface SchemaSignupRequest {
+  password?: string;
+  user_name?: string;
 }

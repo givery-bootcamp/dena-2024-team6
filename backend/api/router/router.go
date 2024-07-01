@@ -144,7 +144,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	}
 
 	// createPostComments /posts/{postId}/comments POST
-	app.POST("/posts/:postid/comments", postController.CreateComment)
+	authRequired.POST("/posts/:postid/comments", postController.CreateComment)
 	createCommnetsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/comments")
 	createCommnetsOpe.SetID("createPostComments")
 	createCommnetsOpe.AddReqStructure(new(schema.CreateCommentRequest))
@@ -173,6 +173,48 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	// likePost /posts/{postId}/like POST
+	app.POST("/posts/:postid/like", postController.LikePost)
+	likePostOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/like")
+	likePostOpe.SetID("likePost")
+	likePostOpe.AddReqStructure(new(schema.LikePostRequest))
+	likePostOpe.SetSummary("対象の投稿をlikeする")
+	likePostOpe.SetTags("post")
+	likePostOpe.AddRespStructure(new(schema.MutationSchema), openapi.WithHTTPStatus(http.StatusCreated))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	likePostOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(likePostOpe); err != nil {
+		return err
+	}
+	// getlikeRecord /posts/{postId}/like GET
+	app.GET("/posts/:postid/like", postController.GetLikeRecords)
+	getLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/{postId}/like")
+	getLikeRecordsOpe.SetID("likePost")
+	getLikeRecordsOpe.AddReqStructure(new(schema.GetLikesRequest))
+	getLikeRecordsOpe.SetSummary("対象の投稿のlike数を取得する")
+	getLikeRecordsOpe.SetTags("post")
+	getLikeRecordsOpe.AddRespStructure(new(schema.LikeRecordResponse), openapi.WithHTTPStatus(http.StatusOK))
+	getLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	getLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	getLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(getLikeRecordsOpe); err != nil {
+		return err
+	}
+	// updatelikeRecord /posts/like/update POST
+	app.POST("/posts/like/update", postController.UpdateLikeRecords)
+	updateLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/like/update")
+	updateLikeRecordsOpe.SetID("likePost")
+	updateLikeRecordsOpe.SetSummary("定期的に実行される。1h経過したらlike数を更新する")
+	updateLikeRecordsOpe.SetTags("post")
+	updateLikeRecordsOpe.AddRespStructure(new(schema.LikeRecordResponse), openapi.WithHTTPStatus(http.StatusOK))
+	updateLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	updateLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusForbidden))
+	updateLikeRecordsOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(updateLikeRecordsOpe); err != nil {
+		return err
+	}
+
 	// signInOpe /signin POST
 	app.POST("/signin", authController.SignIn)
 	signInOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signin")
@@ -185,6 +227,20 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	signInOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
 	signInOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
 	if err := appDoc.AddOperation(signInOpe); err != nil {
+		return err
+	}
+
+	// signUpOpe /signup POST
+	app.POST("/signup", authController.SignUp)
+	signUpOpe, _ := appDoc.NewOperationContext(http.MethodPost, "/signup")
+	signUpOpe.SetID("signUp")
+	signUpOpe.SetSummary("ユーザのアカウント登録を実行")
+	signUpOpe.SetTags("auth")
+	signUpOpe.AddReqStructure(new(schema.SignupRequest))
+	signUpOpe.AddRespStructure(new(schema.UserResponse), openapi.WithHTTPStatus(http.StatusOK))
+	signUpOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusBadRequest))
+	signUpOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(signUpOpe); err != nil {
 		return err
 	}
 
