@@ -104,6 +104,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[application.GetLikeRecordUsecase](i, application.NewGetLikeRecordUsecase)
 	do.Provide[application.CreateLikeRecordUsecase](i, application.NewCreateLikeRecordUsecase)
 	do.Provide[application.CloseLikeRecordUsecase](i, application.NewCloseLikeRecordUsecase)
+	do.Provide[application.ListSpeedsUsecase](i, application.NewListSpeedsUsecase)
 
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)

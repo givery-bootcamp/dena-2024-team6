@@ -30,6 +30,7 @@ type PostController struct {
 	createLikeRecordUsecase application.CreateLikeRecordUsecase
 	getLikeRecordUsecase    application.GetLikeRecordUsecase
 	closeLikeRecordUsecase  application.CloseLikeRecordUsecase
+	listSpeedsUsecase       application.ListSpeedsUsecase
 }
 
 func NewPostController(i *do.Injector) (*PostController, error) {
@@ -46,6 +47,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 	createLikeRecordUsecase := do.MustInvoke[application.CreateLikeRecordUsecase](i)
 	getLikeRecordUsecase := do.MustInvoke[application.GetLikeRecordUsecase](i)
 	closeLikeRecordUsecase := do.MustInvoke[application.CloseLikeRecordUsecase](i)
+	listSpeedsUsecase := do.MustInvoke[application.ListSpeedsUsecase](i)
 	return &PostController{
 		createPostUsecase:       createPostUsecase,
 		listPostUsecase:         listPostUsecase,
@@ -60,6 +62,7 @@ func NewPostController(i *do.Injector) (*PostController, error) {
 		createLikeRecordUsecase: createLikeRecordUsecase,
 		getLikeRecordUsecase:    getLikeRecordUsecase,
 		closeLikeRecordUsecase:  closeLikeRecordUsecase,
+		listSpeedsUsecase:       listSpeedsUsecase,
 	}, nil
 }
 
@@ -519,4 +522,25 @@ func (p PostController) GetLikeRecords(c *gin.Context) {
 	c.JSON(200, schema.LikeRecordResponse{
 		Likes: likes,
 	})
+}
+
+func (p PostController) ListSpeeds(c *gin.Context) {
+	ctx, cancel := context.WithDeadline(c, time.Now().Add(time.Duration(config.DefaultTimeoutSecond)*time.Second))
+	defer cancel()
+
+	result, err := p.listSpeedsUsecase.Execute(ctx)
+	if apperror.Is(err, apperror.CodeInternalServer) || err != nil {
+		c.JSON(500, schema.NewErrorResponse(err))
+		return
+	}
+
+	resp := make([]schema.SpeedResponse, len(result.Speeds))
+	for i, s := range result.Speeds {
+		resp[i] = schema.SpeedResponse{
+			ID:    s.PostID,
+			Speed: s.Speed,
+		}
+	}
+
+	c.JSON(200, resp)
 }
