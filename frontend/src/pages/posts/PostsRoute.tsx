@@ -25,7 +25,11 @@ export const PostsRoute = () => {
   // API取得
   const { data, isLoading, isError, refetch } = useListPosts()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { data: speeds, refetch: refetchSpeeds } = useListSpeeds()
+  const { data: speeds, refetch: refetchSpeeds } = useListSpeeds({
+    query: {
+      refetchInterval: 500
+    }
+  })
 
   useEffect(() => {
     refetch()
