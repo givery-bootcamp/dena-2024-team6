@@ -56,7 +56,21 @@ export const PostDetailRoute = () => {
         position="absolute"
         bottom="0px"
       >
-        <Flex flexDir="column" gap="md" px="md" py="sm" h="45vh" overflow="scroll">
+        <Flex
+          flexDir="column"
+          gap="md"
+          px="md"
+          py="sm"
+          h="45vh"
+          overflowY="scroll"
+          _scrollbar={{
+            w: '8px',
+            height: '32px'
+          }}
+          _scrollbarThumb={{
+            bgColor: 'black'
+          }}
+        >
           {commentList?.map((c) => (
             <CommentCard
               key={c.id}
