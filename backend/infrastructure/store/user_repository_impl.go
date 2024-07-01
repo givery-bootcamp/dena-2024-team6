@@ -83,7 +83,8 @@ func (u UserRepositoryImpl) GetByID(ctx context.Context, id int) (model.User, er
 		SELECT
 			id,
 			name,
-			password
+			password,
+                        icon_url
 		FROM
 			users
 		WHERE
@@ -110,7 +111,8 @@ func (u UserRepositoryImpl) GetByUserNameAndPassword(ctx context.Context, userNa
 		SELECT
 			id,
 			name,
-			password
+			password,
+                        icon_url
 		FROM
 			users
 		WHERE

@@ -49,9 +49,10 @@ func TestGetByUserNameAndPassword(t *testing.T) {
 		username string
 		password string
 		userID   int
+		iconURL  string
 	}{
-		{"taro", "password", 1},
-		{"hanako", "PASSWORD", 2},
+		{"taro", "password", 1, "https://example.com/icon/taro.png"},
+		{"hanako", "PASSWORD", 2, "https://example.com/icon/hanako.png"},
 	}
 	for _, tc := range testcases {
 		t.Run(fmt.Sprintf("username = %s and password = %s", tc.username, tc.password), func(t *testing.T) {

@@ -140,5 +140,6 @@ func (ac AuthController) GetCurrentUser(c *gin.Context) {
 	c.JSON(200, schema.UserResponse{
 		ID:       result.User.ID,
 		UserName: result.User.Name,
+		IconURL:  result.User.IconURL,
 	})
 }
