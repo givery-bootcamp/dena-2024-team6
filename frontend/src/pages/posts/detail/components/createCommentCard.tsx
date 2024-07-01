@@ -13,6 +13,10 @@ export const CreatePostCommentCard = ({ id, onSuccess }: CreatePostCommentCardPr
   const { mutate } = useCreatePostComments()
   const { snack } = useSnacks()
   const {mutate:mutateLike} = useLikePost()
+  const [isHovered, setIsHovered] = useState(false)
+
+  const handleMouseEnter = () => setIsHovered(true)
+  const handleMouseLeave = () => setIsHovered(false)
 
   const handleBodyChange = (event: { target: { value: string } }) => {
     setBody(event.target.value)
@@ -24,6 +28,9 @@ export const CreatePostCommentCard = ({ id, onSuccess }: CreatePostCommentCardPr
     console.log('いいね')
 
   }
+
+
+
 
   function handleSubmit(event: { preventDefault: () => void }): void {
     event.preventDefault()
@@ -77,7 +84,15 @@ export const CreatePostCommentCard = ({ id, onSuccess }: CreatePostCommentCardPr
           </HStack>
         </form>
       </Box>
-      <IconButton colorScheme="whiteAlpha" variant="ghost" as={Heart} onClick={handleLike}/>
+      <IconButton 
+      color={isHovered ? 'red.300' : 'whiteAlpha.400'}
+        // colorScheme="whiteAlpha" 
+        variant="ghost" 
+        as={Heart} 
+        onClick={handleLike}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        />
     </Flex>
   )
 }
