@@ -59,7 +59,7 @@ func (l *listSpeedsUsecaseInteractor) Execute(ctx context.Context) (ListSpeedsUs
 
 		speeds = append(speeds, model.Speed{
 			PostID: post.ID,
-			Speed:  len(comments) + likes,
+			Speed:  (len(comments) * 35) + (likes * 3),
 		})
 	}
 
