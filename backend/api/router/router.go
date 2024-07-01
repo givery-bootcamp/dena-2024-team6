@@ -160,9 +160,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	}
 
 	// listSpeeds /posts/speed GET
-	app.GET("/posts/speed", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Not Implemented"})
-	})
+	app.GET("/posts/speed", postController.ListSpeeds)
 	getSpeedOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/speed")
 	getSpeedOpe.SetID("listSpeeds")
 	getSpeedOpe.SetSummary("各投稿の盛り上がり度を取得")
