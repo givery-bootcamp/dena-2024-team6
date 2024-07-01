@@ -159,6 +159,20 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 		return err
 	}
 
+	// listSpeeds /posts/speed GET
+	app.GET("/posts/speed", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Not Implemented"})
+	})
+	getSpeedOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/speed")
+	getSpeedOpe.SetID("listSpeeds")
+	getSpeedOpe.SetSummary("各投稿の盛り上がり度を取得")
+	getSpeedOpe.SetTags("post")
+	getSpeedOpe.AddRespStructure(new([]schema.SpeedResponse), openapi.WithHTTPStatus(http.StatusOK))
+	getSpeedOpe.AddRespStructure(new(schema.ErrorResponse), openapi.WithHTTPStatus(http.StatusInternalServerError))
+	if err := appDoc.AddOperation(getSpeedOpe); err != nil {
+		return err
+	}
+
 	// likePost /posts/{postId}/like POST
 	app.POST("/posts/:postid/like", postController.LikePost)
 	likePostOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/{postId}/like")
