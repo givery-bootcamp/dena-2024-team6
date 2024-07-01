@@ -4,12 +4,18 @@ import { useDeletePost, useGetPost, useGetCurrentUser, useListPostComments } fro
 import { PostDetailCard } from './components/PostDetailCard'
 import { CommentCard } from './components/CommentCard'
 import { CreatePostCommentCard } from './components/createCommentCard'
+import { useEffect, useRef } from 'react'
 export const PostDetailRoute = () => {
+  const endOfCommentRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id } = useParams<{ id: string }>()
   const { data, isError } = useGetPost(id!)
-  const { data: commentList, refetch: refetchComments } = useListPostComments(id!)
+  const { data: commentList } = useListPostComments(id!, {
+    query: {
+      refetchInterval: 500
+    }
+  })
   const { data: user } = useGetCurrentUser()
   const { mutate } = useDeletePost()
 
@@ -25,6 +31,10 @@ export const PostDetailRoute = () => {
       }
     )
   }
+
+  useEffect(() => {
+    endOfCommentRef?.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [commentList])
 
   return (
     <Flex w="full" flexDir="column" gap="lg">
@@ -52,7 +62,21 @@ export const PostDetailRoute = () => {
         position="absolute"
         bottom="0px"
       >
-        <Flex flexDir="column" gap="md" px="md" py="sm" h="45vh" overflow="scroll">
+        <Flex
+          flexDir="column"
+          gap="md"
+          px="md"
+          py="sm"
+          h="45vh"
+          overflowY="scroll"
+          _scrollbar={{
+            w: '8px',
+            height: '32px'
+          }}
+          _scrollbarThumb={{
+            bgColor: 'black'
+          }}
+        >
           {commentList?.map((c) => (
             <CommentCard
               key={c.id}
@@ -61,8 +85,9 @@ export const PostDetailRoute = () => {
               createdAt={c.created_at ? new Date(c.created_at) : undefined}
             />
           ))}
+          <Box h="1px" ref={endOfCommentRef} />
         </Flex>
-        <CreatePostCommentCard id={Number(id)} onSuccess={refetchComments} />
+        <CreatePostCommentCard id={Number(id)} onSuccess={() => {}} />
       </Flex>
       <Dialog
         header={data?.title + 'の削除'}
