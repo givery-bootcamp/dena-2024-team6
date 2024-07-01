@@ -7,6 +7,6 @@
  */
 
 export interface SchemaLoginRequest {
-  password?: string
-  user_name?: string
+  password?: string;
+  user_name?: string;
 }

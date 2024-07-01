@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SchemaUpdateCommentRequest {
-  body?: string;
+export interface SchemaSpeedResponse {
+  id?: number;
+  speed?: number;
 }

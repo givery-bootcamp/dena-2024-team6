@@ -6,6 +6,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface SchemaUpdateCommentRequest {
-  body?: string;
+export interface SchemaLikeRecordResponse {
+  likes?: number;
 }

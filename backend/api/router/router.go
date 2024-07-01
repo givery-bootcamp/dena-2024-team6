@@ -190,7 +190,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	// getlikeRecord /posts/{postId}/like GET
 	app.GET("/posts/:postid/like", postController.GetLikeRecords)
 	getLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodGet, "posts/{postId}/like")
-	getLikeRecordsOpe.SetID("likePost")
+	getLikeRecordsOpe.SetID("getlikeRecord")
 	getLikeRecordsOpe.AddReqStructure(new(schema.GetLikesRequest))
 	getLikeRecordsOpe.SetSummary("対象の投稿のlike数を取得する")
 	getLikeRecordsOpe.SetTags("post")
@@ -204,7 +204,7 @@ func SetupRoutes(i *do.Injector, app *gin.Engine) error {
 	// updatelikeRecord /posts/like/update POST
 	app.POST("/posts/like/update", postController.UpdateLikeRecords)
 	updateLikeRecordsOpe, _ := appDoc.NewOperationContext(http.MethodPost, "posts/like/update")
-	updateLikeRecordsOpe.SetID("likePost")
+	updateLikeRecordsOpe.SetID("updatelikeRecord")
 	updateLikeRecordsOpe.SetSummary("定期的に実行される。1h経過したらlike数を更新する")
 	updateLikeRecordsOpe.SetTags("post")
 	updateLikeRecordsOpe.AddRespStructure(new(schema.LikeRecordResponse), openapi.WithHTTPStatus(http.StatusOK))
