@@ -85,7 +85,6 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[repository.PostRepository](i, store.NewPostRepository)
 	do.Provide[repository.UserRepository](i, store.NewUserRepositoryImpl)
 	do.Provide[repository.CommentRepository](i, store.NewCommentRepositoryImpl)
-	do.Provide[repository.SpeedRepository](i, store.NewSpeedRepositoryImpl)
 	do.Provide[repository.LikeRepository](i, store.NewLikeRepository)
 
 	// Inject application usecase resources
