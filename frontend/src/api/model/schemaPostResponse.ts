@@ -7,7 +7,7 @@
  */
 
 export interface SchemaPostResponse {
-  post_id?: number
-  title?: string
-  user_id?: number
+  post_id?: number;
+  title?: string;
+  user_id?: number;
 }
