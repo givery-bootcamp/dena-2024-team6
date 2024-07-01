@@ -27,7 +27,7 @@ export const PostsRoute = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { data: speeds, refetch: refetchSpeeds } = useListSpeeds({
     query: {
-      refetchInterval: 1000
+      refetchInterval: 500
     }
   })
 
