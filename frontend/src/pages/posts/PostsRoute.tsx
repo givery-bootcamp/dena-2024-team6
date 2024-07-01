@@ -17,7 +17,7 @@ import {
 } from '@yamada-ui/react'
 import { useListPosts, useListSpeeds } from '@api/hooks'
 import { Link } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Beer, FileText } from 'lucide-react'
 import { CreatePostModal } from './CreatePostRoute'
 
@@ -25,11 +25,11 @@ export const PostsRoute = () => {
   // API取得
   const { data, isLoading, isError, refetch } = useListPosts()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { data: speeds, refetch: refetchSpeeds } = useListSpeeds()
-
-  useEffect(() => {
-    refetch()
-  }, [])
+  const { data: speeds } = useListSpeeds({
+    query: {
+      refetchInterval: 3000
+    }
+  })
 
   return (
     <Container>
