@@ -85,6 +85,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[repository.PostRepository](i, store.NewPostRepository)
 	do.Provide[repository.UserRepository](i, store.NewUserRepositoryImpl)
 	do.Provide[repository.CommentRepository](i, store.NewCommentRepositoryImpl)
+	do.Provide[repository.SpeedRepository](i, store.NewSpeedRepositoryImpl)
 	do.Provide[repository.LikeRepository](i, store.NewLikeRepository)
 
 	// Inject application usecase resources
@@ -104,6 +105,7 @@ func injectDependencies(i *do.Injector) {
 	do.Provide[application.GetLikeRecordUsecase](i, application.NewGetLikeRecordUsecase)
 	do.Provide[application.CreateLikeRecordUsecase](i, application.NewCreateLikeRecordUsecase)
 	do.Provide[application.CloseLikeRecordUsecase](i, application.NewCloseLikeRecordUsecase)
+	do.Provide[application.ListSpeedsUsecase](i, application.NewListSpeedsUsecase)
 
 	// Inject controller resources
 	do.Provide[*controller.PostController](i, controller.NewPostController)
