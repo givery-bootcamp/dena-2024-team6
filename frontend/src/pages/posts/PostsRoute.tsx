@@ -15,7 +15,7 @@ import {
   Divider,
   useDisclosure
 } from '@yamada-ui/react'
-import { useListPosts } from '@api/hooks'
+import { useListPosts, useListSpeeds } from '@api/hooks'
 import { Link } from 'react-router-dom'
 import { useEffect } from 'react'
 import { Beer, FileText } from 'lucide-react'
@@ -25,6 +25,7 @@ export const PostsRoute = () => {
   // API取得
   const { data, isLoading, isError, refetch } = useListPosts()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { data: speeds, refetch: refetchSpeeds } = useListSpeeds()
 
   useEffect(() => {
     refetch()
@@ -62,32 +63,36 @@ export const PostsRoute = () => {
       )}
       <Divider variant="solid" />
       <VStack h="500px" p="md" w="full" overflow="auto">
-        {data?.map((post) => (
-          <Card
-            key={post.post_id}
-            bg="White"
-            w="full"
-            _hover={{
-              cursor: 'pointer',
-              bgColor: 'gray.50'
-            }}
-          >
-            <Link to={`/posts/${post.post_id}`}>
-              <CardBody>
-                <HStack>
-                  <Beer />
-                  <Text fontWeight="bold" fontSize="16px" fontFamily="Inter" color="#E64545">
-                    0
-                  </Text>
-                  <Spacer />
-                  <Text fontWeight="bold" fontSize="14px" fontFamily="Inter">
-                    {post.title}
-                  </Text>
-                </HStack>
-              </CardBody>
-            </Link>
-          </Card>
-        ))}
+        {data?.map((post) => {
+          const speed = speeds?.find((speed) => speed.id === post.post_id)
+
+          return (
+            <Card
+              key={post.post_id}
+              bg="White"
+              w="full"
+              _hover={{
+                cursor: 'pointer',
+                bgColor: 'gray.50'
+              }}
+            >
+              <Link to={`/posts/${post.post_id}`}>
+                <CardBody>
+                  <HStack>
+                    <Beer />
+                    <Text fontWeight="bold" fontSize="16px" fontFamily="Inter" color="#E64545">
+                      {speed?.speed ?? 0}
+                    </Text>
+                    <Spacer />
+                    <Text fontWeight="bold" fontSize="14px" fontFamily="Inter">
+                      {post.title}
+                    </Text>
+                  </HStack>
+                </CardBody>
+              </Link>
+            </Card>
+          )
+        })}
       </VStack>
       <Divider variant="solid" />
       <Flex justifyContent="flex-end">
