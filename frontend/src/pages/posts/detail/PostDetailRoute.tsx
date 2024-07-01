@@ -4,7 +4,9 @@ import { useDeletePost, useGetPost, useGetCurrentUser, useListPostComments } fro
 import { PostDetailCard } from './components/PostDetailCard'
 import { CommentCard } from './components/CommentCard'
 import { CreatePostCommentCard } from './components/createCommentCard'
+import { useEffect, useRef } from 'react'
 export const PostDetailRoute = () => {
+  const endOfCommentRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { id } = useParams<{ id: string }>()
@@ -29,6 +31,10 @@ export const PostDetailRoute = () => {
       }
     )
   }
+
+  useEffect(() => {
+    endOfCommentRef?.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [commentList])
 
   return (
     <Flex w="full" flexDir="column" gap="lg">
@@ -79,6 +85,7 @@ export const PostDetailRoute = () => {
               createdAt={c.created_at ? new Date(c.created_at) : undefined}
             />
           ))}
+          <Box h="1px" ref={endOfCommentRef} />
         </Flex>
         <CreatePostCommentCard id={Number(id)} onSuccess={() => {}} />
       </Flex>
