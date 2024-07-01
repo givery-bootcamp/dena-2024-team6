@@ -509,6 +509,27 @@ paths:
       summary: 投稿を更新
       tags:
       - post
+  posts/speed:
+    get:
+      operationId: listSpeeds
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SchemaSpeedResponse'
+                type: array
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 各投稿の盛り上がり度を取得
+      tags:
+      - post
 components:
   schemas:
     SchemaCommentResponse:
@@ -589,6 +610,13 @@ components:
         title:
           type: string
         user_id:
+          type: integer
+      type: object
+    SchemaSpeedResponse:
+      properties:
+        id:
+          type: integer
+        speed:
           type: integer
       type: object
     SchemaUpdateCommentRequest:

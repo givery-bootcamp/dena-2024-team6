@@ -65,3 +65,8 @@ type CommentResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+type SpeedResponse struct {
+	ID    int `json:"id"`
+	Speed int `json:"speed"`
+}
