@@ -645,6 +645,27 @@ paths:
       summary: 定期的に実行される。1h経過したらlike数を更新する
       tags:
       - post
+  posts/speed:
+    get:
+      operationId: listSpeeds
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SchemaSpeedResponse'
+                type: array
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaErrorResponse'
+          description: Internal Server Error
+      summary: 各投稿の盛り上がり度を取得
+      tags:
+      - post
 components:
   schemas:
     SchemaCommentResponse:
@@ -738,6 +759,13 @@ components:
           type: string
         user_name:
           type: string
+      type: object
+    SchemaSpeedResponse:
+      properties:
+        id:
+          type: integer
+        speed:
+          type: integer
       type: object
     SchemaUpdateCommentRequest:
       properties:

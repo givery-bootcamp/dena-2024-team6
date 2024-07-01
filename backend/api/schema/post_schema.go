@@ -66,6 +66,11 @@ type CommentResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type SpeedResponse struct {
+	ID    int `json:"id"`
+	Speed int `json:"speed"`
+}
+
 type LikePostRequest struct {
 	PostID string `path:"postId" example:"1"`
 }
