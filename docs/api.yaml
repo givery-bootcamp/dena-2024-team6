@@ -449,7 +449,7 @@ paths:
       - post
   posts/{postId}/like:
     get:
-      operationId: likePost
+      operationId: getlikeRecord
       parameters:
       - in: path
         name: postId
@@ -616,7 +616,7 @@ paths:
       - post
   posts/like/update:
     post:
-      operationId: likePost
+      operationId: updatelikeRecord
       responses:
         "200":
           content:

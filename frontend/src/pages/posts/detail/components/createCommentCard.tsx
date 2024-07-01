@@ -1,4 +1,4 @@
-import { useCreatePostComments } from '@api/hooks'
+import { useCreatePostComments, useLikePost } from '@api/hooks'
 import { Box, Button, Flex, HStack, Icon, IconButton, Input, useSnacks } from '@yamada-ui/react'
 import { MessageSquareText, Heart } from 'lucide-react'
 import { useState } from 'react'
@@ -12,9 +12,17 @@ export const CreatePostCommentCard = ({ id, onSuccess }: CreatePostCommentCardPr
   const [body, setBody] = useState('')
   const { mutate } = useCreatePostComments()
   const { snack } = useSnacks()
+  const {mutate:mutateLike} = useLikePost()
 
   const handleBodyChange = (event: { target: { value: string } }) => {
     setBody(event.target.value)
+  }
+
+  const handleLike = () => {
+    // いいねの処理
+    mutateLike({postId: String(id)})
+    console.log('いいね')
+
   }
 
   function handleSubmit(event: { preventDefault: () => void }): void {
@@ -69,7 +77,7 @@ export const CreatePostCommentCard = ({ id, onSuccess }: CreatePostCommentCardPr
           </HStack>
         </form>
       </Box>
-      <IconButton colorScheme="whiteAlpha" variant="ghost" as={Heart} />
+      <IconButton colorScheme="whiteAlpha" variant="ghost" as={Heart} onClick={handleLike}/>
     </Flex>
   )
 }

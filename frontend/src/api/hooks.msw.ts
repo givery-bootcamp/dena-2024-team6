@@ -19,6 +19,7 @@ import type {
   SchemaMutationSchema,
   SchemaPostDetailResponse,
   SchemaPostResponse,
+  SchemaSpeedResponse,
   SchemaUserResponse
 } from './model'
 
@@ -42,11 +43,17 @@ export const getDeletePostCommentsResponseMock = (overrideResponse: Partial< Sch
 
 export const getPutPostCommentsResponseMock = (overrideResponse: Partial< SchemaMutationSchema > = {}): SchemaMutationSchema => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), target_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
-export const getLikePostResponseMock = (overrideResponse: Partial< SchemaLikeRecordResponse > = {}): SchemaLikeRecordResponse => ({likes: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+export const getGetlikeRecordResponseMock = (overrideResponse: Partial< SchemaLikeRecordResponse > = {}): SchemaLikeRecordResponse => ({likes: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getLikePostResponseMock = (overrideResponse: Partial< SchemaMutationSchema > = {}): SchemaMutationSchema => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), target_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
 export const getDeletePostResponseMock = (overrideResponse: Partial< SchemaMutationSchema > = {}): SchemaMutationSchema => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), target_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
 export const getUpdatePostResponseMock = (overrideResponse: Partial< SchemaMutationSchema > = {}): SchemaMutationSchema => ({message: faker.helpers.arrayElement([faker.word.sample(), undefined]), target_id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getUpdatelikeRecordResponseMock = (overrideResponse: Partial< SchemaLikeRecordResponse > = {}): SchemaLikeRecordResponse => ({likes: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
+
+export const getListSpeedsResponseMock = (): SchemaSpeedResponse[] => (Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({id: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), speed: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined])})))
 
 
 export const getHealthCheckMockHandler = () => {
@@ -225,13 +232,28 @@ export const getPutPostCommentsMockHandler = (overrideResponse?: SchemaMutationS
   })
 }
 
-export const getLikePostMockHandler = (overrideResponse?: SchemaLikeRecordResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SchemaLikeRecordResponse> | SchemaLikeRecordResponse)) => {
-  return http.post('*/posts/like/update', async (info) => {await delay(1000);
+export const getGetlikeRecordMockHandler = (overrideResponse?: SchemaLikeRecordResponse | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SchemaLikeRecordResponse> | SchemaLikeRecordResponse)) => {
+  return http.get('*/posts/:postId/like', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getGetlikeRecordResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getLikePostMockHandler = (overrideResponse?: SchemaMutationSchema | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SchemaMutationSchema> | SchemaMutationSchema)) => {
+  return http.post('*/posts/:postId/like', async (info) => {await delay(1000);
     return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
             ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
             : getLikePostResponseMock()),
       {
-        status: 200,
+        status: 201,
         headers: {
           'Content-Type': 'application/json',
         }
@@ -269,6 +291,36 @@ export const getUpdatePostMockHandler = (overrideResponse?: SchemaMutationSchema
     )
   })
 }
+
+export const getUpdatelikeRecordMockHandler = (overrideResponse?: SchemaLikeRecordResponse | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<SchemaLikeRecordResponse> | SchemaLikeRecordResponse)) => {
+  return http.post('*/posts/like/update', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getUpdatelikeRecordResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
+
+export const getListSpeedsMockHandler = (overrideResponse?: SchemaSpeedResponse[] | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SchemaSpeedResponse[]> | SchemaSpeedResponse[])) => {
+  return http.get('*/posts/speed', async (info) => {await delay(1000);
+    return new HttpResponse(JSON.stringify(overrideResponse !== undefined 
+            ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse) 
+            : getListSpeedsResponseMock()),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    )
+  })
+}
 export const getWeb6APIMock = () => [
   getHealthCheckMockHandler(),
   getListPostsMockHandler(),
@@ -282,7 +334,10 @@ export const getWeb6APIMock = () => [
   getCreatePostCommentsMockHandler(),
   getDeletePostCommentsMockHandler(),
   getPutPostCommentsMockHandler(),
+  getGetlikeRecordMockHandler(),
   getLikePostMockHandler(),
   getDeletePostMockHandler(),
-  getUpdatePostMockHandler()
+  getUpdatePostMockHandler(),
+  getUpdatelikeRecordMockHandler(),
+  getListSpeedsMockHandler()
 ]

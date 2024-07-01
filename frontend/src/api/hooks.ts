@@ -29,6 +29,7 @@ import type {
   SchemaPostDetailResponse,
   SchemaPostResponse,
   SchemaSignupRequest,
+  SchemaSpeedResponse,
   SchemaUpdateCommentRequest,
   SchemaUpdatePostRequest,
   SchemaUserResponse
@@ -756,15 +757,77 @@ export const usePutPostComments = <TError = SchemaErrorResponse,
     }
     
 /**
- * @summary 定期的に実行される。1h経過したらlike数を更新する
+ * @summary 対象の投稿のlike数を取得する
  */
-export const likePost = (
-    
- options?: SecondParameter<typeof customInstance>,) => {
+export const getlikeRecord = (
+    postId: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
       
       
       return customInstance<SchemaLikeRecordResponse>(
-      {url: `/posts/like/update`, method: 'POST'
+      {url: `/posts/${postId}/like`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetlikeRecordQueryKey = (postId: string,) => {
+    return [`/posts/${postId}/like`] as const;
+    }
+
+    
+export const getGetlikeRecordQueryOptions = <TData = Awaited<ReturnType<typeof getlikeRecord>>, TError = SchemaErrorResponse>(postId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getlikeRecord>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetlikeRecordQueryKey(postId);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getlikeRecord>>> = ({ signal }) => getlikeRecord(postId, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(postId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getlikeRecord>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetlikeRecordQueryResult = NonNullable<Awaited<ReturnType<typeof getlikeRecord>>>
+export type GetlikeRecordQueryError = SchemaErrorResponse
+
+/**
+ * @summary 対象の投稿のlike数を取得する
+ */
+export const useGetlikeRecord = <TData = Awaited<ReturnType<typeof getlikeRecord>>, TError = SchemaErrorResponse>(
+ postId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getlikeRecord>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetlikeRecordQueryOptions(postId,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * @summary 対象の投稿をlikeする
+ */
+export const likePost = (
+    postId: string,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaMutationSchema>(
+      {url: `/posts/${postId}/like`, method: 'POST'
     },
       options);
     }
@@ -772,17 +835,17 @@ export const likePost = (
 
 
 export const getLikePostMutationOptions = <TError = SchemaErrorResponse,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError,void, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError,{postId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError,{postId: string}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof likePost>>, void> = () => {
-          
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof likePost>>, {postId: string}> = (props) => {
+          const {postId} = props ?? {};
 
-          return  likePost(requestOptions)
+          return  likePost(postId,requestOptions)
         }
 
         
@@ -795,14 +858,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
     export type LikePostMutationError = SchemaErrorResponse
 
     /**
- * @summary 定期的に実行される。1h経過したらlike数を更新する
+ * @summary 対象の投稿をlikeする
  */
 export const useLikePost = <TError = SchemaErrorResponse,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof likePost>>, TError,{postId: string}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationResult<
         Awaited<ReturnType<typeof likePost>>,
         TError,
-        void,
+        {postId: string},
         TContext
       > => {
 
@@ -926,3 +989,121 @@ export const useUpdatePost = <TError = SchemaErrorResponse,
       return useMutation(mutationOptions);
     }
     
+/**
+ * @summary 定期的に実行される。1h経過したらlike数を更新する
+ */
+export const updatelikeRecord = (
+    
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<SchemaLikeRecordResponse>(
+      {url: `/posts/like/update`, method: 'POST'
+    },
+      options);
+    }
+  
+
+
+export const getUpdatelikeRecordMutationOptions = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatelikeRecord>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatelikeRecord>>, TError,void, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatelikeRecord>>, void> = () => {
+          
+
+          return  updatelikeRecord(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdatelikeRecordMutationResult = NonNullable<Awaited<ReturnType<typeof updatelikeRecord>>>
+    
+    export type UpdatelikeRecordMutationError = SchemaErrorResponse
+
+    /**
+ * @summary 定期的に実行される。1h経過したらlike数を更新する
+ */
+export const useUpdatelikeRecord = <TError = SchemaErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatelikeRecord>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof updatelikeRecord>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getUpdatelikeRecordMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * @summary 各投稿の盛り上がり度を取得
+ */
+export const listSpeeds = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<SchemaSpeedResponse[]>(
+      {url: `/posts/speed`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getListSpeedsQueryKey = () => {
+    return [`/posts/speed`] as const;
+    }
+
+    
+export const getListSpeedsQueryOptions = <TData = Awaited<ReturnType<typeof listSpeeds>>, TError = SchemaErrorResponse>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSpeeds>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListSpeedsQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listSpeeds>>> = ({ signal }) => listSpeeds(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listSpeeds>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListSpeedsQueryResult = NonNullable<Awaited<ReturnType<typeof listSpeeds>>>
+export type ListSpeedsQueryError = SchemaErrorResponse
+
+/**
+ * @summary 各投稿の盛り上がり度を取得
+ */
+export const useListSpeeds = <TData = Awaited<ReturnType<typeof listSpeeds>>, TError = SchemaErrorResponse>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listSpeeds>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getListSpeedsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+

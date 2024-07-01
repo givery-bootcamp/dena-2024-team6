@@ -16,6 +16,7 @@ export * from './schemaMutationSchema';
 export * from './schemaPostDetailResponse';
 export * from './schemaPostResponse';
 export * from './schemaSignupRequest';
+export * from './schemaSpeedResponse';
 export * from './schemaUpdateCommentRequest';
 export * from './schemaUpdatePostRequest';
 export * from './schemaUserResponse';
